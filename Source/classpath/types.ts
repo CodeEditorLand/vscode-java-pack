@@ -4,19 +4,19 @@
 import { ProjectType } from "../utils/webview";
 
 export interface ProjectInfo {
-    name: string;
-    rootPath: string;
+	name: string;
+	rootPath: string;
 }
 
 export interface ClasspathComponent {
-    projectType: ProjectType;
-    sourcePaths: string[];
-    defaultOutputPath: string;
-    referenceLibraries: string[];
+	projectType: ProjectType;
+	sourcePaths: string[];
+	defaultOutputPath: string;
+	referenceLibraries: string[];
 }
 
 export enum ClasspathViewException {
-    JavaExtensionNotInstalled = "javaExtensionNotInstalled",
-    StaleJavaExtension = "staleJavaExtension",
-    NoJavaProjects = "noJavaProjects",
+	JavaExtensionNotInstalled = "javaExtensionNotInstalled",
+	StaleJavaExtension = "staleJavaExtension",
+	NoJavaProjects = "noJavaProjects",
 }

@@ -5,10 +5,7 @@ import React from "react";
 import FormatterSettingsView from "./features/formatterSettings/FormatterSettingView";
 
 export class App extends React.Component {
-
-  render() {
-    return (
-      <FormatterSettingsView />
-    );
-  }
+	render() {
+		return <FormatterSettingsView />;
+	}
 }

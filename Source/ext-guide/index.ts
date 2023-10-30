@@ -4,77 +4,118 @@
 import * as vscode from "vscode";
 import * as path from "path";
 import { getExtensionContext, getNonce } from "../utils";
-import { sendInfo, instrumentOperation } from "vscode-extension-telemetry-wrapper";
+import {
+	sendInfo,
+	instrumentOperation,
+} from "vscode-extension-telemetry-wrapper";
 
 let javaExtGuideView: vscode.WebviewPanel | undefined;
 
-export async function javaExtGuideCmdHandler(context: vscode.ExtensionContext, operationId: string) {
-  if (javaExtGuideView) {
-    javaExtGuideView.reveal();
-    return;
-  }
+export async function javaExtGuideCmdHandler(
+	context: vscode.ExtensionContext,
+	operationId: string
+) {
+	if (javaExtGuideView) {
+		javaExtGuideView.reveal();
+		return;
+	}
 
-  javaExtGuideView = vscode.window.createWebviewPanel("java.extGuide", "Java Extensions Guide", {
-    viewColumn: vscode.ViewColumn.One,
-  }, {
-    enableScripts: true,
-    enableCommandUris: true,
-    retainContextWhenHidden: true
-  });
+	javaExtGuideView = vscode.window.createWebviewPanel(
+		"java.extGuide",
+		"Java Extensions Guide",
+		{
+			viewColumn: vscode.ViewColumn.One,
+		},
+		{
+			enableScripts: true,
+			enableCommandUris: true,
+			retainContextWhenHidden: true,
+		}
+	);
 
-  await initializeJavaExtGuideView(context, javaExtGuideView, onDidDisposeWebviewPanel, operationId);
+	await initializeJavaExtGuideView(
+		context,
+		javaExtGuideView,
+		onDidDisposeWebviewPanel,
+		operationId
+	);
 }
 
 function onDidDisposeWebviewPanel() {
-  javaExtGuideView = undefined;
+	javaExtGuideView = undefined;
 }
 
-async function initializeJavaExtGuideView(context: vscode.ExtensionContext, webviewPanel: vscode.WebviewPanel, onDisposeCallback: () => void, operationId: string) {
-  webviewPanel.iconPath = {
-    light: vscode.Uri.file(path.join(context.extensionPath, "caption.light.svg")),
-    dark: vscode.Uri.file(path.join(context.extensionPath, "caption.dark.svg"))
-  };
+async function initializeJavaExtGuideView(
+	context: vscode.ExtensionContext,
+	webviewPanel: vscode.WebviewPanel,
+	onDisposeCallback: () => void,
+	operationId: string
+) {
+	webviewPanel.iconPath = {
+		light: vscode.Uri.file(
+			path.join(context.extensionPath, "caption.light.svg")
+		),
+		dark: vscode.Uri.file(
+			path.join(context.extensionPath, "caption.dark.svg")
+		),
+	};
 
-  webviewPanel.webview.html = getHtmlForWebview(webviewPanel, context.asAbsolutePath("./out/assets/ext-guide/index.js"));
+	webviewPanel.webview.html = getHtmlForWebview(
+		webviewPanel,
+		context.asAbsolutePath("./out/assets/ext-guide/index.js")
+	);
 
-  context.subscriptions.push(webviewPanel.onDidDispose(onDisposeCallback));
-  context.subscriptions.push(webviewPanel.webview.onDidReceiveMessage(async (e) => {
-    if (e.command === "tabActivated") {
-      let tabId = e.tabId;
-      sendInfo(operationId, {
-        infoType: "tabActivated",
-        tabId: tabId
-      });
-    } else if (e.command === "installExtensions") {
-      const extNames = <string[]>e.extNames;
-      await Promise.all(extNames.map(async extName => {
-        return vscode.commands.executeCommand("java.helper.installExtension", extName, extName);
-      }));
-    }
-  }));
+	context.subscriptions.push(webviewPanel.onDidDispose(onDisposeCallback));
+	context.subscriptions.push(
+		webviewPanel.webview.onDidReceiveMessage(async (e) => {
+			if (e.command === "tabActivated") {
+				let tabId = e.tabId;
+				sendInfo(operationId, {
+					infoType: "tabActivated",
+					tabId: tabId,
+				});
+			} else if (e.command === "installExtensions") {
+				const extNames = <string[]>e.extNames;
+				await Promise.all(
+					extNames.map(async (extName) => {
+						return vscode.commands.executeCommand(
+							"java.helper.installExtension",
+							extName,
+							extName
+						);
+					})
+				);
+			}
+		})
+	);
 
-  vscode.extensions.onDidChange(_e => {
-    syncExtensionStatus();
-  });
+	vscode.extensions.onDidChange((_e) => {
+		syncExtensionStatus();
+	});
 
-  function syncExtensionStatus() {
-    const installedExtensions = vscode.extensions.all.map(ext => ext.id.toLowerCase());
-    webviewPanel.webview.postMessage({
-      command: "syncExtensionStatus",
-      installedExtensions: installedExtensions
-    });
-  }
+	function syncExtensionStatus() {
+		const installedExtensions = vscode.extensions.all.map((ext) =>
+			ext.id.toLowerCase()
+		);
+		webviewPanel.webview.postMessage({
+			command: "syncExtensionStatus",
+			installedExtensions: installedExtensions,
+		});
+	}
 
-  syncExtensionStatus();
+	syncExtensionStatus();
 }
 
-function getHtmlForWebview(webviewPanel: vscode.WebviewPanel, scriptPath: string) {
-  const scriptPathOnDisk = vscode.Uri.file(scriptPath);
-  const scriptUri = webviewPanel.webview.asWebviewUri(scriptPathOnDisk);
+function getHtmlForWebview(
+	webviewPanel: vscode.WebviewPanel,
+	scriptPath: string
+) {
+	const scriptPathOnDisk = vscode.Uri.file(scriptPath);
+	const scriptUri = webviewPanel.webview.asWebviewUri(scriptPathOnDisk);
 
-  // Use a nonce to whitelist which scripts can be run
-  const nonce = getNonce();
-  return `<!DOCTYPE html>
+	// Use a nonce to whitelist which scripts can be run
+	const nonce = getNonce();
+	return `<!DOCTYPE html>
   <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -330,17 +371,27 @@ function getHtmlForWebview(webviewPanel: vscode.WebviewPanel, scriptPath: string
   `;
 }
 
-export class JavaExtGuideViewSerializer implements vscode.WebviewPanelSerializer {
-  async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, _state: any) {
-    if (javaExtGuideView) {
-      javaExtGuideView.reveal();
-      webviewPanel.dispose();
-      return;
-    }
+export class JavaExtGuideViewSerializer
+	implements vscode.WebviewPanelSerializer
+{
+	async deserializeWebviewPanel(
+		webviewPanel: vscode.WebviewPanel,
+		_state: any
+	) {
+		if (javaExtGuideView) {
+			javaExtGuideView.reveal();
+			webviewPanel.dispose();
+			return;
+		}
 
-    javaExtGuideView = webviewPanel;
-    instrumentOperation("restoreExtGuideView", operationId => {
-      initializeJavaExtGuideView(getExtensionContext(), webviewPanel, onDidDisposeWebviewPanel, operationId);
-    })();
-  }
+		javaExtGuideView = webviewPanel;
+		instrumentOperation("restoreExtGuideView", (operationId) => {
+			initializeJavaExtGuideView(
+				getExtensionContext(),
+				webviewPanel,
+				onDidDisposeWebviewPanel,
+				operationId
+			);
+		})();
+	}
 }
