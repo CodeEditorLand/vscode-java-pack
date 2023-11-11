@@ -5,7 +5,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import classpathConfigurationViewReducer from "../features/classpathConfiguration/classpathConfigurationViewSlice";
 
 export default configureStore({
-	reducer: {
-		classpathConfig: classpathConfigurationViewReducer,
-	},
+  reducer: {
+    classpathConfig: classpathConfigurationViewReducer
+  },
 });

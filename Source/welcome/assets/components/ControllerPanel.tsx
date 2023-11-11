@@ -6,23 +6,18 @@ import { Form } from "react-bootstrap";
 import { setWelcomeVisibility } from "../utils";
 
 export default class ControllerPanel extends React.Component<{
-	showWhenUsingJava?: boolean;
+    showWhenUsingJava?: boolean;
 }> {
-	render() {
-		let { showWhenUsingJava } = this.props;
+  render() {
+    let {showWhenUsingJava} = this.props;
 
-		return (
-			<Form>
-				<Form.Check
-					defaultChecked={showWhenUsingJava}
-					label="Show welcome page when using Java"
-					onChange={toggleVisibility}
-				/>
-			</Form>
-		);
-	}
+    return <Form>
+        <Form.Check defaultChecked={showWhenUsingJava} label="Show welcome page when using Java" onChange={toggleVisibility}/>
+    </Form>;
+  }
+
 }
 
 function toggleVisibility(event: React.ChangeEvent<HTMLInputElement>) {
-	setWelcomeVisibility(event.target.checked);
+  setWelcomeVisibility(event.target.checked);
 }

@@ -9,21 +9,13 @@ import { webviewCmdLinkHandler } from "../utils";
 const WEBVIEW_ID = "java.gettingStarted";
 const WEBVIEW_TITLE = "Tips for Beginners";
 
-export async function javaGettingStartedCmdHandler(
-	context: vscode.ExtensionContext,
-	_operationId: string
-) {
-	BeginnerTipsPage.createOrShow(context.extensionPath);
+export async function javaGettingStartedCmdHandler(context: vscode.ExtensionContext, _operationId: string) {
+  BeginnerTipsPage.createOrShow(context.extensionPath);
 }
 
-export class BeginnerTipsViewSerializer
-	implements vscode.WebviewPanelSerializer
-{
-	constructor(private context: vscode.ExtensionContext) {}
-	async deserializeWebviewPanel(
-		webviewPanel: vscode.WebviewPanel,
-		_state: unknown
-	) {
+export class BeginnerTipsViewSerializer implements vscode.WebviewPanelSerializer {
+	constructor(private context: vscode.ExtensionContext) { }
+	async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, _state: unknown) {
 		BeginnerTipsPage.createOrShow(this.context.extensionPath, webviewPanel);
 	}
 }
@@ -35,87 +27,65 @@ class BeginnerTipsPage {
 	private readonly _extensionPath: string;
 	private _disposables: vscode.Disposable[] = [];
 
-	public static createOrShow(
-		extensionPath: string,
-		webviewPanel?: vscode.WebviewPanel
-	) {
+	public static createOrShow(extensionPath: string, webviewPanel?: vscode.WebviewPanel) {
 		if (BeginnerTipsPage.instance) {
 			BeginnerTipsPage.instance._panel?.reveal();
 		} else {
-			BeginnerTipsPage.instance = webviewPanel
-				? new BeginnerTipsPage(extensionPath, webviewPanel)
-				: new BeginnerTipsPage(extensionPath, vscode.ViewColumn.One);
+			BeginnerTipsPage.instance = webviewPanel ?
+				new BeginnerTipsPage(extensionPath, webviewPanel) :
+				new BeginnerTipsPage(extensionPath, vscode.ViewColumn.One);
 		}
 	}
 
 	private constructor(extensionPath: string, column: vscode.ViewColumn);
-	private constructor(
-		extensionPath: string,
-		webviewPanel: vscode.WebviewPanel
-	);
-	private constructor(
-		extensionPath: string,
-		columnOrwebviewPanel: vscode.ViewColumn | vscode.WebviewPanel
-	) {
+	private constructor(extensionPath: string, webviewPanel: vscode.WebviewPanel);
+	private constructor(extensionPath: string, columnOrwebviewPanel: vscode.ViewColumn | vscode.WebviewPanel) {
 		this._extensionPath = extensionPath;
 		if ((columnOrwebviewPanel as vscode.WebviewPanel).viewType) {
 			this._panel = columnOrwebviewPanel as vscode.WebviewPanel;
 		} else {
-			this._panel = vscode.window.createWebviewPanel(
-				BeginnerTipsPage.viewType,
-				WEBVIEW_TITLE,
-				columnOrwebviewPanel as vscode.ViewColumn,
-				{
-					enableScripts: true,
-					localResourceRoots: [
-						vscode.Uri.file(path.join(this._extensionPath, "out")),
-					],
-					enableCommandUris: true,
-					retainContextWhenHidden: true,
-				}
-			);
+			this._panel = vscode.window.createWebviewPanel(BeginnerTipsPage.viewType, WEBVIEW_TITLE, columnOrwebviewPanel as vscode.ViewColumn, {
+				enableScripts: true,
+				localResourceRoots: [
+					vscode.Uri.file(path.join(this._extensionPath, 'out'))
+				],
+				enableCommandUris: true,
+				retainContextWhenHidden: true
+			});
 		}
 
-		this._panel.iconPath = {
-			light: vscode.Uri.file(
-				path.join(this._extensionPath, "caption.light.svg")
-			),
-			dark: vscode.Uri.file(
-				path.join(this._extensionPath, "caption.dark.svg")
-			),
-		};
-		this._panel.webview.html = this._getHtmlForWebview();
+    this._panel.iconPath = {
+      light: vscode.Uri.file(path.join(this._extensionPath, "caption.light.svg")),
+      dark: vscode.Uri.file(path.join(this._extensionPath, "caption.dark.svg"))
+    };
+    this._panel.webview.html = this._getHtmlForWebview();
 
-		this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
+    this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
 
 		// Handle messages from the webview
-		this._panel.webview.onDidReceiveMessage(
-			(message) => {
-				switch (message.command) {
-					case "onWillActivateTab":
-						this.doActivateTab(message.payload);
-						return;
-					case "onWillReloadWindow":
-						this.doReloadWindow();
-				}
-			},
-			null,
-			this._disposables
-		);
+		this._panel.webview.onDidReceiveMessage(message => {
+			switch (message.command) {
+				case 'onWillActivateTab':
+					this.doActivateTab(message.payload);
+					return;
+				case 'onWillReloadWindow':
+					this.doReloadWindow();
+			}
+		}, null, this._disposables);
 	}
 
-	private async doActivateTab(payload: { tabId: string }) {
-		sendInfo("", {
-			infoType: "tabActivated",
-			tabId: payload.tabId,
-		});
+	private async doActivateTab(payload: {tabId: string}) {
+    sendInfo("", {
+      infoType: "tabActivated",
+      tabId: payload.tabId
+    });
 	}
 
 	private async doReloadWindow() {
 		await webviewCmdLinkHandler({
 			webview: BeginnerTipsPage.viewType,
 			identifier: "Reload Window",
-			command: "workbench.action.reloadWindow",
+			command: "workbench.action.reloadWindow"
 		});
 	}
 
@@ -134,15 +104,7 @@ class BeginnerTipsPage {
 	}
 
 	private _getHtmlForWebview() {
-		const scriptPathOnDisk = vscode.Uri.file(
-			path.join(
-				this._extensionPath,
-				"out",
-				"assets",
-				"beginner-tips",
-				"index.js"
-			)
-		);
+		const scriptPathOnDisk = vscode.Uri.file(path.join(this._extensionPath, 'out', "assets", "beginner-tips", "index.js"));
 		const scriptUri = this._panel?.webview.asWebviewUri(scriptPathOnDisk);
 
 		// Use a nonce to whitelist which scripts can be run
@@ -168,8 +130,7 @@ class BeginnerTipsPage {
 
 function getNonce() {
 	let text = "";
-	const possible =
-		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 	for (let i = 0; i < 32; i++) {
 		text += possible.charAt(Math.floor(Math.random() * possible.length));
 	}

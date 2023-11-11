@@ -2,14 +2,14 @@
 // Licensed under the MIT license.
 
 export function getExtensionName() {
-	const packageInfo = getPackageInfo();
-	return `${packageInfo["publisher"]}.${packageInfo["name"]}`;
+  const packageInfo = getPackageInfo();
+  return `${packageInfo["publisher"]}.${packageInfo["name"]}`;
 }
 
 export function getExtensionVersion() {
-	return getPackageInfo()["version"];
+  return getPackageInfo()["version"];
 }
 
 function getPackageInfo() {
-	return ({} = require("../../package.json"));
+  return {} = require("../../package.json");
 }

@@ -5,7 +5,10 @@ import React from "react";
 import ClasspathConfigurationView from "./features/classpathConfiguration/ClasspathConfigurationView";
 
 export class App extends React.Component {
-	render() {
-		return <ClasspathConfigurationView />;
-	}
+
+    render() {
+        return (
+            <ClasspathConfigurationView />
+        );
+    }
 }

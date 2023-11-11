@@ -11,12 +11,12 @@ $list-group-hover-bg: var(--vscode-list-hoverBackground) !default;
 $list-group-action-active-bg: $list-group-bg;
 $list-group-border-color: var(--vscode-notifications-background) !default;
 $list-group-action-color: var(--vscode-notifications-foreground) !default;
-$list-group-item-padding-y: 0.75rem !default;
+$list-group-item-padding-y: .75rem !default;
 $list-group-item-padding-x: 1rem !default;
 
-$list-group-border-radius: 0 !default;
+$list-group-border-radius:          0 !default;
 
-$font-size-base: 0.8rem !default;
+$font-size-base: .8rem !default;
 
 $code-font-size: $font-size-base;
 $kbd-bg: var(--vscode-button-background) !default;
@@ -27,11 +27,9 @@ $text-muted: var(--vscode-editorCodeLens-foreground) !default;
 
 $nav-tabs-link-active-color: var(--vscode-sideBarTitle-foreground);
 $nav-tabs-link-active-bg: var(--vscode-sideBar-background);
-$nav-tabs-link-active-border-color: var(--vscode-sideBarTitle-foreground)
-	var(--vscode-sideBarTitle-foreground) var(--vscode-sideBar-background)
-	var(--vscode-sideBarTitle-foreground);
+$nav-tabs-link-active-border-color: var(--vscode-sideBarTitle-foreground) var(--vscode-sideBarTitle-foreground) var(--vscode-sideBar-background) var(--vscode-sideBarTitle-foreground);
 $nav-tabs-link-hover-border-color: var(--vscode-sideBarTitle-foreground);
-$nav-tabs-border-color: var(--vscode-sideBarTitle-foreground);
+$nav-tabs-border-color:  var(--vscode-sideBarTitle-foreground);
 
 $card-bg: var(--vscode-sideBar-background);
 $card-color: var(--vscode-sideBarTitle-foreground);
@@ -42,6 +40,7 @@ $input-group-addon-color: var(--vscode-sideBarTitle-foreground);
 
 $code-color: var(--vscode-textPreformat-foreground);
 
-$input-color: var(--vscode-sideBarTitle-foreground);
-$input-bg: var(--vscode-sideBar-background);
+$input-color:var(--vscode-sideBarTitle-foreground);
+$input-bg:var(--vscode-sideBar-background);
 @import "~bootstrap/scss/bootstrap";
+

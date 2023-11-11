@@ -6,13 +6,10 @@ import * as hljs from "highlight.js";
 import "../../../../../../webview-resources/highlight.css";
 
 export function highlight(content: string): JSX.Element {
-	const highlighted = hljs.highlight("java", content);
-	return (
-		<pre className="hljs d-flex flex-grow-1">
-			<code
-				className="hljs flex-grow-1"
-				dangerouslySetInnerHTML={{ __html: highlighted.value }}
-			/>
-		</pre>
-	);
+  const highlighted = hljs.highlight("java", content);
+  return (
+    <pre className="hljs d-flex flex-grow-1">
+      <code className="hljs flex-grow-1" dangerouslySetInnerHTML={{ __html: highlighted.value }} />
+    </pre>
+  );
 }
