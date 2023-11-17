@@ -11,4 +11,5 @@ export const KEY_OVERVIEW_LAST_SHOW_TIME = "overviewLastShowTime";
 export const KEY_IS_WELCOME_PAGE_VIEWED = "isWelcomePageViewed";
 
 // release note (inactive)
-export const RELEASE_NOTE_PRESENTATION_HISTORY = "releaseNotesPresentationHistory";
+export const RELEASE_NOTE_PRESENTATION_HISTORY =
+	"releaseNotesPresentationHistory";

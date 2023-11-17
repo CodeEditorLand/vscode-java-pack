@@ -6,51 +6,53 @@ import * as fs from "fs";
 import { gt } from "semver";
 import { sendError } from "vscode-extension-telemetry-wrapper";
 
-type ReleaseNotesEntry = { fileName: string, version: string };
+type ReleaseNotesEntry = { fileName: string; version: string };
 
-export async function getReleaseNotesEntries(context: vscode.ExtensionContext): Promise<ReleaseNotesEntry[]> {
-  const dir = context.asAbsolutePath("release-notes");
-  const regex = /v((0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*))\.md/g;
+export async function getReleaseNotesEntries(
+	context: vscode.ExtensionContext
+): Promise<ReleaseNotesEntry[]> {
+	const dir = context.asAbsolutePath("release-notes");
+	const regex = /v((0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*))\.md/g;
 
-  return new Promise<ReleaseNotesEntry[]>((resolve, reject) => {
-    fs.readdir(dir, (err, files) => {
-      if (err) {
-        sendError(err);
-        reject(err);
-        return;
-      }
+	return new Promise<ReleaseNotesEntry[]>((resolve, reject) => {
+		fs.readdir(dir, (err, files) => {
+			if (err) {
+				sendError(err);
+				reject(err);
+				return;
+			}
 
-      const entries: any[] = [];
+			const entries: any[] = [];
 
-      files.forEach(fileName => {
-        const match = regex.exec(fileName);
-        if (!match) {
-          return;
-        }
+			files.forEach((fileName) => {
+				const match = regex.exec(fileName);
+				if (!match) {
+					return;
+				}
 
-        const [, semver] = match;
+				const [, semver] = match;
 
-        entries.push({
-          fileName: fileName,
-          version: semver
-        });
+				entries.push({
+					fileName: fileName,
+					version: semver,
+				});
 
-        // global regular expression object is STATEFUL!!!
-        regex.lastIndex = 0;
-      });
+				// global regular expression object is STATEFUL!!!
+				regex.lastIndex = 0;
+			});
 
-      resolve(entries);
-    });
-  });
+			resolve(entries);
+		});
+	});
 }
 
 export function findLatestReleaseNotes(entries: ReleaseNotesEntry[]) {
-  let latest = entries[0];
-  entries.forEach(entry => {
-    if (gt(entry.version, latest.version)) {
-      latest = entry;
-    }
-  });
+	let latest = entries[0];
+	entries.forEach((entry) => {
+		if (gt(entry.version, latest.version)) {
+			latest = entry;
+		}
+	});
 
-  return latest;
+	return latest;
 }

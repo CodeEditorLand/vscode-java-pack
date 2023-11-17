@@ -3,14 +3,12 @@
 
 import React from "react";
 import InstallJDKView from "./features/InstallJDKView";
-import './App.scss';
+import "./App.scss";
 
 class App extends React.Component {
-  render() {
-    return (
-      <InstallJDKView />
-    );
-  }
+	render() {
+		return <InstallJDKView />;
+	}
 }
 
 export default App;
