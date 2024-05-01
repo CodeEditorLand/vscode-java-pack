@@ -1,34 +1,47 @@
 {
-	"name": "vscode-java-pack",
-	"displayName": "Extension Pack for Java",
-	"version": "0.0.1",
-	"private": false,
-	"description": "Popular extensions for Java development that provides Java IntelliSense, debugging, testing, Maven/Gradle support, project management and more",
-	"keywords": [
-		"land"
+	"activationEvents": [
+		"onLanguage:java",
+		"workspaceContains:pom.xml",
+		"workspaceContains:*/pom.xml",
+		"workspaceContains:build.gradle",
+		"workspaceContains:*/build.gradle",
+		"workspaceContains:settings.gradle",
+		"workspaceContains:*/settings.gradle",
+		"workspaceContains:build.gradle.kts",
+		"workspaceContains:*/build.gradle.kts",
+		"workspaceContains:settings.gradle.kts",
+		"workspaceContains:*/settings.gradle.kts",
+		"workspaceContains:.classpath",
+		"workspaceContains:*/.classpath",
+		"onCommand:java.overview",
+		"onCommand:java.showReleaseNotes",
+		"onWebviewPanel:java.overview",
+		"onCommand:java.runtime",
+		"onWebviewPanel:java.runtime",
+		"onCommand:java.gettingStarted",
+		"onWebviewPanel:java.gettingStarted",
+		"onCommand:java.extGuide",
+		"onWebviewPanel:java.extGuide",
+		"onCommand:java.welcome",
+		"onWebviewPanel:java.welcome",
+		"onCommand:java.installJdk",
+		"onWebviewPanel:java.installJdk",
+		"onCommand:java.classpathConfiguration",
+		"onWebviewPanel:java.classpathConfiguration",
+		"onCommand:java.formatterSettings",
+		"onWalkthrough:javaWelcome"
 	],
-	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandJavaPack#readme",
+	"aiKey": "b4a8a622-6ac7-4cf8-83aa-f325e1890795",
+	"author": {
+		"email": "Land@PlayForm.Cloud",
+		"name": "🌆 — Land —",
+		"url": "HTTPS://Land.PlayForm.Cloud"
+	},
 	"bugs": {
 		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandJavaPack/issues"
 	},
-	"repository": {
-		"type": "git",
-		"url": "git+HTTPS://github.com/CodeEditorLand/LandJavaPack.git"
-	},
-	"license": "SEE LICENSE IN LICENSE",
-	"author": {
-		"name": "🌆 — Land —",
-		"email": "Land@PlayForm.Cloud",
-		"url": "HTTPS://Land.PlayForm.Cloud"
-	},
-	"type": "module",
-	"main": "./out/extension",
-	"scripts": {
-		"Document": "Document 'Source/**/*.ts'",
-		"build": "webpack --config webpack.config.js --mode=\"production\"",
-		"compile": "webpack --config webpack.config.js",
-		"prepublishOnly": "Build 'Source/**/*.ts'",
-		"update-tpn": "node scripts/update-third-party-notice.js"
+	"capabilities": {
+		"virtualWorkspaces": false
 	},
 	"contributes": {
 		"commands": [
@@ -275,38 +288,6 @@
 			}
 		]
 	},
-	"activationEvents": [
-		"onLanguage:java",
-		"workspaceContains:pom.xml",
-		"workspaceContains:*/pom.xml",
-		"workspaceContains:build.gradle",
-		"workspaceContains:*/build.gradle",
-		"workspaceContains:settings.gradle",
-		"workspaceContains:*/settings.gradle",
-		"workspaceContains:build.gradle.kts",
-		"workspaceContains:*/build.gradle.kts",
-		"workspaceContains:settings.gradle.kts",
-		"workspaceContains:*/settings.gradle.kts",
-		"workspaceContains:.classpath",
-		"workspaceContains:*/.classpath",
-		"onCommand:java.overview",
-		"onCommand:java.showReleaseNotes",
-		"onWebviewPanel:java.overview",
-		"onCommand:java.runtime",
-		"onWebviewPanel:java.runtime",
-		"onCommand:java.gettingStarted",
-		"onWebviewPanel:java.gettingStarted",
-		"onCommand:java.extGuide",
-		"onWebviewPanel:java.extGuide",
-		"onCommand:java.welcome",
-		"onWebviewPanel:java.welcome",
-		"onCommand:java.installJdk",
-		"onWebviewPanel:java.installJdk",
-		"onCommand:java.classpathConfiguration",
-		"onWebviewPanel:java.classpathConfiguration",
-		"onCommand:java.formatterSettings",
-		"onWalkthrough:javaWelcome"
-	],
 	"dependencies": {
 		"@iconify-icons/codicon": "1.2.30",
 		"@xmldom/xmldom": "0.8.10",
@@ -323,6 +304,7 @@
 		"lodash": "4.17.21",
 		"semver": "7.6.0"
 	},
+	"description": "Popular extensions for Java development that provides Java IntelliSense, debugging, testing, Maven/Gradle support, project management and more",
 	"devDependencies": {
 		"@playform/build": "0.0.7",
 		"@playform/document": "0.0.6",
@@ -347,6 +329,10 @@
 		"style-loader": "4.0.0",
 		"ts-loader": "9.5.1"
 	},
+	"displayName": "Extension Pack for Java",
+	"enabledApiProposals": [
+		"languageModels"
+	],
 	"extensionPack": [
 		"VisualStudioExptTeam.vscodeintellicode",
 		"redhat.java",
@@ -355,16 +341,30 @@
 		"vscjava.vscode-java-test",
 		"vscjava.vscode-maven"
 	],
+	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandJavaPack#readme",
+	"icon": "logo.png",
+	"keywords": [
+		"land"
+	],
+	"license": "SEE LICENSE IN LICENSE",
+	"main": "./out/extension",
+	"name": "vscode-java-pack",
+	"preview": false,
+	"private": false,
 	"publishConfig": {
 		"access": "public"
 	},
-	"icon": "logo.png",
-	"preview": false,
-	"aiKey": "b4a8a622-6ac7-4cf8-83aa-f325e1890795",
-	"capabilities": {
-		"virtualWorkspaces": false
+	"repository": {
+		"type": "git",
+		"url": "git+HTTPS://github.com/CodeEditorLand/LandJavaPack.git"
 	},
-	"enabledApiProposals": [
-		"languageModels"
-	]
+	"scripts": {
+		"Document": "Document 'Source/**/*.ts'",
+		"build": "webpack --config webpack.config.js --mode=\"production\"",
+		"compile": "webpack --config webpack.config.js",
+		"prepublishOnly": "Build 'Source/**/*.ts'",
+		"update-tpn": "node scripts/update-third-party-notice.js"
+	},
+	"type": "module",
+	"version": "0.0.1"
 }
