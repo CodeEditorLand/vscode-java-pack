@@ -1,27 +1,7 @@
 {
 	"name": "vscode-java-pack",
 	"displayName": "Extension Pack for Java",
-	"version": "0.0.1",
-	"private": false,
 	"description": "Popular extensions for Java development that provides Java IntelliSense, debugging, testing, Maven/Gradle support, project management and more",
-	"keywords": [
-		"land"
-	],
-	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandJavaPack#readme",
-	"bugs": {
-		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandJavaPack/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+HTTPS://github.com/CodeEditorLand/LandJavaPack.git"
-	},
-	"license": "SEE LICENSE IN LICENSE",
-	"author": {
-		"name": "🛬 Land —",
-		"email": "Land@PlayForm.Cloud",
-		"url": "HTTPS://Land.PlayForm.Cloud"
-	},
-	"type": "module",
 	"main": "./out/extension",
 	"scripts": {
 		"Document": "Document 'Source/**/*.ts'",
@@ -325,7 +305,6 @@
 	},
 	"devDependencies": {
 		"@playform/build": "0.0.7",
-		"@playform/document": "0.0.6",
 		"@types/bytes": "3.1.4",
 		"@types/expand-tilde": "2.0.2",
 		"@types/fs-extra": "11.0.4",
@@ -355,9 +334,6 @@
 		"vscjava.vscode-java-test",
 		"vscjava.vscode-maven"
 	],
-	"publishConfig": {
-		"access": "public"
-	},
 	"icon": "logo.png",
 	"preview": false,
 	"aiKey": "b4a8a622-6ac7-4cf8-83aa-f325e1890795",
