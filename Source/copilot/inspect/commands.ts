@@ -1,22 +1,24 @@
-import { DocumentSymbol, TextDocument, Range, Selection, commands } from "vscode";
+import { TextDocument, Range, Selection, commands } from "vscode";
 import { instrumentOperationAsVsCodeCommand, sendInfo } from "vscode-extension-telemetry-wrapper";
 import InspectionCopilot from "./InspectionCopilot";
 import { Inspection, InspectionProblem } from "./Inspection";
 import { uncapitalize } from "../utils";
+import { SymbolNode } from "./SymbolNode";
+import { DocumentRenderer } from "./DocumentRenderer";
 
 export const COMMAND_INSPECT_CLASS = 'java.copilot.inspect.class';
 export const COMMAND_INSPECT_RANGE = 'java.copilot.inspect.range';
 export const COMMAND_FIX = 'java.copilot.fix.inspection';
 
-export function registerCommands() {
-    instrumentOperationAsVsCodeCommand(COMMAND_INSPECT_CLASS, async (document: TextDocument, clazz: DocumentSymbol) => {
-        const copilot = new InspectionCopilot();
-        void copilot.inspectClass(document, clazz);
+export function registerCommands(copilot: InspectionCopilot, renderer: DocumentRenderer) {
+    instrumentOperationAsVsCodeCommand(COMMAND_INSPECT_CLASS, async (document: TextDocument, clazz: SymbolNode) => {
+        await copilot.inspectClass(document, clazz);
+        renderer.rerender(document);
     });
 
     instrumentOperationAsVsCodeCommand(COMMAND_INSPECT_RANGE, async (document: TextDocument, range: Range | Selection) => {
-        const copilot = new InspectionCopilot();
-        void copilot.inspectRange(document, range);
+        await copilot.inspectRange(document, range);
+        renderer.rerender(document);
     });
 
     instrumentOperationAsVsCodeCommand(COMMAND_FIX, async (problem: InspectionProblem, solution: string, source: string) => {
