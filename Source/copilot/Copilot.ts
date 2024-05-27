@@ -1,16 +1,16 @@
-import { LanguageModelChatMessage, LanguageModelChatUserMessage, LanguageModelChatAssistantMessage, lm, Disposable, CancellationToken, LanguageModelChatRequestOptions } from "vscode";
+import { LanguageModelChatMessage, lm, Disposable, CancellationToken, LanguageModelChatRequestOptions, LanguageModelChatMessageRole, LanguageModelChatSelector } from "vscode";
 import { instrumentSimpleOperation, sendInfo } from "vscode-extension-telemetry-wrapper";
 import { logger } from "./utils";
 
 export default class Copilot {
     public static readonly DEFAULT_END_MARK = '<|endofresponse|>';
     public static readonly DEFAULT_MAX_ROUNDS = 10;
-    public static readonly DEFAULT_MODEL = 'copilot-gpt-4';
+    public static readonly DEFAULT_MODEL = { family: 'gpt-4' };
     public static readonly DEFAULT_MODEL_OPTIONS: LanguageModelChatRequestOptions = { modelOptions: {} };
     public static readonly NOT_CANCELLABEL: CancellationToken = { isCancellationRequested: false, onCancellationRequested: () => Disposable.from() };
 
     public constructor(
-        private readonly model: string = Copilot.DEFAULT_MODEL,
+        private readonly modelSelector: LanguageModelChatSelector = Copilot.DEFAULT_MODEL,
         private readonly modelOptions: LanguageModelChatRequestOptions = Copilot.DEFAULT_MODEL_OPTIONS,
         private readonly maxRounds: number = Copilot.DEFAULT_MAX_ROUNDS,
         private readonly endMark: string = Copilot.DEFAULT_END_MARK
@@ -28,22 +28,28 @@ export default class Copilot {
         const messages = [...systemMessagesOrSamples];
         const _send = async (message: string): Promise<boolean> => {
             rounds++;
-            logger.info(`User: \n`, message);
-            messages.push(new LanguageModelChatUserMessage(message));
+            logger.debug(`User: \n`, message);
+            logger.info(`User: ${message.split('\n')[0]}...`);
+            messages.push(new LanguageModelChatMessage(LanguageModelChatMessageRole.User, message));
             logger.info('Copilot: thinking...');
 
             let rawAnswer: string = '';
             try {
-                const response = await lm.sendChatRequest(this.model, messages, modelOptions ?? this.modelOptions, cancellationToken);
-                for await (const item of response.stream) {
+                const model = (await lm.selectChatModels(this.modelSelector))?.[0];
+                if (!model) {
+                    throw new Error('No model selected');
+                }
+                const response = await model.sendRequest(messages, modelOptions ?? this.modelOptions, cancellationToken);
+                for await (const item of response.text) {
                     rawAnswer += item;
                 }
             } catch (e) {
                 logger.error(`Failed to send request to copilot`, e);
                 throw new Error(`Failed to send request to copilot: ${e}`);
             }
-            messages.push(new LanguageModelChatAssistantMessage(rawAnswer));
-            logger.info(`Copilot: \n`, rawAnswer);
+            messages.push(new LanguageModelChatMessage(LanguageModelChatMessageRole.Assistant, rawAnswer));
+            logger.debug(`Copilot: \n`, rawAnswer);
+            logger.info(`Copilot: ${rawAnswer.split('\n')[0]}...`);
             answer += rawAnswer;
             return answer.trim().endsWith(this.endMark);
         };

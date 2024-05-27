@@ -1,4 +1,5 @@
 import { TextDocument, workspace, window, Selection, Range, Position } from "vscode";
+import { SymbolNode } from "./SymbolNode";
 
 export interface InspectionProblem {
     /**
@@ -26,7 +27,9 @@ export interface InspectionProblem {
 }
 
 export interface Inspection {
+    id: string;
     document?: TextDocument;
+    symbol?: SymbolNode;
     problem: InspectionProblem;
     solution: string;
     severity: string;

@@ -13,7 +13,7 @@ import InspectionCache from "./InspectionCache";
 
 /**
  * `DocumentRenderer` is responsible for 
- * - managing `Rewrite with new syntax` code lenses renderer
+ * - managing `Rewrite with new Java syntax` code lenses renderer
  * - managing inspection renderers based on settings
  * - rendering inspections for a document
  */
@@ -104,7 +104,11 @@ export class DocumentRenderer {
         if (settings.length === 0) {
             settings.push('diagnostics');
             settings.push('rulerhighlights');
-            settings.push(isCodeLensDisabled() ? 'guttericons' : 'codelenses');
+            const disabled = isCodeLensDisabled();
+            if (disabled) {
+                logger.warn('CodeLens is disabled, fallback to GutterIcons');
+            }
+            settings.push(disabled ? 'guttericons' : 'codelenses');
         }
         return settings;
     }

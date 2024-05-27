@@ -2,8 +2,9 @@
 import { CancellationToken, CodeAction, CodeActionContext, CodeActionKind, Diagnostic, DiagnosticCollection, DiagnosticSeverity, ExtensionContext, Range, Selection, TextDocument, languages } from "vscode";
 import { Inspection } from "../Inspection";
 import { InspectionRenderer } from "./InspectionRenderer";
-import { logger } from "../../../copilot/utils";
-import { COMMAND_FIX } from "../commands";
+import { logger, uncapitalize } from "../../../copilot/utils";
+import { COMMAND_IGNORE_INSPECTIONS, COMMAND_FIX_INSPECTION } from "../commands";
+import _ from "lodash";
 
 const DIAGNOSTICS_GROUP = 'java.copilot.inspection.diagnostics';
 
@@ -38,22 +39,21 @@ export class DiagnosticRenderer implements InspectionRenderer {
         if (inspections.length < 1 || !this.diagnostics) {
             return;
         }
-        const newDiagnostics: Diagnostic[] = inspections.map(s => DiagnosticRenderer.toDiagnostic(s));
-        const newDiagnosticsMessages = newDiagnostics.map(d => d.message.trim());
-        const existingDiagnostics = this.diagnostics.get(document.uri) ?? [];
-        const leftDiagnostics = existingDiagnostics.filter(d => !newDiagnosticsMessages.includes(d.message.trim()));
-        newDiagnostics.push(...leftDiagnostics);
-        this.diagnostics.set(document.uri, newDiagnostics);
+        const oldItems: readonly InspectionDiagnostic[] = (this.diagnostics.get(document.uri) ?? []) as InspectionDiagnostic[];
+        const oldIds: string[] = _.uniq(oldItems).map(c => c.inspection.id);
+        const newIds: string[] = inspections.map(i => i.id);
+        const toKeep: InspectionDiagnostic[] = _.intersection(oldIds, newIds).map(id => oldItems.find(c => c.inspection.id === id)!) ?? [];
+        const toAdd: InspectionDiagnostic[] = _.difference(newIds, oldIds).map(id => inspections.find(i => i.id === id)!).map(i => new InspectionDiagnostic(i));
+        this.diagnostics.set(document.uri, [...toKeep, ...toAdd]);
     }
+}
 
-    private static toDiagnostic(inspection: Inspection): Diagnostic {
+class InspectionDiagnostic extends Diagnostic {
+    public constructor(public readonly inspection: Inspection) {
         const range = Inspection.getIndicatorRangeOfInspection(inspection.problem);
         const severiy = inspection.severity.toUpperCase() === 'HIGH' ? DiagnosticSeverity.Information : DiagnosticSeverity.Hint;
-        const diagnostic = new Diagnostic(range, inspection.problem.description, severiy);
-        diagnostic.source = DIAGNOSTICS_GROUP;
-        //@ts-ignore
-        diagnostic.additional = inspection;
-        return diagnostic;
+        super(range, inspection.problem.description, severiy);
+        this.source = DIAGNOSTICS_GROUP;
     }
 }
 
@@ -66,20 +66,29 @@ export async function fixDiagnostic(document: TextDocument, _range: Range | Sele
         if (diagnostic.source !== DIAGNOSTICS_GROUP) {
             continue;
         }
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const inspection: Inspection = diagnostic.additional as Inspection;
-        const action: CodeAction = {
+        const inspection: Inspection = (diagnostic as InspectionDiagnostic).inspection as Inspection;
+        const fixAction: CodeAction = {
             title: inspection.solution,
             diagnostics: [diagnostic],
             kind: CodeActionKind.RefactorRewrite,
             command: {
                 title: diagnostic.message,
-                command: COMMAND_FIX,
+                command: COMMAND_FIX_INSPECTION,
                 arguments: [inspection.problem, inspection.solution, 'diagnostics']
             }
         };
-        actions.push(action);
+        actions.push(fixAction);
+        const ignoreAction: CodeAction = {
+            title: `Ignore "${uncapitalize(inspection.problem.description)}"`,
+            diagnostics: [diagnostic],
+            kind: CodeActionKind.RefactorRewrite,
+            command: {
+                title: `Ignore "${uncapitalize(inspection.problem.description)}"`,
+                command: COMMAND_IGNORE_INSPECTIONS,
+                arguments: [document, inspection.symbol, inspection]
+            }
+        };
+        actions.push(ignoreAction);
     }
     return actions;
 }

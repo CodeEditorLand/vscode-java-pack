@@ -3,10 +3,11 @@ import Copilot from "../Copilot";
 import { getClassesContainedInRange, getInnermostClassContainsRange, getIntersectionMethodsOfRange, getProjectJavaVersion, getUnionRange, logger } from "../utils";
 import { Inspection } from "./Inspection";
 import path from "path";
-import { TextDocument, SymbolKind, ProgressLocation, commands, Position, Range, Selection, window, LanguageModelChatSystemMessage, LanguageModelChatMessage, LanguageModelChatUserMessage, LanguageModelChatAssistantMessage } from "vscode";
-import { COMMAND_FIX } from "./commands";
+import { TextDocument, SymbolKind, ProgressLocation, commands, Position, Range, Selection, window, LanguageModelChatMessage } from "vscode";
+import { COMMAND_FIX_INSPECTION } from "./commands";
 import InspectionCache from "./InspectionCache";
 import { SymbolNode } from "./SymbolNode";
+import { randomUUID } from "crypto";
 
 export default class InspectionCopilot extends Copilot {
 
@@ -161,7 +162,7 @@ export default class InspectionCopilot extends Copilot {
             const symbolKind = SymbolKind[symbols[0].kind].toLowerCase();
             const inspections = await window.withProgress({
                 location: ProgressLocation.Notification,
-                title: `Inspecting ${symbolKind} ${symbolName}... of \"${path.basename(document.fileName)}\"`,
+                title: `Inspecting ${symbolKind} ${symbolName}... of "${path.basename(document.fileName)}"`,
                 cancellable: false
             }, (_progress) => {
                 return this.doInspectRange(document, expandedRange);
@@ -169,13 +170,13 @@ export default class InspectionCopilot extends Copilot {
 
             // show message based on the number of inspections
             if (inspections.length < 1) {
-                void window.showInformationMessage(`Inspected ${symbolKind} ${symbolName}... of \"${path.basename(document.fileName)}\" and got 0 suggestions.`);
+                void window.showInformationMessage(`Inspected ${symbolKind} ${symbolName}... of "${path.basename(document.fileName)}" and got 0 suggestions.`);
             } else if (inspections.length == 1) {
                 // apply the only suggestion automatically
-                void commands.executeCommand(COMMAND_FIX, inspections[0].problem, inspections[0].solution, 'auto');
+                void commands.executeCommand(COMMAND_FIX_INSPECTION, inspections[0].problem, inspections[0].solution, 'auto');
             } else {
                 // show message to go to the first suggestion
-                void window.showInformationMessage(`Inspected ${symbolKind} ${symbolName}... of \"${path.basename(document.fileName)}\" and got ${inspections.length} suggestions.`, "Go to").then(selection => {
+                void window.showInformationMessage(`Inspected ${symbolKind} ${symbolName}... of "${path.basename(document.fileName)}" and got ${inspections.length} suggestions.`, "Go to").then(selection => {
                     selection === "Go to" && void Inspection.revealFirstLineOfInspection(inspections[0]);
                 });
             }
@@ -219,10 +220,8 @@ export default class InspectionCopilot extends Copilot {
         const adjustedRange = new Range(new Position(range.start.line, 0), new Position(range.end.line, document.lineAt(range.end.line).text.length));
         const content: string = document.getText(adjustedRange);
         const startLine = range.start.line;
-        const javaVersion = await getProjectJavaVersion(document);
-        const inspections = await this.inspectCode(content, {
-            javaVersion
-        });
+        const projectContext = await this.collectProjectContext(document);
+        const inspections = await this.inspectCode(content, projectContext);
         inspections.forEach(s => {
             s.document = document;
             // real line index to the start of the document
@@ -242,9 +241,9 @@ export default class InspectionCopilot extends Copilot {
         }
 
         const messages: LanguageModelChatMessage[] = [
-            new LanguageModelChatSystemMessage(InspectionCopilot.SYSTEM_MESSAGE(context)),
-            new LanguageModelChatUserMessage(InspectionCopilot.EXAMPLE_USER_MESSAGE),
-            new LanguageModelChatAssistantMessage(InspectionCopilot.EXAMPLE_ASSISTANT_MESSAGE),
+            LanguageModelChatMessage.User(InspectionCopilot.SYSTEM_MESSAGE(context)),
+            LanguageModelChatMessage.User(InspectionCopilot.EXAMPLE_USER_MESSAGE),
+            LanguageModelChatMessage.Assistant(InspectionCopilot.EXAMPLE_ASSISTANT_MESSAGE),
         ];
         const codeWithInspectionComments = await this.send(messages, codeLinesContent);
         const inspections = this.extractInspections(codeWithInspectionComments, codeLines);
@@ -254,7 +253,10 @@ export default class InspectionCopilot extends Copilot {
             codeLength: code.length,
             codeLines: codeLines.length,
             insectionsCount: inspections.length,
-            problems: inspections.map(i => i.problem.description).join(',')
+            inspections: `[${inspections.map(i => JSON.stringify({
+                problem: i.problem.description,
+                solution: i.solution,
+            })).join(',')}]`,
         });
         return inspections;
     }
@@ -296,6 +298,7 @@ export default class InspectionCopilot extends Copilot {
      */
     private extractInspection(index: number, lines: string[]): Inspection {
         const inspection: Inspection = {
+            id: randomUUID().toString(),
             problem: {
                 description: '',
                 position: { line: -1, relativeLine: -1, code: '' },
@@ -350,6 +353,11 @@ export default class InspectionCopilot extends Copilot {
             }
         }
         return codeLines;
+    }
+
+    async collectProjectContext(document: TextDocument): Promise<ProjectContext> {
+        const javaVersion = await getProjectJavaVersion(document);
+        return { javaVersion };
     }
 }
 

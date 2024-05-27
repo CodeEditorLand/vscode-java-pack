@@ -5,7 +5,8 @@ import * as path from "path";
 import * as vscode from "vscode";
 import { instrumentOperation, sendError, sendInfo } from "vscode-extension-telemetry-wrapper";
 import { getExtensionContext, getNonce } from "../utils";
-import { ClasspathPanelHandler } from "./handlers/classpath/ClasspathPanelHandler";
+import { ClasspathRequestHandler } from "./handlers/classpath/ClasspathRequestHandler";
+import { MavenRequestHandler } from "./handlers/classpath/MavenRequestHandler";
 
 let projectSettingsPanel: vscode.WebviewPanel | undefined;
 class ProjectSettingView {
@@ -26,10 +27,15 @@ class ProjectSettingView {
         }
 
         projectSettingsPanel.reveal();
-        projectSettingsPanel.webview.postMessage({
-            command: "main.onWillChangeRoute",
-            route: sectionId
-        });
+        const oneTimeHook = projectSettingsPanel.webview.onDidReceiveMessage(() => {
+            // send the route change msg once react component is ready.
+            // and dispose it once it's done.
+            projectSettingsPanel!.webview.postMessage({
+                command: "main.onWillChangeRoute",
+                route: sectionId
+            });
+            oneTimeHook.dispose();
+        })
     }
 
     public async initializeWebview(context: vscode.ExtensionContext): Promise<void> {
@@ -55,7 +61,8 @@ class ProjectSettingView {
         };
 
         context.subscriptions.push(
-            new ClasspathPanelHandler(projectSettingsPanel.webview),
+            new ClasspathRequestHandler(projectSettingsPanel.webview),
+            new MavenRequestHandler(projectSettingsPanel.webview),
             projectSettingsPanel.webview.onDidReceiveMessage(async (message) => {
                 switch (message.command) {
                     case "common.onWillExecuteCommand":
