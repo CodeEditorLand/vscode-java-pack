@@ -1,0 +1,66 @@
+.app-container {
+  min-height: calc(100vh - 98px);
+  display: flex;
+  flex-direction: row;
+  height: calc(100vh - 98px);
+}
+
+.app-sidebar {
+  width: 90px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: row;
+  z-index: 2;
+
+  .app-sidebar-content {
+    flex: 1;
+
+    .section-link {
+      color: var(--vscode-foreground);
+      line-height: 22px;
+
+      &:hover {
+        cursor: pointer;
+      }
+
+      .codicon {
+        font-size: 12px;
+      }
+    }
+
+    .section-link-active {
+      font-weight: 700;
+      color: var(--vscode-settings-headerForeground);
+    }
+  }
+
+  .app-sidebar-resizer {
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: 1px;
+    justify-self: flex-end;
+    resize: horizontal;
+    background: var(--vscode-editorWidget-border);
+  }
+}
+
+.app-frame {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-height: 100%;
+  z-index: 1;
+  min-width: 560px;
+  margin: 0 18px;
+}
+
+.app-footer {
+  position: absolute;
+  bottom: 0;
+  width: 80%;
+  background: var(--background);
+}
+
+@import "../utils.scss";
