@@ -8,12 +8,6 @@ declare function acquireVsCodeApi(): any;
 const vscode = acquireVsCodeApi();
 
 export namespace CommonRequest {
-    export function onWillListProjects() {
-        vscode.postMessage({
-            command: "common.onWillListProjects",
-        });
-    }
-
     export function onWillExecuteCommand(id: string) {
         vscode.postMessage({
             command: "common.onWillExecuteCommand",
@@ -23,6 +17,12 @@ export namespace CommonRequest {
 }
 
 export namespace ClasspathRequest {
+    export function onWillListProjects() {
+        vscode.postMessage({
+            command: "classpath.onWillListProjects",
+        });
+    }
+
     export function onWillListVmInstalls() {
         vscode.postMessage({
             command: "classpath.onWillListVmInstalls",
@@ -42,14 +42,14 @@ export namespace ClasspathRequest {
         });
     }
 
-    export function onWillUpdateClassPaths(rootPath: string, projectType: ProjectType, sourcePaths: ClasspathEntry[], defaultOutputPath: string, vmInstallPath: string, libraries: ClasspathEntry[]) {
+    export function onWillUpdateClassPaths(rootPaths: string[], projectTypes: ProjectType[], sourcePaths: ClasspathEntry[][], defaultOutputPaths: string[], vmInstallPaths: string[], libraries: ClasspathEntry[][]) {
         vscode.postMessage({
             command: "classpath.onWillUpdateClassPaths",
-            rootPath,
-            projectType,
+            rootPaths,
+            projectTypes,
             sourcePaths,
-            defaultOutputPath,
-            vmInstallPath,
+            defaultOutputPaths,
+            vmInstallPaths,
             libraries
         });
 
@@ -109,37 +109,6 @@ export namespace MavenRequest {
             command: "maven.onWillUpdateSelectProfiles",
             uri,
             selectedProfiles,
-        });
-    }
-}
-
-export namespace CompilerRequest {
-    export function onWillGetAvailableComplianceLevels() {
-        vscode.postMessage({
-            command: "compiler.onWillGetAvailableComplianceLevels",
-        });
-    }
-
-    export function onWillGetCompilerSettings(uri: string) {
-        vscode.postMessage({
-            command: "compiler.onWillGetCompilerSettings",
-            uri,
-        });
-    }
-
-    export function onWillUpdateCompilerSettings(uri: string, useRelease: boolean, enablePreview: boolean,
-            complianceLevel: string, sourceLevel: string, targetLevel: string, generateDebugInfo: boolean,
-            storeMethodParamNames: boolean) {
-        vscode.postMessage({
-            command: "compiler.onWillUpdateCompilerSettings",
-            uri,
-            useRelease,
-            enablePreview,
-            complianceLevel,
-            sourceLevel,
-            targetLevel,
-            generateDebugInfo,
-            storeMethodParamNames,
         });
     }
 }

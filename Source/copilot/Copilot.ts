@@ -1,6 +1,6 @@
 import { LanguageModelChatMessage, lm, Disposable, CancellationToken, LanguageModelChatRequestOptions, LanguageModelChatMessageRole, LanguageModelChatSelector } from "vscode";
-import { fixedInstrumentSimpleOperation, logger } from "./utils";
-import { sendInfo } from "vscode-extension-telemetry-wrapper";
+import { instrumentSimpleOperation, sendInfo } from "vscode-extension-telemetry-wrapper";
+import { logger } from "./utils";
 
 export default class Copilot {
     public static readonly DEFAULT_END_MARK = '<|endofresponse|>';
@@ -10,7 +10,6 @@ export default class Copilot {
     public static readonly NOT_CANCELLABEL: CancellationToken = { isCancellationRequested: false, onCancellationRequested: () => Disposable.from() };
 
     public constructor(
-        private readonly systemMessagesOrSamples: LanguageModelChatMessage[],
         private readonly modelSelector: LanguageModelChatSelector = Copilot.DEFAULT_MODEL,
         private readonly modelOptions: LanguageModelChatRequestOptions = Copilot.DEFAULT_MODEL_OPTIONS,
         private readonly maxRounds: number = Copilot.DEFAULT_MAX_ROUNDS,
@@ -19,13 +18,14 @@ export default class Copilot {
     }
 
     private async doSend(
+        systemMessagesOrSamples: LanguageModelChatMessage[],
         userMessage: string,
         modelOptions: LanguageModelChatRequestOptions = Copilot.DEFAULT_MODEL_OPTIONS,
         cancellationToken: CancellationToken = Copilot.NOT_CANCELLABEL
     ): Promise<string> {
         let answer: string = '';
         let rounds: number = 0;
-        const messages = [...this.systemMessagesOrSamples];
+        const messages = [...systemMessagesOrSamples];
         const _send = async (message: string): Promise<boolean> => {
             rounds++;
             logger.debug(`User: \n`, message);
@@ -37,18 +37,15 @@ export default class Copilot {
             try {
                 const model = (await lm.selectChatModels(this.modelSelector))?.[0];
                 if (!model) {
-                    const models = await lm.selectChatModels();
-                    throw new Error(`No suitable model, available models: [${models.map(m => m.name).join(', ')}]. Please make sure you have installed the latest "GitHub Copilot Chat" (v0.16.0 or later).`);
+                    throw new Error('No model selected');
                 }
                 const response = await model.sendRequest(messages, modelOptions ?? this.modelOptions, cancellationToken);
                 for await (const item of response.text) {
                     rawAnswer += item;
                 }
             } catch (e) {
-                //@ts-ignore
-                const cause = e.cause || e;
-                logger.error(`Failed to chat with copilot`, cause);
-                throw cause;
+                logger.error(`Failed to send request to copilot`, e);
+                throw new Error(`Failed to send request to copilot: ${e}`);
             }
             messages.push(new LanguageModelChatMessage(LanguageModelChatMessageRole.Assistant, rawAnswer));
             logger.debug(`Copilot: \n`, rawAnswer);
@@ -66,10 +63,11 @@ export default class Copilot {
     }
 
     public async send(
+        systemMessagesOrSamples: LanguageModelChatMessage[],
         userMessage: string,
         modelOptions: LanguageModelChatRequestOptions = Copilot.DEFAULT_MODEL_OPTIONS,
         cancellationToken: CancellationToken = Copilot.NOT_CANCELLABEL
     ): Promise<string> {
-        return fixedInstrumentSimpleOperation("java.copilot.sendRequest", this.doSend.bind(this))(userMessage, modelOptions, cancellationToken);
+        return instrumentSimpleOperation("java.copilot.sendRequest", this.doSend.bind(this))(systemMessagesOrSamples, userMessage, modelOptions, cancellationToken);
     }
 }
