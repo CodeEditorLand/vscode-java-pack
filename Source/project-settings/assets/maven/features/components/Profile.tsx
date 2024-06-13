@@ -4,7 +4,7 @@
 import { VSCodeTextField } from "@vscode/webview-ui-toolkit/react";
 import React, { Dispatch, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { updateActiveProfiles } from "../mavenConfigurationViewSlice";
+import { flushMavenSettingsToEffective, updateActiveProfiles } from "../mavenConfigurationViewSlice";
 import { MavenRequest } from "../../../vscode/utils";
 
 const Profile = (): JSX.Element => {
@@ -21,6 +21,9 @@ const Profile = (): JSX.Element => {
       dispatch(updateActiveProfiles({
         activeProjectIndex,
         activeProfiles: message.selectedProfiles
+      }));
+      dispatch(flushMavenSettingsToEffective({
+        activeProjectIndex
       }));
     }
   }
@@ -44,17 +47,15 @@ const Profile = (): JSX.Element => {
 
   return (
     <div className="setting-section">
-      <div>
-        <div className="setting-section-subtitle">
-          <h4 className="mt-3 mb-1 mr-1">Active Maven Profiles</h4>
-          <span>(comma separated)</span>
-        </div>
-
-        <VSCodeTextField className="setting-section-text"
-          value={activeProfiles ?? ""}
-          onInput={handleInput}>
-        </VSCodeTextField>
+      <div className="setting-section-subtitle">
+        <h4 className="mt-3 mb-1 mr-1">Active Maven Profiles</h4>
+        <span>(comma separated)</span>
       </div>
+
+      <VSCodeTextField className="setting-section-text"
+        value={activeProfiles ?? ""}
+        onInput={handleInput}>
+      </VSCodeTextField>
     </div>
   );
 };
