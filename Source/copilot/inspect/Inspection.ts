@@ -39,7 +39,7 @@ export namespace Inspection {
     export function revealFirstLineOfInspection(inspection: Inspection) {
         inspection.document && void workspace.openTextDocument(inspection.document.uri).then(document => {
             void window.showTextDocument(document).then(editor => {
-                const range = getIndicatorRangeOfInspection(inspection.problem);
+                const range = document.lineAt(inspection.problem.position.line).range;
                 editor.selection = new Selection(range.start, range.end);
                 editor.revealRange(range);
             });
