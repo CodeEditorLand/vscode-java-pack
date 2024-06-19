@@ -39,4 +39,19 @@
     align-items: center;
 }
 
+.invisible {
+    display: none;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.root {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
+  }
+
 @import "~@vscode/codicons/dist/codicon.css";

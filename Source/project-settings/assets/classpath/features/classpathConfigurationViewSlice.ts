@@ -12,14 +12,19 @@ export const classpathConfigurationViewSlice = createSlice({
         activeTab: "",
       },
       data: {
-        activeVmInstallPath: [] as string[],
         vmInstalls: [],
+        effective: { // the effective classpath in LS.
+          activeVmInstallPath: [] as string[],
+          sources: [] as ClasspathEntry[][],
+          output: [] as string[],
+          libraries: [] as ClasspathEntry[][],
+        },
+        // below are the classpath data in the UI.
+        activeVmInstallPath: [] as string[],
         sources: [] as ClasspathEntry[][],
         output: [] as string[],
         libraries: [] as ClasspathEntry[][],
       },
-      loadingState: false, // TODO: move to common?
-      exception: undefined,
     },
     reducers: {
       updateActiveTab: (state, action) => {
@@ -31,6 +36,11 @@ export const classpathConfigurationViewSlice = createSlice({
         state.data.sources = Array(projectNum).fill([]);
         state.data.output = Array(projectNum).fill("");
         state.data.libraries = Array(projectNum).fill([]);
+
+        state.data.effective.activeVmInstallPath = Array(projectNum).fill("");
+        state.data.effective.sources = Array(projectNum).fill([]);
+        state.data.effective.output = Array(projectNum).fill("");
+        state.data.effective.libraries = Array(projectNum).fill([]);
       },
       listVmInstalls: (state, action) => {
         state.data.vmInstalls = action.payload;
@@ -38,19 +48,32 @@ export const classpathConfigurationViewSlice = createSlice({
       loadClasspath: (state, action) => {
         const activeProjectIndex = action.payload.activeProjectIndex;
         state.data.output[activeProjectIndex] = action.payload.output;
+        state.data.effective.output[activeProjectIndex] = action.payload.output;
+
         state.data.activeVmInstallPath[activeProjectIndex] = action.payload.activeVmInstallPath;
+        state.data.effective.activeVmInstallPath[activeProjectIndex] = action.payload.activeVmInstallPath;
+
         // Only update the array when they have different elements.
         const currentSources = _.sortBy(state.data.sources[activeProjectIndex], ["path", "output"]);
         const newSources = _.sortBy(action.payload.sources, ["path", "output"]);
         if (!_.isEqual(currentSources, newSources)) {
           state.data.sources[activeProjectIndex] = action.payload.sources;
+          state.data.effective.sources[activeProjectIndex] = action.payload.sources;
         }
 
         const currentLibs = _.sortBy(state.data.libraries[activeProjectIndex], ["path"]);
         const newLibs = _.sortBy(action.payload.libraries, ["path"]);
         if (!_.isEqual(currentLibs, newLibs)) {
           state.data.libraries[activeProjectIndex] = action.payload.libraries;
+          state.data.effective.libraries[activeProjectIndex] = action.payload.libraries;
         }
+      },
+      flushClasspathToEffective: (state, action) => {
+        const activeProjectIndex = action.payload.activeProjectIndex;
+        state.data.effective.output[activeProjectIndex] = state.data.output[activeProjectIndex];
+        state.data.effective.activeVmInstallPath[activeProjectIndex] = state.data.activeVmInstallPath[activeProjectIndex];
+        state.data.effective.sources[activeProjectIndex] = [...state.data.sources[activeProjectIndex]];
+        state.data.effective.libraries[activeProjectIndex] = [...state.data.libraries[activeProjectIndex]];
       },
       updateSource: (state, action) => {
         const activeProjectIndex = action.payload.activeProjectIndex;
@@ -82,12 +105,6 @@ export const classpathConfigurationViewSlice = createSlice({
         newLibs = _.uniq(newLibs);
         state.data.libraries[activeProjectIndex] = _.uniqBy(newLibs, "path");
       },
-      catchException: (state, action) => {
-        state.exception = action.payload;
-      },
-      updateLoadingState: (state, action) => {
-        state.loadingState = action.payload;
-      },
     },
 });
 
@@ -105,8 +122,7 @@ export const {
   setJdks,
   removeReferencedLibrary,
   addLibraries,
-  catchException,
-  updateLoadingState,
+  flushClasspathToEffective,
 } = classpathConfigurationViewSlice.actions;
 
 export default classpathConfigurationViewSlice.reducer;
