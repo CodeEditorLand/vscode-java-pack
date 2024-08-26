@@ -300,7 +300,7 @@
 	},
 	"dependencies": {
 		"@iconify-icons/codicon": "1.2.30",
-		"@xmldom/xmldom": "0.9.0-beta.11",
+		"@xmldom/xmldom": "0.8.10",
 		"axios": "1.7.5",
 		"bootstrap": "5.3.3",
 		"compare-versions": "6.1.1",
@@ -310,7 +310,7 @@
 		"hdr-histogram-js": "3.0.0",
 		"highlight.js": "11.10.0",
 		"jdk-utils": "0.5.1",
-		"jquery": "4.0.0-beta.2",
+		"jquery": "3.7.1",
 		"lodash": "4.17.21",
 		"semver": "7.6.3"
 	},
