@@ -11,24 +11,30 @@ const INTERVAL = 1000;
 const IDLE_THRESHOLD = 5000;
 
 export function initialize(context: vscode.ExtensionContext) {
-  context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(vscodeEventHandler)); // switching editor
-  context.subscriptions.push(vscode.window.onDidChangeTextEditorSelection(vscodeEventHandler)); // change cursor position
-  context.subscriptions.push(vscode.window.onDidChangeTextEditorVisibleRanges(vscodeEventHandler)); // scrolling
+	context.subscriptions.push(
+		vscode.window.onDidChangeActiveTextEditor(vscodeEventHandler),
+	); // switching editor
+	context.subscriptions.push(
+		vscode.window.onDidChangeTextEditorSelection(vscodeEventHandler),
+	); // change cursor position
+	context.subscriptions.push(
+		vscode.window.onDidChangeTextEditorVisibleRanges(vscodeEventHandler),
+	); // scrolling
 
-  setInterval(timerEventHandler, INTERVAL);
+	setInterval(timerEventHandler, INTERVAL);
 }
 
 function vscodeEventHandler() {
-  timeElapsed = 0;
+	timeElapsed = 0;
 }
 
 function timerEventHandler() {
-  timeElapsed += INTERVAL;
-  if (timeElapsed >= IDLE_THRESHOLD) {
-    timeElapsed = 0;
-    _onIdle.fire();
-  }
+	timeElapsed += INTERVAL;
+	if (timeElapsed >= IDLE_THRESHOLD) {
+		timeElapsed = 0;
+		_onIdle.fire();
+	}
 }
 
-const _onIdle: vscode.EventEmitter<void> = new vscode.EventEmitter;
+const _onIdle: vscode.EventEmitter<void> = new vscode.EventEmitter();
 export const onIdle: vscode.Event<void> = _onIdle.event;
