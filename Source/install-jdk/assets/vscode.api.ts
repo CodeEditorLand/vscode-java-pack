@@ -4,33 +4,32 @@
 declare function acquireVsCodeApi(): any;
 const vscode = acquireVsCodeApi();
 
-
 export function onWillFetchAvailableReleases() {
-  vscode.postMessage({
-    command: "onWillFetchAvailableReleases"
-  });
+	vscode.postMessage({
+		command: "onWillFetchAvailableReleases",
+	});
 }
 
 export function onWillDownloadTemurinJDK(url: string) {
-  vscode.postMessage({
-    command: "onWillDownloadTemurinJDK",
-    payload: {
-      url
-    }
-  });
+	vscode.postMessage({
+		command: "onWillDownloadTemurinJDK",
+		payload: {
+			url,
+		},
+	});
 }
 
 export function onWillFetchAsset(majorVersion?: number) {
-  vscode.postMessage({
-    command: "onWillFetchAsset",
-    payload: {
-      majorVersion
-    }
-  });
+	vscode.postMessage({
+		command: "onWillFetchAsset",
+		payload: {
+			majorVersion,
+		},
+	});
 }
 
 export function onWillReloadWindow() {
-  vscode.postMessage({
-    command: "onWillReloadWindow",
-  });
+	vscode.postMessage({
+		command: "onWillReloadWindow",
+	});
 }

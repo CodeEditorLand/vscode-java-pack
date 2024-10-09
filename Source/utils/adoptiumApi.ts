@@ -1,16 +1,16 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
-import axios from "axios";
 import * as https from "https";
+import axios from "axios";
 
 // workaround: certificate expired, will be fixed when vscode adopts Electron v15.1.0
 // see: https://github.com/node-fetch/node-fetch/issues/568#issuecomment-932435180
 https.globalAgent.options.rejectUnauthorized = false;
 
 /**
- * 
+ *
  * @returns information about available releases
- * 
+ *
  * Sample Response:
  * {
  *   "available_lts_releases": [
@@ -31,16 +31,15 @@ https.globalAgent.options.rejectUnauthorized = false;
  * }
  */
 export async function availableReleases(): Promise<AdoptiumReleaseInfo> {
-    const uri = "https://api.adoptium.net/v3/info/available_releases";
-    const response = await axios.get(uri);
-    return response.data;
+	const uri = "https://api.adoptium.net/v3/info/available_releases";
+	const response = await axios.get(uri);
+	return response.data;
 }
 
-
 /**
- * 
+ *
  * @returns list of latest assets for given feature version and jvm impl
- * 
+ *
  * Sample Response:
  * [
  *  {
@@ -87,53 +86,64 @@ export async function availableReleases(): Promise<AdoptiumReleaseInfo> {
  *   ...
  * ]
  */
-export async function latestAssets(featureVersion: string, jvmImpl: string): Promise<AdoptiumAsset[]> {
-    let uri = `https://api.adoptium.net/v3/assets/latest/${featureVersion}/${jvmImpl}`;
-    const response = await axios.get(uri);
-    return response.data;
+export async function latestAssets(
+	featureVersion: string,
+	jvmImpl: string,
+): Promise<AdoptiumAsset[]> {
+	let uri = `https://api.adoptium.net/v3/assets/latest/${featureVersion}/${jvmImpl}`;
+	const response = await axios.get(uri);
+	return response.data;
 }
 
-export async function latestCompatibleAsset(featureVersion: string, jvmImpl: string): Promise<AdoptiumAsset | undefined> {
-    const assets = await latestAssets(featureVersion, jvmImpl);
-    let os: string = process.platform;
-    if (os === "win32") {
-        os = "windows";
-    } else if (os === "darwin") {
-        os = "mac";
-    } else {
-        os = "linux";
-    }
+export async function latestCompatibleAsset(
+	featureVersion: string,
+	jvmImpl: string,
+): Promise<AdoptiumAsset | undefined> {
+	const assets = await latestAssets(featureVersion, jvmImpl);
+	let os: string = process.platform;
+	if (os === "win32") {
+		os = "windows";
+	} else if (os === "darwin") {
+		os = "mac";
+	} else {
+		os = "linux";
+	}
 
-    let arch = process.arch as string;
-    if (arch === "arm64") {
-        arch = "aarch64";
-    }
-    return assets.find(a => a.binary.image_type === "jdk" && a.binary.architecture === arch && a.binary.os === os);
+	let arch = process.arch as string;
+	if (arch === "arm64") {
+		arch = "aarch64";
+	}
+	return assets.find(
+		(a) =>
+			a.binary.image_type === "jdk" &&
+			a.binary.architecture === arch &&
+			a.binary.os === os,
+	);
 }
 
 export interface AdoptiumReleaseInfo {
-    available_lts_releases: number[];
-    available_releases: number[];
-    most_recent_lts: number;
-};
+	available_lts_releases: number[];
+	available_releases: number[];
+	most_recent_lts: number;
+}
 
 export interface AdoptiumAsset {
-    release_name: string;
-    binary: {
-        architecture: string;
-        os: string;
-        image_type: string;
-        installer?: AdoptiumFileMetadata;
-        package?: AdoptiumFileMetadata;
-    };
-    version: {
-        major: number;
-    }
+	release_name: string;
+	binary: {
+		architecture: string;
+		os: string;
+		image_type: string;
+		installer?: AdoptiumFileMetadata;
+		package?: AdoptiumFileMetadata;
+	};
+	version: {
+		major: number;
+	};
 }
 
 export interface AdoptiumFileMetadata {
-    name: string;
-    link: string;
-    checksum: string;
-    size: number;
+	name: string;
+	link: string;
+	checksum: string;
+	size: number;
 }
