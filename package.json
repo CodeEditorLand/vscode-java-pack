@@ -332,7 +332,7 @@
 		"postcss": "8.4.47",
 		"postcss-loader": "8.1.1",
 		"process": "0.11.10",
-		"sass": "1.79.4",
+		"sass": "1.79.5",
 		"sass-loader": "16.0.2",
 		"style-loader": "4.0.0",
 		"ts-loader": "9.5.1"
