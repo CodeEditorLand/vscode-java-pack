@@ -300,7 +300,7 @@
 	},
 	"dependencies": {
 		"@iconify-icons/codicon": "1.2.30",
-		"@xmldom/xmldom": "0.9.3",
+		"@xmldom/xmldom": "0.9.4",
 		"axios": "1.7.7",
 		"bootstrap": "5.3.3",
 		"compare-versions": "6.1.1",
