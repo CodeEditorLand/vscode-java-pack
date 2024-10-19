@@ -319,7 +319,7 @@
 		"@types/bytes": "3.1.4",
 		"@types/expand-tilde": "2.0.2",
 		"@types/fs-extra": "11.0.4",
-		"@types/lodash": "4.17.10",
+		"@types/lodash": "4.17.11",
 		"@types/node": "22.x",
 		"@types/path-exists": "4.0.2",
 		"@types/semver": "7.5.8",
@@ -332,7 +332,7 @@
 		"postcss": "8.4.47",
 		"postcss-loader": "8.1.1",
 		"process": "0.11.10",
-		"sass": "1.80.1",
+		"sass": "1.80.2",
 		"sass-loader": "16.0.2",
 		"style-loader": "4.0.0",
 		"ts-loader": "9.5.1"
