@@ -320,7 +320,7 @@
 		"@types/expand-tilde": "2.0.2",
 		"@types/fs-extra": "11.0.4",
 		"@types/lodash": "4.17.13",
-		"@types/node": "22.8.4",
+		"@types/node": "22.8.6",
 		"@types/path-exists": "4.0.2",
 		"@types/semver": "7.5.8",
 		"@types/winreg": "1.2.36",
