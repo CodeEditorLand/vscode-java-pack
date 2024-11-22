@@ -31,6 +31,7 @@ import { scheduleAction } from "./utils/scheduler";
 import { showWelcomeWebview, WelcomeViewSerializer } from "./welcome";
 
 let cleanJavaWorkspaceIndicator: string;
+
 let activatedTimestamp: number;
 export let activatingTimestamp: number;
 
@@ -55,6 +56,7 @@ async function initializeExtension(
 	initDaemon(context);
 
 	activatedTimestamp = performance.now();
+
 	if (context.storageUri) {
 		const javaWorkspaceStoragePath = path.join(
 			context.storageUri.fsPath,
@@ -153,7 +155,9 @@ function syncState(_context: vscode.ExtensionContext): void {
 
 function initializeTelemetry(_context: vscode.ExtensionContext) {
 	const ext = vscode.extensions.getExtension("vscjava.vscode-java-pack");
+
 	const packageInfo = ext ? ext.packageJSON : undefined;
+
 	if (packageInfo) {
 		if (packageInfo.aiKey) {
 			initialize(packageInfo.id, packageInfo.version, packageInfo.aiKey);
@@ -163,10 +167,12 @@ function initializeTelemetry(_context: vscode.ExtensionContext) {
 
 export async function deactivate() {
 	const now = performance.now();
+
 	const data = {
 		name: "sessionStatus",
 		time: Math.round(now - activatedTimestamp),
 	};
+
 	if (
 		cleanJavaWorkspaceIndicator &&
 		fs.existsSync(cleanJavaWorkspaceIndicator)

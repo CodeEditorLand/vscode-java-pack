@@ -4,6 +4,7 @@
 import { ExampleKind } from "../types";
 
 declare function acquireVsCodeApi(): any;
+
 const vscode = acquireVsCodeApi();
 
 export function onWillInitialize() {

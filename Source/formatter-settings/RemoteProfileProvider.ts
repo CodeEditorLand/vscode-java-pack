@@ -17,6 +17,7 @@ export class RemoteProfileProvider
 
 	async provideTextDocumentContent(uri: vscode.Uri): Promise<string> {
 		const originalUri: vscode.Uri = uri.with({ scheme: "https" });
+
 		return (
 			this.contentStorage.get(originalUri.toString()) ||
 			downloadFile(originalUri.toString())

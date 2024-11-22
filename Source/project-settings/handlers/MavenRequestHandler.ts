@@ -17,13 +17,17 @@ export class MavenRequestHandler implements vscode.Disposable {
 				switch (message.command) {
 					case "maven.onWillGetSelectedProfiles":
 						this.onWillGetSelectedProfiles(message.uri);
+
 						break;
+
 					case "maven.onWillUpdateSelectProfiles":
 						this.onWillUpdateSelectProfiles(
 							message.uri,
 							message.selectedProfiles,
 						);
+
 						break;
+
 					default:
 						break;
 				}
@@ -40,7 +44,9 @@ export class MavenRequestHandler implements vscode.Disposable {
 				uri,
 				[M2E_SELECTED_PROFILES],
 			);
+
 			const selectedProfiles: string = response?.[M2E_SELECTED_PROFILES];
+
 			if (selectedProfiles) {
 				this.webview.postMessage({
 					command: "maven.onDidGetSelectedProfiles",

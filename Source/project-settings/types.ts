@@ -18,6 +18,7 @@ export interface VmInstall {
 export interface ClasspathComponent {
 	projectType: ProjectType;
 	sourcePaths: ClasspathEntry[];
+
 	defaultOutputPath: string;
 	jdkPath: string;
 	libraries: ClasspathEntry[];

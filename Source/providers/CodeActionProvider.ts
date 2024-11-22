@@ -12,6 +12,7 @@ export class CodeActionProvider implements vscode.CodeActionProvider {
 		context: vscode.CodeActionContext,
 	): vscode.CodeAction[] {
 		const classPathDiagnostics: vscode.Diagnostic[] = [];
+
 		for (const diagnostic of context.diagnostics) {
 			if (
 				diagnostic.source === "Java" &&
@@ -34,6 +35,7 @@ export class CodeActionProvider implements vscode.CodeActionProvider {
 			command: "java.classpathConfiguration",
 		};
 		codeAction.kind = vscode.CodeActionKind.QuickFix;
+
 		return [codeAction];
 	}
 }

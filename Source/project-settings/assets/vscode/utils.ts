@@ -5,6 +5,7 @@ import { ProjectType } from "../../../utils/webview";
 import { ClasspathEntry } from "../../types";
 
 declare function acquireVsCodeApi(): any;
+
 const vscode = acquireVsCodeApi();
 
 export namespace CommonRequest {

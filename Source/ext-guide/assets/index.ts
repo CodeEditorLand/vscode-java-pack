@@ -19,6 +19,7 @@ const osToHide = os === "win" ? "mac" : "win";
 $(`[data-os=${osToHide}]`).hide();
 
 declare function acquireVsCodeApi(): any;
+
 const vscode = acquireVsCodeApi && acquireVsCodeApi();
 
 $("a[data-toggle='tab']").on("shown.bs.tab", (e: any) => {
@@ -34,12 +35,15 @@ $("a[data-toggle='tab']").on("shown.bs.tab", (e: any) => {
 
 $("tr").hover((e: any) => {
 	const $chkBox = $(e.target).closest("tr").find("input[type='checkbox']");
+
 	if ($chkBox.length === 0) {
 		return;
 	}
 
 	const ext = $chkBox.val();
+
 	const $visibleDesc = $("p[ext]:visible");
+
 	if ($visibleDesc.length > 0 && $visibleDesc.val() !== ext) {
 		bsHide($visibleDesc);
 	}
@@ -54,9 +58,12 @@ $("tr").hover((e: any) => {
 
 function updateSelection() {
 	const $checked = $("input:checked:visible:enabled");
+
 	const $btnSelected = $("#btn-install-selected");
+
 	if ($checked.length === 0) {
 		bsHide($btnSelected);
+
 		return;
 	}
 
@@ -92,10 +99,12 @@ function getSelectedExtension(isAll: boolean = false) {
 	const $selected = isAll
 		? $("input:visible:enabled")
 		: $("input:checked:visible:enabled");
+
 	const selectedExtensions: string[] = [];
 	$selected.each((_i: any, elem: any) => {
 		selectedExtensions.push(<string>$(elem).val());
 	});
+
 	return selectedExtensions;
 }
 

@@ -12,6 +12,7 @@ import { onWillListRuntimes } from "./vscode.api";
 
 const onInitialize = (event: any) => {
 	const { data } = event;
+
 	if (data.command === "showJavaRuntimeEntries") {
 		showJavaRuntimeEntries(data.args);
 	}

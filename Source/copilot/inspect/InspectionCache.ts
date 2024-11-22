@@ -28,6 +28,7 @@ export default class InspectionCache {
 		symbol?: SymbolNode,
 	): Promise<boolean> {
 		const documentKey = document.uri.fsPath;
+
 		if (!symbol) {
 			return DOC_SYMBOL_SNAPSHOT_INSPECTIONS.has(documentKey);
 		}
@@ -38,8 +39,10 @@ export default class InspectionCache {
 			symbol.range,
 			document,
 		);
+
 		for (const s of symbols) {
 			const snapshotInspections = symbolInspections?.get(s.qualifiedName);
+
 			if (
 				snapshotInspections?.[0] === s.snapshotId &&
 				snapshotInspections[1].length > 0
@@ -59,6 +62,7 @@ export default class InspectionCache {
 		document: TextDocument,
 	): Promise<Inspection[]> {
 		const symbols: SymbolNode[] = await getSymbolsOfDocument(document);
+
 		const inspections: Inspection[] = [];
 		// we don't get cached inspections directly from the cache, because we need to filter out outdated symbols
 		for (const symbol of symbols) {
@@ -77,26 +81,32 @@ export default class InspectionCache {
 		symbol: SymbolNode,
 	): Inspection[] {
 		const documentKey = document.uri.fsPath;
+
 		const symbolInspections =
 			DOC_SYMBOL_SNAPSHOT_INSPECTIONS.get(documentKey);
+
 		const snapshotInspections = symbolInspections?.get(
 			symbol.qualifiedName,
 		);
+
 		if (snapshotInspections?.[0] === symbol.snapshotId) {
 			logger.debug(
 				`cache hit for ${SymbolKind[symbol.kind]} ${symbol.qualifiedName} of ${document.uri.fsPath}`,
 			);
+
 			const inspections = snapshotInspections[1];
 			inspections.forEach((s) => {
 				s.document = document;
 				s.problem.position.line =
 					s.problem.position.relativeLine + symbol.range.start.line;
 			});
+
 			return inspections;
 		}
 		logger.debug(
 			`cache miss for ${SymbolKind[symbol.kind]} ${symbol.qualifiedName} of ${document.uri.fsPath}`,
 		);
+
 		return [];
 	}
 
@@ -107,9 +117,11 @@ export default class InspectionCache {
 	): void {
 		for (const symbol of symbols) {
 			const isMethod = METHOD_KINDS.includes(symbol.kind);
+
 			const symbolInspections: Inspection[] = inspections.filter(
 				(inspection) => {
 					const inspectionLine = inspection.problem.position.line;
+
 					return isMethod
 						? // NOTE: method inspections are inspections whose `position.line` is within the method's range
 							inspectionLine >= symbol.range.start.line &&
@@ -149,6 +161,7 @@ export default class InspectionCache {
 			DOC_SYMBOL_SNAPSHOT_INSPECTIONS.delete(documentKey);
 		} else if (!inspeciton) {
 			const documentKey = document.uri.fsPath;
+
 			const symbolInspections =
 				DOC_SYMBOL_SNAPSHOT_INSPECTIONS.get(documentKey);
 			// remove the cached inspections of the symbol
@@ -161,11 +174,14 @@ export default class InspectionCache {
 			});
 		} else {
 			const documentKey = document.uri.fsPath;
+
 			const symbolInspections =
 				DOC_SYMBOL_SNAPSHOT_INSPECTIONS.get(documentKey);
+
 			const snapshotInspections = symbolInspections?.get(
 				symbol.qualifiedName,
 			);
+
 			if (snapshotInspections?.[0] === symbol.snapshotId) {
 				const inspections = snapshotInspections[1];
 				// remove the inspection
@@ -182,7 +198,9 @@ export default class InspectionCache {
 		logger.debug(
 			`cache ${inspections.length} inspections for ${SymbolKind[symbol.kind]} ${symbol.qualifiedName} of ${document.uri.fsPath}`,
 		);
+
 		const documentKey = document.uri.fsPath;
+
 		const cachedSymbolInspections =
 			DOC_SYMBOL_SNAPSHOT_INSPECTIONS.get(documentKey) ?? new Map();
 		inspections.forEach((s) => {

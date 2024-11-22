@@ -54,6 +54,7 @@ export class SymbolNode {
 		symbol: DocumentSymbol,
 	): string {
 		const body = document.getText(symbol.range);
+
 		return crypto.createHash("md5").update(body).digest("hex");
 	}
 

@@ -20,6 +20,7 @@ import { MavenRequestHandler } from "./handlers/MavenRequestHandler";
 import { ProjectInfo, ProjectSettingsException } from "./types";
 
 let projectSettingsPanel: vscode.WebviewPanel | undefined;
+
 let lsApi: LanguageServerAPI | undefined;
 
 const MINIMUM_JAVA_EXTENSION_VERSION: string = "1.31.0";
@@ -31,6 +32,7 @@ class ProjectSettingView {
 		sectionId: string = "classpath",
 	): Promise<void> {
 		const context: vscode.ExtensionContext = getExtensionContext();
+
 		if (!projectSettingsPanel) {
 			projectSettingsPanel = vscode.window.createWebviewPanel(
 				"java.projectSettings",
@@ -42,6 +44,7 @@ class ProjectSettingView {
 			);
 
 			await this.initializeWebview(context);
+
 			const oneTimeHook =
 				projectSettingsPanel.webview.onDidReceiveMessage(() => {
 					// send the route change msg once react component is ready.
@@ -67,6 +70,7 @@ class ProjectSettingView {
 	): Promise<void> {
 		if (!projectSettingsPanel) {
 			sendError(new Error("projectSettingsPanel is not defined."));
+
 			return;
 		}
 
@@ -105,10 +109,14 @@ class ProjectSettingView {
 					switch (message.command) {
 						case "common.onWillListProjects":
 							await this.listProjects();
+
 							break;
+
 						case "common.onWillExecuteCommand":
 							this.executeCommand(message.id);
+
 							break;
+
 						default:
 							break;
 					}
@@ -159,20 +167,25 @@ class ProjectSettingView {
 			return true;
 		}
 		const javaExt = vscode.extensions.getExtension("redhat.java");
+
 		if (!javaExt) {
 			projectSettingsPanel?.webview.postMessage({
 				command: "main.onException",
 				exception: ProjectSettingsException.JavaExtensionNotInstalled,
 			});
+
 			const err: Error = new Error(
 				"The extension 'redhat.java' is not installed.",
 			);
+
 			setUserError(err);
 			sendError(err);
+
 			return false;
 		}
 
 		const javaExtVersion: string = javaExt.packageJSON.version;
+
 		if (
 			compareVersions(javaExtVersion, MINIMUM_JAVA_EXTENSION_VERSION) < 0
 		) {
@@ -180,11 +193,14 @@ class ProjectSettingView {
 				command: "main.onException",
 				exception: ProjectSettingsException.StaleJavaExtension,
 			});
+
 			const err: Error = new Error(
 				`The extension version of 'redhat.java' (${javaExtVersion}) is too stale.`,
 			);
+
 			setUserError(err);
 			sendError(err);
+
 			return false;
 		}
 
@@ -209,7 +225,9 @@ class ProjectSettingView {
 
 	private async getProjectsFromLS(): Promise<ProjectInfo[]> {
 		const ret: ProjectInfo[] = [];
+
 		let projects: string[] = [];
+
 		try {
 			projects =
 				(await vscode.commands.executeCommand(
@@ -231,10 +249,12 @@ class ProjectSettingView {
 
 	private getHtmlForWebview(webview: vscode.Webview, scriptPath: string) {
 		const scriptPathOnDisk = vscode.Uri.file(scriptPath);
+
 		const scriptUri = webview.asWebviewUri(scriptPathOnDisk);
 
 		// Use a nonce to whitelist which scripts can be run
 		const nonce = getNonce();
+
 		return `<!DOCTYPE html>
         <html lang="en">
         <head>

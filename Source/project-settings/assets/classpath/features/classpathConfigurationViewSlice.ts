@@ -64,10 +64,12 @@ export const classpathConfigurationViewSlice = createSlice({
 				state.data.sources[activeProjectIndex],
 				["path", "output"],
 			);
+
 			const newSources = _.sortBy(action.payload.sources, [
 				"path",
 				"output",
 			]);
+
 			if (!_.isEqual(currentSources, newSources)) {
 				state.data.sources[activeProjectIndex] = action.payload.sources;
 				state.data.effective.sources[activeProjectIndex] =
@@ -78,7 +80,9 @@ export const classpathConfigurationViewSlice = createSlice({
 				state.data.libraries[activeProjectIndex],
 				["path"],
 			);
+
 			const newLibs = _.sortBy(action.payload.libraries, ["path"]);
+
 			if (!_.isEqual(currentLibs, newLibs)) {
 				state.data.libraries[activeProjectIndex] =
 					action.payload.libraries;
@@ -114,6 +118,7 @@ export const classpathConfigurationViewSlice = createSlice({
 			const activeProjectIndex = action.payload.activeProjectIndex;
 			state.data.activeVmInstallPath[activeProjectIndex] =
 				action.payload.activeVmInstallPath;
+
 			if (
 				action.payload.vmInstalls &&
 				isDifferentStringArray(
@@ -127,7 +132,9 @@ export const classpathConfigurationViewSlice = createSlice({
 		removeReferencedLibrary: (state, action) => {
 			const activeProjectIndex: number =
 				action.payload.activeProjectIndex;
+
 			const removedIndex: number = action.payload.removedIndex;
+
 			if (
 				removedIndex > -1 &&
 				removedIndex < state.data.libraries[activeProjectIndex].length
@@ -140,6 +147,7 @@ export const classpathConfigurationViewSlice = createSlice({
 		},
 		addLibraries: (state, action) => {
 			const activeProjectIndex = action.payload.activeProjectIndex;
+
 			let newLibs = state.data.libraries[activeProjectIndex];
 			newLibs.unshift(...action.payload.libraries);
 			newLibs = _.uniq(newLibs);

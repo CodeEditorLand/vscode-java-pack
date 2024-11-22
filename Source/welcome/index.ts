@@ -48,6 +48,7 @@ export async function showWelcomeWebview(
 		fetchInitProps(context);
 	} else {
 		let column = vscode.ViewColumn.Active;
+
 		if (options?.openBeside) {
 			// "smart" Beside
 			const ate = vscode.window.activeTextEditor;
@@ -83,6 +84,7 @@ export class WelcomeViewSerializer implements vscode.WebviewPanelSerializer {
 		if (welcomeView) {
 			welcomeView.reveal();
 			webviewPanel.dispose();
+
 			return;
 		}
 
@@ -122,13 +124,19 @@ async function initializeWelcomeView(
 			switch (message.command) {
 				case "onWillFetchInitProps":
 					fetchInitProps(context);
+
 					break;
+
 				case "setWelcomeVisibility":
 					setWelcomeVisibility(context, message.visibility);
+
 					break;
+
 				case "sendInfo":
 					sendInfo("", message.data);
+
 					break;
+
 				default:
 					break;
 			}
@@ -148,10 +156,12 @@ function getHtmlForWebview(
 	scriptPath: string,
 ) {
 	const scriptPathOnDisk = vscode.Uri.file(scriptPath);
+
 	const scriptUri = webviewPanel.webview.asWebviewUri(scriptPathOnDisk);
 
 	// Use a nonce to whitelist which scripts can be run
 	const nonce = getNonce();
+
 	return `<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -193,6 +203,7 @@ export const fetchInitProps = async (context: vscode.ExtensionContext) => {
 			isAwtDisabled: isAwtDisabled(),
 		},
 	});
+
 	setFirstTimeRun(context, false);
 };
 
@@ -201,6 +212,7 @@ function isAwtDisabled(): boolean {
 		vscode.workspace
 			.getConfiguration("java.completion")
 			.get<string[]>("filteredTypes") || [];
+
 	return filteredTypes.some((type: string) => {
 		return type.startsWith("java.awt.");
 	});

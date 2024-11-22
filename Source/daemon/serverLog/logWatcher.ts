@@ -23,14 +23,17 @@ export class LogWatcher {
 	private logProcessedTimestamp: number = Date.now();
 	private context: vscode.ExtensionContext;
 	private watcher: vscode.FileSystemWatcher | undefined;
+
 	constructor(daemon: LSDaemon) {
 		this.context = daemon.context;
+
 		if (this.context.storageUri) {
 			const javaExtStoragePath: string = path.join(
 				this.context.storageUri.fsPath,
 				"..",
 				"redhat.java",
 			);
+
 			const serverLogPath: string = path.join(
 				javaExtStoragePath,
 				"jdt_ws",
@@ -59,6 +62,7 @@ export class LogWatcher {
 
 		if (!this.serverLogUri) {
 			sendInfo("", { name: "no-server-log" });
+
 			return;
 		}
 
@@ -66,6 +70,7 @@ export class LogWatcher {
 			await fs.promises.access(this.serverLogUri.fsPath);
 		} catch (error) {
 			sendInfo("", { name: "no-server-log" });
+
 			return;
 		}
 
@@ -77,17 +82,21 @@ export class LogWatcher {
 				return;
 			} // reduce frequency of log file I/O.
 			const logs = await logsForLatestSession(e.fsPath);
+
 			const errors = collectErrorsSince(logs, this.logProcessedTimestamp);
+
 			const consentToCollectLogs =
 				vscode.workspace
 					.getConfiguration("java")
 					.get<boolean>("help.collectErrorLog") ?? false;
+
 			if (errors) {
 				errors.forEach((e) => {
 					const { message, tags, hash } = redact(
 						e.message,
 						consentToCollectLogs,
 					);
+
 					const infoBody: { [key: string]: any } = {
 						name: "jdtls-error",
 						error: message,
@@ -95,6 +104,7 @@ export class LogWatcher {
 						hash: hash,
 						timestamp: e.timestamp!.toString(),
 					};
+
 					if (consentToCollectLogs && e.stack) {
 						infoBody.stack = e.stack;
 					}
@@ -120,6 +130,7 @@ export class LogWatcher {
 			const logs = await logsForLatestSession(
 				path.join(this.serverLogUri?.fsPath, ".log"),
 			);
+
 			const metadata = sessionMetadata(logs);
 			sendInfo("", {
 				name: "jdtls-startup-metadata",
@@ -159,17 +170,21 @@ export class LogWatcher {
 			const logs = await logsForLatestSession(
 				path.join(this.serverLogUri?.fsPath, ".log"),
 			);
+
 			const errors = collectErrors(logs);
+
 			const consentToCollectLogs =
 				vscode.workspace
 					.getConfiguration("java")
 					.get<boolean>("help.collectErrorLog") ?? false;
+
 			if (errors) {
 				errors.forEach((e) => {
 					const { message, tags, hash } = redact(
 						e.message,
 						consentToCollectLogs,
 					);
+
 					const infoBody: { [key: string]: any } = {
 						name: "jdtls-error-in-crashed-session",
 						error: message,
@@ -177,6 +192,7 @@ export class LogWatcher {
 						hash: hash,
 						timestamp: e.timestamp!.toString(),
 					};
+
 					if (consentToCollectLogs && e.stack) {
 						infoBody.stack = e.stack;
 					}
@@ -191,6 +207,7 @@ export class LogWatcher {
 			const logs = await logsForLatestSession(
 				path.join(this.serverLogUri?.fsPath, ".log"),
 			);
+
 			return containsCorruptedException(logs);
 		}
 
@@ -202,6 +219,7 @@ export class LogWatcher {
 			const logs = await logsForLatestSession(
 				path.join(this.serverLogUri?.fsPath, ".log"),
 			);
+
 			return isUnsavedWorkspace(logs);
 		}
 

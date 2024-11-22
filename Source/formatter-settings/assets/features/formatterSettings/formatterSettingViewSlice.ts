@@ -25,6 +25,7 @@ export const formatterSettingsViewSlice = createSlice({
 		},
 		loadVSCodeSetting: (state, action) => {
 			state.vscodeSettings = action.payload.setting;
+
 			for (const setting of state.vscodeSettings) {
 				if (setting.id === SupportedSettings.TABULATION_SIZE) {
 					document.documentElement.style.setProperty(

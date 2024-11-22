@@ -48,6 +48,7 @@ export async function getClassesContainedInRange(
 	document: TextDocument,
 ): Promise<SymbolNode[]> {
 	const symbols = await getSymbolsOfDocument(document);
+
 	return symbols
 		.filter((symbol) => CLASS_KINDS.includes(symbol.kind))
 		.filter((clazz) => range.contains(clazz.range));
@@ -58,6 +59,7 @@ export async function getSymbolsContainedInRange(
 	document: TextDocument,
 ): Promise<SymbolNode[]> {
 	const symbols = await getSymbolsOfDocument(document);
+
 	return symbols.filter((symbol) => range.contains(symbol.range));
 }
 
@@ -69,6 +71,7 @@ export async function getInnermostClassContainsRange(
 	document: TextDocument,
 ): Promise<SymbolNode> {
 	const symbols = await getSymbolsOfDocument(document);
+
 	return (
 		symbols
 			.filter((symbol) => CLASS_KINDS.includes(symbol.kind))
@@ -86,6 +89,7 @@ export async function getIntersectionSymbolsOfRange(
 	document: TextDocument,
 ): Promise<SymbolNode[]> {
 	const symbols = await getSymbolsOfDocument(document);
+
 	return symbols
 		.filter(
 			(symbol) =>
@@ -97,6 +101,7 @@ export async function getIntersectionSymbolsOfRange(
 
 export function getUnionRange(symbols: SymbolNode[]): Range {
 	let result: Range = new Range(symbols[0].range.start, symbols[0].range.end);
+
 	for (const symbol of symbols) {
 		result = result.union(symbol.range);
 	}
@@ -119,8 +124,10 @@ export async function getSymbolsOfDocument(
 		.map((symbol) => new SymbolNode(document, symbol));
 
 	const result: SymbolNode[] = [];
+
 	while (stack.length > 0) {
 		const symbol = stack.pop() as SymbolNode;
+
 		if (CLASS_KINDS.includes(symbol.kind)) {
 			result.push(symbol);
 			stack.push(...symbol.children.reverse());
@@ -142,6 +149,7 @@ export async function getTopLevelClassesOfDocument(
 			"vscode.executeDocumentSymbolProvider",
 			document.uri,
 		)) ?? [];
+
 	return symbols
 		.filter((symbol) => CLASS_KINDS.includes(symbol.kind))
 		.map((symbol) => new SymbolNode(document, symbol));
@@ -153,6 +161,7 @@ export function uncapitalize(str: string): string {
 
 export function isCodeLensDisabled(): boolean {
 	const editorConfig = workspace.getConfiguration("editor");
+
 	const enabled = editorConfig.get<boolean>("codeLens");
 	// If it's explicitly set to false, CodeLens is turned off
 	return enabled === false;
@@ -162,7 +171,9 @@ export async function getProjectJavaVersion(
 	document: TextDocument,
 ): Promise<string> {
 	const uri = document.uri.toString();
+
 	const key = "org.eclipse.jdt.core.compiler.source";
+
 	try {
 		const settings: { [key]: string } = await retryOnFailure(async () => {
 			return await commands.executeCommand(
@@ -171,6 +182,7 @@ export async function getProjectJavaVersion(
 				[key],
 			);
 		});
+
 		return settings[key] ?? "17";
 	} catch (e) {
 		throw new Error(
@@ -215,11 +227,14 @@ export function fixedInstrumentOperation(
 ): (...args: any[]) => any {
 	return async (...args: any[]) => {
 		let error;
+
 		const operationId = createUuid();
+
 		const startAt: number = Date.now();
 
 		try {
 			sendOperationStart(operationId, operationName);
+
 			return await cb.apply(thisArg, [operationId, ...args]);
 		} catch (e) {
 			error = e as Error;

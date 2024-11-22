@@ -11,17 +11,25 @@ import {
 
 const ADD_VARIABlLE_ATTRIBUTE =
 	"org.eclipse.jdt.core.compiler.debug.localVariable";
+
 const ADD_LINE_NUMBER_ATTRIBUTE =
 	"org.eclipse.jdt.core.compiler.debug.lineNumber";
+
 const ADD_SOURCE_FILE_NAME = "org.eclipse.jdt.core.compiler.debug.sourceFile";
+
 const STORE_METHOD_PARAMETER_INFO =
 	"org.eclipse.jdt.core.compiler.codegen.methodParameters";
+
 const ENABLE_PREVIEW_FEATURES =
 	"org.eclipse.jdt.core.compiler.problem.enablePreviewFeatures";
+
 const USE_RELEASE = "org.eclipse.jdt.core.compiler.release";
+
 const SOURCE_COMPATIBILITY = "org.eclipse.jdt.core.compiler.source";
+
 const TARGET_COMPATIBILITY =
 	"org.eclipse.jdt.core.compiler.codegen.targetPlatform";
+
 const COMPLIANCE_LEVEL = "org.eclipse.jdt.core.compiler.compliance";
 
 export class CompilerRequestHandler implements vscode.Disposable {
@@ -35,10 +43,14 @@ export class CompilerRequestHandler implements vscode.Disposable {
 				switch (message.command) {
 					case "compiler.onWillGetAvailableComplianceLevels":
 						this.onWillGetAvailableComplianceLevels();
+
 						break;
+
 					case "compiler.onWillGetCompilerSettings":
 						this.onWillGetCompilerSettings(message.uri);
+
 						break;
+
 					case "compiler.onWillUpdateCompilerSettings":
 						this.onWillUpdateCompilerSettings(
 							message.uri,
@@ -50,7 +62,9 @@ export class CompilerRequestHandler implements vscode.Disposable {
 							message.generateDebugInfo,
 							message.storeMethodParamNames,
 						);
+
 						break;
+
 					default:
 						break;
 				}
@@ -63,6 +77,7 @@ export class CompilerRequestHandler implements vscode.Disposable {
 		async (_operationId: string): Promise<void> => {
 			const jres =
 				this.getRuntimeDefinition().items?.properties?.name?.enum;
+
 			if (jres) {
 				this.webview.postMessage({
 					command: "compiler.onDidGetAvailableComplianceLevels",
@@ -132,6 +147,7 @@ export class CompilerRequestHandler implements vscode.Disposable {
 				USE_RELEASE,
 				useRelease ? "enabled" : "disabled",
 			);
+
 			if (useRelease) {
 				// if useRelease is enabled, source and target level should honor the compliance level.
 				compilerSettings.set(COMPLIANCE_LEVEL, complianceLevel);
@@ -200,13 +216,17 @@ export class CompilerRequestHandler implements vscode.Disposable {
 	private getRuntimeDefinition() {
 		const packageJson =
 			vscode.extensions.getExtension("redhat.java")?.packageJSON;
+
 		if (!packageJson) {
 			const errorString =
 				"The required extension 'redhat.java' is not installed.";
 			vscode.window.showErrorMessage(errorString);
+
 			const err: Error = new Error(errorString);
+
 			setUserError(err);
 			sendError(err);
+
 			return;
 		}
 
@@ -214,6 +234,7 @@ export class CompilerRequestHandler implements vscode.Disposable {
 		// representing a single category of settings, or an array
 		// of objects, representing multiple categories of settings.
 		const categories = packageJson?.contributes?.configuration;
+
 		if (Array.isArray(categories)) {
 			for (const category of categories) {
 				if (category?.properties?.["java.configuration.runtimes"]) {

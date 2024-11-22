@@ -18,12 +18,14 @@ import { DOMAttr, DOMElement, ProfileContent } from "./types";
 
 export async function getProfilePath(formatterUrl: string): Promise<string> {
 	const workspaceFolders = vscode.workspace.workspaceFolders;
+
 	if (workspaceFolders?.length && !path.isAbsolute(formatterUrl)) {
 		for (const workspaceFolder of workspaceFolders) {
 			const filePath = path.resolve(
 				workspaceFolder.uri.fsPath,
 				formatterUrl,
 			);
+
 			if (await fse.pathExists(filePath)) {
 				return filePath;
 			}
@@ -38,11 +40,14 @@ export function getVSCodeSetting(setting: string, defaultValue: any) {
 	const config = vscode.workspace.getConfiguration(undefined, {
 		languageId: "java",
 	});
+
 	let result =
 		config.get<any>(setting) ??
 		vscode.workspace.getConfiguration().get<any>(setting);
+
 	if (result === undefined) {
 		sendInfo("", { notFoundSetting: setting });
+
 		return defaultValue;
 	}
 	return result;
@@ -63,11 +68,13 @@ export async function addDefaultProfile(
 		"webview-resources",
 		"java-formatter.xml",
 	);
+
 	const profilePath = await getAbsoluteTargetPath(
 		context,
 		"java-formatter.xml",
 	);
 	await fse.copy(defaultProfile, profilePath);
+
 	const workspaceFolders = vscode.workspace.workspaceFolders;
 	await vscode.workspace
 		.getConfiguration("java")
@@ -90,7 +97,9 @@ export async function getAbsoluteTargetPath(
 	fileName: string,
 ): Promise<string> {
 	const workspaceFolders = vscode.workspace.workspaceFolders;
+
 	let profilePath: string;
+
 	if (workspaceFolders?.length) {
 		profilePath = path.join(
 			workspaceFolders[0].uri.fsPath,
@@ -112,10 +121,15 @@ function toPosixPath(inputPath: string): string {
 
 export function parseProfile(document: vscode.TextDocument): ProfileContent {
 	const profileElements = new Map<string, DOMElement>();
+
 	const profileSettings = new Map<string, string>();
+
 	let lastElement = undefined;
+
 	const diagnostics: vscode.Diagnostic[] = [];
+
 	let settingsVersion = JavaConstants.CURRENT_FORMATTER_SETTINGS_VERSION;
+
 	const documentDOM = new DOMParser({
 		locator: {},
 		errorHandler: (_level, msg) => {
@@ -123,7 +137,9 @@ export function parseProfile(document: vscode.TextDocument): ProfileContent {
 				"\\[line:(\\d*),col:(\\d*)\\]",
 				"g",
 			);
+
 			const result = bracketExp.exec(msg);
+
 			if (result && result.length === 3) {
 				diagnostics.push(
 					new vscode.Diagnostic(
@@ -143,19 +159,23 @@ export function parseProfile(document: vscode.TextDocument): ProfileContent {
 			}
 		},
 	}).parseFromString(document.getText());
+
 	if (!documentDOM) {
 		return { isValid: false, settingsVersion, diagnostics };
 	}
 	settingsVersion =
 		documentDOM.documentElement.getAttribute("version") || settingsVersion;
+
 	const profiles =
 		documentDOM.documentElement.getElementsByTagName("profile");
+
 	if (!profiles || profiles.length === 0) {
 		return { isValid: false, settingsVersion, diagnostics };
 	}
 	const settingsProfileName: string | undefined = vscode.workspace
 		.getConfiguration("java")
 		.get<string>(JavaConstants.SETTINGS_PROFILE_KEY);
+
 	for (let i = 0; i < profiles.length; i++) {
 		if (
 			!settingsProfileName ||
@@ -166,12 +186,17 @@ export function parseProfile(document: vscode.TextDocument): ProfileContent {
 			}
 			settingsVersion =
 				profiles[i].getAttribute("version") || settingsVersion;
+
 			const settings = profiles[i].getElementsByTagName("setting");
+
 			for (let j = 0; j < settings.length; j++) {
 				const setting: DOMElement = settings[j] as DOMElement;
+
 				const settingContent: string =
 					new XMLSerializer().serializeToString(setting);
+
 				const id = setting.getAttribute("id");
+
 				if (!id) {
 					diagnostics.push(
 						new vscode.Diagnostic(
@@ -191,9 +216,11 @@ export function parseProfile(document: vscode.TextDocument): ProfileContent {
 							vscode.DiagnosticSeverity.Error,
 						),
 					);
+
 					continue;
 				}
 				const value = settings[j].getAttribute("value");
+
 				if (!value) {
 					// value maybe "" or null, "" is an valid value comes from deleting the values in the inpux box of the editor, and we will still push diagnostic here.
 					diagnostics.push(
@@ -214,6 +241,7 @@ export function parseProfile(document: vscode.TextDocument): ProfileContent {
 							vscode.DiagnosticSeverity.Error,
 						),
 					);
+
 					if (value === null) {
 						continue;
 					}
@@ -231,8 +259,10 @@ export function parseProfile(document: vscode.TextDocument): ProfileContent {
 	const supportedProfileSettings = getSupportedProfileSettings(
 		Number(settingsVersion),
 	);
+
 	for (const setting of supportedProfileSettings.values()) {
 		const element = profileElements.get(setting.id);
+
 		const value = profileSettings.get(setting.id);
 		// "" is a valid value, so we distinguish it and undefined here.
 		if (!element || value === undefined) {
@@ -240,12 +270,15 @@ export function parseProfile(document: vscode.TextDocument): ProfileContent {
 				setting.id,
 				getDefaultValue(setting.id),
 			)!;
+
 			continue;
 		}
 		const webViewValue: string | undefined =
 			FormatterConverter.profile2WebViewConvert(setting.id, value);
+
 		if (webViewValue === undefined) {
 			const valueNode = element.getAttributeNode("value") as DOMAttr;
+
 			if (!valueNode || !valueNode.nodeValue) {
 				continue;
 			}
@@ -267,10 +300,12 @@ export function parseProfile(document: vscode.TextDocument): ProfileContent {
 				),
 			);
 			profileSettings.delete(setting.id);
+
 			setting.value = FormatterConverter.profile2WebViewConvert(
 				setting.id,
 				getDefaultValue(setting.id),
 			)!;
+
 			continue;
 		}
 		setting.value = webViewValue;
@@ -295,6 +330,7 @@ export async function downloadFile(settingsUrl: string): Promise<string> {
 			"Retry",
 			"Open Settings",
 		);
+
 		if (answer === "Retry") {
 			return downloadFile(settingsUrl);
 		} else if (answer === "Open Settings") {
@@ -309,6 +345,7 @@ export function openFormatterSettings(): void {
 		"workbench.action.openSettings",
 		JavaConstants.SETTINGS_URL_KEY,
 	);
+
 	if (vscode.workspace.workspaceFolders?.length) {
 		vscode.commands.executeCommand(
 			"workbench.action.openWorkspaceSettings",

@@ -8,6 +8,7 @@ import { sendInfo } from "vscode-extension-telemetry-wrapper";
 import { getNonce, webviewCmdLinkHandler } from "../utils";
 
 const WEBVIEW_ID = "java.gettingStarted";
+
 const WEBVIEW_TITLE = "Tips for Beginners";
 
 export async function javaGettingStartedCmdHandler(
@@ -59,6 +60,7 @@ class BeginnerTipsPage {
 		columnOrwebviewPanel: vscode.ViewColumn | vscode.WebviewPanel,
 	) {
 		this._extensionPath = extensionPath;
+
 		if ((columnOrwebviewPanel as vscode.WebviewPanel).viewType) {
 			this._panel = columnOrwebviewPanel as vscode.WebviewPanel;
 		} else {
@@ -95,7 +97,9 @@ class BeginnerTipsPage {
 				switch (message.command) {
 					case "onWillActivateTab":
 						this.doActivateTab(message.payload);
+
 						return;
+
 					case "onWillReloadWindow":
 						this.doReloadWindow();
 				}
@@ -128,6 +132,7 @@ class BeginnerTipsPage {
 
 		while (this._disposables.length) {
 			const x = this._disposables.pop();
+
 			if (x) {
 				x.dispose();
 			}
@@ -144,6 +149,7 @@ class BeginnerTipsPage {
 				"index.js",
 			),
 		);
+
 		const scriptUri = this._panel?.webview.asWebviewUri(scriptPathOnDisk);
 
 		// Use a nonce to whitelist which scripts can be run

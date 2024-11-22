@@ -43,6 +43,7 @@ export function registerCommands(
 					`Failed to inspect class "${clazz.symbol.name}".`,
 					e,
 				);
+
 				throw e;
 			}
 			renderer.rerender(document);
@@ -60,6 +61,7 @@ export function registerCommands(
 					`Failed to inspect range of "${path.basename(document.fileName)}".`,
 					e,
 				);
+
 				throw e;
 			}
 			renderer.rerender(document);
@@ -124,6 +126,7 @@ function showErrorMessage(
 			: `Failed to inspect class "${target.symbol.name}", ${e}`;
 
 	const actions = new Map<string, () => void>();
+
 	if (
 		e instanceof Error &&
 		e.message.toLowerCase().includes("response got filtered")

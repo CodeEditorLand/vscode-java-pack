@@ -24,6 +24,7 @@ export class GutterIconRenderer implements InspectionRenderer {
 	public install(context: ExtensionContext): InspectionRenderer {
 		if (this.gutterIconDecorationType) return this;
 		logger.debug(`[GutterIconRenderer] install`);
+
 		const icon = Uri.file(
 			path.join(context.asAbsolutePath("resources"), `gutter-blue.svg`),
 		);
@@ -32,6 +33,7 @@ export class GutterIconRenderer implements InspectionRenderer {
 			gutterIconPath: icon,
 			gutterIconSize: "contain",
 		});
+
 		return this;
 	}
 
@@ -50,6 +52,7 @@ export class GutterIconRenderer implements InspectionRenderer {
 
 	public clear(document?: TextDocument): void {
 		if (!this.gutterIconDecorationType) return;
+
 		if (document) {
 			this.gutterIcons?.set(document.uri, []);
 		} else {
@@ -69,6 +72,7 @@ export class GutterIconRenderer implements InspectionRenderer {
 		const editor = window.visibleTextEditors.find(
 			(e) => e.document.uri === document.uri,
 		);
+
 		if (
 			inspections.length < 1 ||
 			!editor ||
@@ -79,15 +83,20 @@ export class GutterIconRenderer implements InspectionRenderer {
 
 		const oldItems: readonly InspectionGutterIcon[] =
 			this.gutterIcons.get(document.uri) ?? [];
+
 		const oldIds: string[] = _.uniq(oldItems).map((c) => c.inspection.id);
+
 		const newIds: string[] = inspections.map((i) => i.id);
+
 		const toKeep: InspectionGutterIcon[] =
 			_.intersection(oldIds, newIds).map(
 				(id) => oldItems.find((c) => c.inspection.id === id)!,
 			) ?? [];
+
 		const toAdd: InspectionGutterIcon[] = _.difference(newIds, oldIds)
 			.map((id) => inspections.find((i) => i.id === id)!)
 			.map((i) => GutterIconRenderer.toGutterIcon(i));
+
 		const newGutterIcons: InspectionGutterIcon[] = [...toKeep, ...toAdd];
 		this.gutterIcons.set(document.uri, newGutterIcons);
 
@@ -98,15 +107,19 @@ export class GutterIconRenderer implements InspectionRenderer {
 		const range = Inspection.getIndicatorRangeOfInspection(
 			inspection.problem,
 		);
+
 		const args = [inspection.problem, inspection.solution, "guttericons"];
+
 		const commandUri = Uri.parse(
 			`command:${COMMAND_FIX_INSPECTION}?${encodeURIComponent(JSON.stringify(args))}`,
 		);
+
 		const hoverMessage = new MarkdownString(
 			`${inspection.problem.description}\n\n$(copilot) [${inspection.solution}](${commandUri})`,
 			true,
 		);
 		hoverMessage.isTrusted = true;
+
 		return { range, hoverMessage, inspection };
 	}
 }

@@ -34,11 +34,13 @@ export namespace FormatterConverter {
 				switch (value) {
 					case "true":
 						return "insert";
+
 					case "false":
 						return "do not insert";
 					// We regard an empty string as a valid value and may write it to the profile
 					case "":
 						return "";
+
 					default:
 						return undefined;
 				}
@@ -53,13 +55,16 @@ export namespace FormatterConverter {
 				switch (value) {
 					case "never":
 						return "one_line_never";
+
 					case "if empty":
 						return "one_line_if_empty";
+
 					case "if at most one item":
 						return "one_line_if_single_item";
 					// We regard an empty string as a valid value and may write it to the profile
 					case "":
 						return "";
+
 					default:
 						return undefined;
 				}
@@ -97,11 +102,13 @@ export namespace FormatterConverter {
 				switch (value) {
 					case "insert":
 						return "true";
+
 					case "do not insert":
 						return "false";
 					// We regard an empty string as a valid value and show it in the webview
 					case "":
 						return "";
+
 					default:
 						return undefined;
 				}
@@ -116,13 +123,16 @@ export namespace FormatterConverter {
 				switch (value) {
 					case "one_line_never":
 						return "never";
+
 					case "one_line_if_empty":
 						return "if empty";
+
 					case "one_line_if_single_item":
 						return "if at most one item";
 					// We regard an empty string as a valid value and show it in the webview
 					case "":
 						return "";
+
 					default:
 						return undefined;
 				}

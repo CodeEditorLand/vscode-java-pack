@@ -23,6 +23,7 @@ export class InspectActionCodeLensProvider implements CodeLensProvider {
 		context.subscriptions.push(
 			languages.registerCodeLensProvider({ language: "java" }, this),
 		);
+
 		return this;
 	}
 
@@ -31,8 +32,11 @@ export class InspectActionCodeLensProvider implements CodeLensProvider {
 		logger.debug(
 			"[InspectCodeLensProvider] rerender inspect codelenses...",
 		);
+
 		const topLevelCodeLenses: CodeLens[] = [];
+
 		const classes = await getTopLevelClassesOfDocument(document);
+
 		classes
 			.map(
 				(clazz) =>
@@ -47,6 +51,7 @@ export class InspectActionCodeLensProvider implements CodeLensProvider {
 		const results = await Promise.all(
 			classes.map((clazz) => InspectionCache.hasCache(document, clazz)),
 		);
+
 		classes
 			.filter((_, i) => results[i])
 			.map(

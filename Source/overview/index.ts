@@ -42,6 +42,7 @@ export async function overviewCmdHandler(
 ) {
 	if (overviewView) {
 		overviewView.reveal();
+
 		return;
 	}
 
@@ -139,6 +140,7 @@ export async function showOverviewPageOnActivation(
 	let overviewLastShowTime = context.globalState.get(
 		KEY_OVERVIEW_LAST_SHOW_TIME,
 	);
+
 	let showInBackground = overviewLastShowTime !== undefined;
 	vscode.commands.executeCommand("java.overview", showInBackground);
 }
@@ -151,6 +153,7 @@ export class OverviewViewSerializer implements vscode.WebviewPanelSerializer {
 		if (overviewView) {
 			overviewView.reveal();
 			webviewPanel.dispose();
+
 			return;
 		}
 
@@ -168,6 +171,7 @@ function getHtmlForWebview(
 	scriptPath: string,
 ) {
 	const scriptPathOnDisk = vscode.Uri.file(scriptPath);
+
 	const scriptUri = webviewPanel.webview.asWebviewUri(scriptPathOnDisk);
 
 	// Use a nonce to whitelist which scripts can be run

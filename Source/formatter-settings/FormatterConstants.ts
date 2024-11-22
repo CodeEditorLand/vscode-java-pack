@@ -10,103 +10,172 @@ import {
 
 export namespace JavaConstants {
 	export const JAVA_CORE_FORMATTER_ID = "org.eclipse.jdt.core.formatter";
+
 	export const CURRENT_FORMATTER_SETTINGS_VERSION = "21";
+
 	export const SETTINGS_URL_KEY = "format.settings.url";
+
 	export const SETTINGS_PROFILE_KEY = "format.settings.profile";
+
 	export const MINIMUM_JAVA_EXTENSION_VERSION: string = "0.77.0";
 }
 
 export namespace VSCodeSettings {
 	export const INSERT_SPACES = "editor.insertSpaces";
+
 	export const TAB_SIZE = "editor.tabSize";
+
 	export const DETECT_INDENTATION = "editor.detectIndentation";
 }
 
 export namespace SupportedSettings {
 	// Indentation
 	export const TABULATION_SIZE = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.tabulation.size`;
+
 	export const TABULATION_CHAR = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.tabulation.char`;
 	// WhiteSpace
 	// Deprecated Settings
 	export const INSERT_SPACE_BEFORE_FIRST_INITIALIZER = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.insert_space_before_first_initializer`;
 	// Active Settings
 	export const INSERT_SPACE_BEFORE_CLOSING_BRACE_IN_ARRAY_INITIALIZER = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.insert_space_before_closing_brace_in_array_initializer`;
+
 	export const INSERT_SPACE_AFTER_OPENING_BRACE_IN_ARRAY_INITIALIZER = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.insert_space_after_opening_brace_in_array_initializer`;
+
 	export const INSERT_SPACE_AFTER_CLOSING_PAREN_IN_CAST = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.insert_space_after_closing_paren_in_cast`;
+
 	export const INSERT_SPACE_AFTER_CLOSING_ANGLE_BRACKET_IN_TYPE_ARGUMENTS = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.insert_space_after_closing_angle_bracket_in_type_arguments`;
 	// New Lines
 	// Deprecated Settings
 	export const INSERT_NEW_LINE_IN_CONTROL_STATEMENTS = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.insert_new_line_in_control_statements`;
+
 	export const INSERT_NEW_LINE_AFTER_ANNOTATION = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.insert_new_line_after_annotation`;
+
 	export const INSERT_NEW_LINE_IN_EMPTY_TYPE_DECLARATION = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.insert_new_line_in_empty_type_declaration`;
+
 	export const INSERT_NEW_LINE_IN_EMPTY_METHOD_BODY = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.insert_new_line_in_empty_method_body`;
+
 	export const INSERT_NEW_LINE_IN_EMPTY_ENUM_DECLARATION = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.insert_new_line_in_empty_enum_declaration`;
+
 	export const INSERT_NEW_LINE_IN_EMPTY_ENUM_CONSTANT = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.insert_new_line_in_empty_enum_constant`;
+
 	export const INSERT_NEW_LINE_IN_EMPTY_ANONYMOUS_TYPE_DECLARATION = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.insert_new_line_in_empty_anonymous_type_declaration`;
+
 	export const INSERT_NEW_LINE_IN_EMPTY_ANNOTATION_DECLARATION = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.insert_new_line_in_empty_annotation_declaration`;
 	// Active Settings
 	export const INSERT_NEW_LINE_BEFORE_WHILE_IN_DO_STATEMENT = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.insert_new_line_before_while_in_do_statement`;
+
 	export const INSERT_NEW_LINE_BEFORE_FINALLY_IN_TRY_STATEMENT = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.insert_new_line_before_finally_in_try_statement`;
+
 	export const INSERT_NEW_LINE_BEFORE_ELSE_IN_IF_STATEMENT = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.insert_new_line_before_else_in_if_statement`;
+
 	export const INSERT_NEW_LINE_BEFORE_CLOSING_BRACE_IN_ARRAY_INITIALIZER = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.insert_new_line_before_closing_brace_in_array_initializer`;
+
 	export const INSERT_NEW_LINE_BEFORE_CATCH_IN_TRY_STATEMENT = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.insert_new_line_before_catch_in_try_statement`;
+
 	export const INSERT_NEW_LINE_AFTER_OPENING_BRACE_IN_ARRAY_INITIALIZER = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.insert_new_line_after_opening_brace_in_array_initializer`;
+
 	export const INSERT_NEW_LINE_AFTER_ANNOTATION_ON_PARAMETER = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.insert_new_line_after_annotation_on_parameter`;
+
 	export const INSERT_NEW_LINE_AFTER_ANNOTATION_ON_PACKAGE = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.insert_new_line_after_annotation_on_package`;
+
 	export const INSERT_NEW_LINE_AFTER_ANNOTATION_ON_ENUM_CONSTANT = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.insert_new_line_after_annotation_on_enum_constant`;
+
 	export const PUT_EMPTY_STATEMENT_ON_NEW_LINE = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.put_empty_statement_on_new_line`;
+
 	export const KEEP_TYPE_DECLARATION_ON_ONE_LINE = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.keep_type_declaration_on_one_line`;
+
 	export const KEEP_RECORD_DECLARATION_ON_ONE_LINE = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.keep_record_declaration_on_one_line`;
+
 	export const KEEP_RECORD_CONSTRUCTOR_ON_ONE_LINE = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.keep_record_constructor_on_one_line`;
+
 	export const KEEP_METHOD_BODY_ON_ONE_LINE = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.keep_method_body_on_one_line`;
+
 	export const KEEP_ENUM_DECLARATION_ON_ONE_LINE = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.keep_enum_declaration_on_one_line`;
+
 	export const KEEP_ENUM_CONSTANT_DECLARATION_ON_ONE_LINE = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.keep_enum_constant_declaration_on_one_line`;
+
 	export const KEEP_ANONYMOUS_TYPE_DECLARATION_ON_ONE_LINE = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.keep_anonymous_type_declaration_on_one_line`;
+
 	export const KEEP_ANNOTATION_DECLARATION_ON_ONE_LINE = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.keep_annotation_declaration_on_one_line`;
 	// Comments
 	// Deprecated Settings
 	export const COMMENT_LINELENGTH = "comment_line_length";
+
 	export const COMMENT_INDENTPARAMETERDESCRIPTION =
 		"comment_indent_parameter_description";
+
 	export const COMMENT_FORMATHEADER = "comment_format_header";
+
 	export const COMMENT_CLEARBLANKLINES = "comment_clear_blank_lines";
+
 	export const COMMENT_CLEAR_BLANK_LINES = "comment.clear_blank_lines";
+
 	export const COMMENT_FORMATTER_COMMENT = "comment_format_comments";
+
 	export const COMMENT_FORMATTER_COMMENT_CORE = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.comment.format_comments`;
 	// Current Settings
 	export const COMMENT_INDENT_ROOT_TAGS = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.comment.indent_root_tags`;
+
 	export const COMMENT_INDENT_PARAMETER_DESCRIPTION = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.comment.indent_parameter_description`;
+
 	export const COMMENT_FORMAT_HEADER = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.comment.format_header`;
+
 	export const COMMENT_FORMAT_BLOCK_COMMENTS = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.comment.format_block_comments`;
+
 	export const COMMENT_COUNT_LINE_LENGTH_FROM_STARTING_POSITION = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.comment.count_line_length_from_starting_position`;
+
 	export const COMMENT_CLEAR_BLANK_LINES_IN_JAVADOC_COMMENT = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.comment.clear_blank_lines_in_javadoc_comment`;
+
 	export const COMMENT_CLEAR_BLANK_LINES_IN_BLOCK_COMMENT = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.comment.clear_blank_lines_in_block_comment`;
+
 	export const COMMENT_ALIGN_TAGS_DESCRIPTIONS_GROUPED = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.comment.align_tags_descriptions_grouped`;
+
 	export const COMMENT_LINE_LENGTH = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.comment.line_length`;
+
 	export const COMMENT_ON_OFF_TAGS = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.use_on_off_tags`;
+
 	export const FORMAT_LINE_COMMENTS = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.comment.format_line_comments`;
 	// Blank Lines
 	export const BLANK_LINES_BETWEEN_TYPE_DECLARATIONS = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.blank_lines_between_type_declarations`;
+
 	export const BLANK_LINES_BETWEEN_IMPORT_GROUPS = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.blank_lines_between_import_groups`;
+
 	export const BLANK_LINES_BEFORE_PACKAGE = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.blank_lines_before_package`;
+
 	export const BLANK_LINES_BEFORE_MEMBER_TYPE = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.blank_lines_before_member_type`;
+
 	export const BLANK_LINES_BEFORE_IMPORTS = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.blank_lines_before_imports`;
+
 	export const NUMBER_OF_EMPTY_LINES_TO_PRESERVE = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.number_of_empty_lines_to_preserve`;
 	// Wrapping
 	export const LINESPLIT = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.lineSplit`;
+
 	export const ALIGNMENT_FOR_TYPE_PARAMETERS = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.alignment_for_type_parameters`;
+
 	export const ALIGNMENT_FOR_TYPE_ARGUMENTS = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.alignment_for_type_arguments`;
+
 	export const ALIGNMENT_FOR_RESOURCES_IN_TRY = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.alignment_for_resources_in_try`;
+
 	export const ALIGNMENT_FOR_PARAMETERIZED_TYPE_REFERENCES = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.alignment_for_parameterized_type_references`;
+
 	export const ALIGNMENT_FOR_METHOD_DECLARATION = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.alignment_for_method_declaration`;
+
 	export const ALIGNMENT_FOR_EXPRESSIONS_IN_FOR_LOOP_HEADER = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.alignment_for_expressions_in_for_loop_header`;
+
 	export const ALIGNMENT_FOR_ENUM_CONSTANTS = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.alignment_for_enum_constants`;
+
 	export const ALIGNMENT_FOR_CONDITIONAL_EXPRESSION = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.alignment_for_conditional_expression`;
+
 	export const ALIGNMENT_FOR_ASSIGNMENT = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.alignment_for_assignment`;
+
 	export const ALIGNMENT_FOR_ASSERTION_MESSAGE = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.alignment_for_assertion_message`;
+
 	export const ALIGNMENT_FOR_ARGUMENTS_IN_ANNOTATION = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.alignment_for_arguments_in_annotation`;
+
 	export const ALIGNMENT_FOR_ANNOTATIONS_ON_PARAMETER = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.alignment_for_annotations_on_parameter`;
+
 	export const ALIGNMENT_FOR_ANNOTATIONS_ON_PACKAGE = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.alignment_for_annotations_on_package`;
+
 	export const ALIGNMENT_FOR_ANNOTATIONS_ON_ENUM_CONSTANT = `${JavaConstants.JAVA_CORE_FORMATTER_ID}.alignment_for_annotations_on_enum_constant`;
 
 	export const indentationSettings: string[] = [
@@ -272,24 +341,34 @@ export namespace Example {
 		switch (example) {
 			case ExampleKind.INDENTATION_EXAMPLE:
 				return Example.INDENTATION_EXAMPLE;
+
 			case ExampleKind.BLANKLINE_EXAMPLE:
 				return Example.BLANKLINE_EXAMPLE;
+
 			case ExampleKind.COMMENT_EXAMPLE:
 				return Example.COMMENT_EXAMPLE;
+
 			case ExampleKind.INSERTLINE_EXAMPLE:
 				return Example.INSERTLINE_EXAMPLE;
+
 			case ExampleKind.BRACED_CODE_TYPE_EXAMPLE:
 				return Example.BRACED_CODE_TYPE_EXAMPLE;
+
 			case ExampleKind.BRACED_CODE_RECORD_EXAMPLE:
 				return Example.BRACED_CODE_RECORD_EXAMPLE;
+
 			case ExampleKind.BRACED_CODE_ENUM_EXAMPLE:
 				return Example.BRACED_CODE_ENUM_EXAMPLE;
+
 			case ExampleKind.ANNOTATION_AND_ANONYMOUS_EXAMPLE:
 				return Example.ANNOTATION_AND_ANONYMOUS_EXAMPLE;
+
 			case ExampleKind.WHITESPACE_EXAMPLE:
 				return Example.WHITESPACE_EXAMPLE;
+
 			case ExampleKind.WRAPPING_EXAMPLE:
 				return Example.WRAPPING_EXAMPLE;
+
 			default:
 				return "";
 		}
@@ -1039,6 +1118,7 @@ export function getSupportedProfileSettings(
 			settings.set(key, value);
 		}
 	});
+
 	return settings;
 }
 
@@ -1046,8 +1126,10 @@ export function getDefaultValue(id: string): string | undefined {
 	switch (id) {
 		case SupportedSettings.TABULATION_CHAR:
 			return "tab";
+
 		case SupportedSettings.TABULATION_SIZE:
 			return "4";
+
 		case SupportedSettings.PUT_EMPTY_STATEMENT_ON_NEW_LINE:
 		case SupportedSettings.COMMENT_INDENTPARAMETERDESCRIPTION:
 		case SupportedSettings.COMMENT_INDENT_PARAMETER_DESCRIPTION:
@@ -1059,6 +1141,7 @@ export function getDefaultValue(id: string): string | undefined {
 		case SupportedSettings.COMMENT_CLEAR_BLANK_LINES_IN_BLOCK_COMMENT:
 		case SupportedSettings.COMMENT_ON_OFF_TAGS:
 			return "false";
+
 		case SupportedSettings.INSERT_NEW_LINE_IN_CONTROL_STATEMENTS:
 		case SupportedSettings.INSERT_SPACE_AFTER_CLOSING_ANGLE_BRACKET_IN_TYPE_ARGUMENTS:
 		case SupportedSettings.INSERT_NEW_LINE_AFTER_ANNOTATION:
@@ -1070,12 +1153,14 @@ export function getDefaultValue(id: string): string | undefined {
 		case SupportedSettings.INSERT_NEW_LINE_BEFORE_FINALLY_IN_TRY_STATEMENT:
 		case SupportedSettings.INSERT_NEW_LINE_BEFORE_CLOSING_BRACE_IN_ARRAY_INITIALIZER:
 			return "do not insert";
+
 		case SupportedSettings.COMMENT_FORMATTER_COMMENT:
 		case SupportedSettings.COMMENT_FORMATTER_COMMENT_CORE:
 		case SupportedSettings.COMMENT_FORMAT_BLOCK_COMMENTS:
 		case SupportedSettings.FORMAT_LINE_COMMENTS:
 		case SupportedSettings.COMMENT_COUNT_LINE_LENGTH_FROM_STARTING_POSITION:
 			return "true";
+
 		case SupportedSettings.INSERT_SPACE_BEFORE_CLOSING_BRACE_IN_ARRAY_INITIALIZER:
 		case SupportedSettings.INSERT_SPACE_AFTER_OPENING_BRACE_IN_ARRAY_INITIALIZER:
 		case SupportedSettings.INSERT_SPACE_AFTER_CLOSING_PAREN_IN_CAST:
@@ -1089,6 +1174,7 @@ export function getDefaultValue(id: string): string | undefined {
 		case SupportedSettings.INSERT_NEW_LINE_AFTER_ANNOTATION_ON_ENUM_CONSTANT:
 		case SupportedSettings.INSERT_NEW_LINE_AFTER_ANNOTATION_ON_PACKAGE:
 			return "insert";
+
 		case SupportedSettings.KEEP_TYPE_DECLARATION_ON_ONE_LINE:
 		case SupportedSettings.KEEP_RECORD_DECLARATION_ON_ONE_LINE:
 		case SupportedSettings.KEEP_RECORD_CONSTRUCTOR_ON_ONE_LINE:
@@ -1098,19 +1184,24 @@ export function getDefaultValue(id: string): string | undefined {
 		case SupportedSettings.KEEP_ANONYMOUS_TYPE_DECLARATION_ON_ONE_LINE:
 		case SupportedSettings.KEEP_ANNOTATION_DECLARATION_ON_ONE_LINE:
 			return "one_line_never";
+
 		case SupportedSettings.BLANK_LINES_BETWEEN_TYPE_DECLARATIONS:
 		case SupportedSettings.BLANK_LINES_BETWEEN_IMPORT_GROUPS:
 		case SupportedSettings.BLANK_LINES_BEFORE_IMPORTS:
 		case SupportedSettings.BLANK_LINES_BEFORE_MEMBER_TYPE:
 		case SupportedSettings.NUMBER_OF_EMPTY_LINES_TO_PRESERVE:
 			return "1";
+
 		case SupportedSettings.BLANK_LINES_BEFORE_PACKAGE:
 			return "0";
+
 		case SupportedSettings.LINESPLIT:
 			return "120";
+
 		case SupportedSettings.COMMENT_LINELENGTH:
 		case SupportedSettings.COMMENT_LINE_LENGTH:
 			return "80";
+
 		default:
 			return undefined;
 	}

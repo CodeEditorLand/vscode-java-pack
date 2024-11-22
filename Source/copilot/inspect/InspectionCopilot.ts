@@ -71,6 +71,7 @@ export default class InspectionCopilot extends Copilot {
         }
         public String getRole() {
             String result = "";
+
             if (this.name.equals("Miller")) {
                 result = "Senior";
             } else if (this.name.equals("Mike")) {
@@ -150,10 +151,12 @@ export default class InspectionCopilot extends Copilot {
 		document: TextDocument,
 	): Promise<Inspection[]> {
 		logger.info("inspecting document:", document.fileName);
+
 		const range = new Range(
 			document.lineAt(0).range.start,
 			document.lineAt(document.lineCount - 1).range.end,
 		);
+
 		return this.inspectRange(document, range);
 	}
 
@@ -162,6 +165,7 @@ export default class InspectionCopilot extends Copilot {
 		clazz: SymbolNode,
 	): Promise<Inspection[]> {
 		logger.info("inspecting class:", clazz.qualifiedName);
+
 		return this.inspectRange(document, clazz.range, clazz);
 	}
 
@@ -172,6 +176,7 @@ export default class InspectionCopilot extends Copilot {
 		logger.info(
 			`inspecting symbol ${SymbolKind[symbol.kind]} ${symbol.qualifiedName}`,
 		);
+
 		return this.inspectRange(document, symbol.range, symbol);
 	}
 
@@ -187,6 +192,7 @@ export default class InspectionCopilot extends Copilot {
 			void window.showWarningMessage(
 				`Copilot is busy, please retry after current inspecting tasks are finished.`,
 			);
+
 			return Promise.resolve([]);
 		}
 		if (this.inspecting.has(document)) {
@@ -197,11 +203,14 @@ export default class InspectionCopilot extends Copilot {
 			// ajust the range to the minimal container class or method symbols
 			const methodAndFields: SymbolNode[] =
 				await getIntersectionSymbolsOfRange(range, document);
+
 			const classes: SymbolNode[] = await getClassesContainedInRange(
 				range,
 				document,
 			);
+
 			const symbols: SymbolNode[] = [...classes, ...methodAndFields];
+
 			if (symbols.length < 1) {
 				const containingClass: SymbolNode =
 					await getInnermostClassContainsRange(range, document);
@@ -215,6 +224,7 @@ export default class InspectionCopilot extends Copilot {
 			const target = symbol
 				? symbol.toString()
 				: symbols[0].toString() + (symbols.length > 1 ? ", etc." : "");
+
 			const inspections = await window.withProgress(
 				{
 					location: ProgressLocation.Notification,
@@ -254,6 +264,7 @@ export default class InspectionCopilot extends Copilot {
 					});
 			}
 			InspectionCache.cache(document, symbols, inspections);
+
 			return inspections;
 		} finally {
 			this.inspecting.delete(document);
@@ -282,6 +293,7 @@ export default class InspectionCopilot extends Copilot {
 			"java.copilot.inspect.code",
 			this.doInspectCode.bind(this),
 		);
+
 		if (!key) {
 			// inspect code immediately without debounce
 			return this.doInspectCode(code, context);
@@ -320,9 +332,13 @@ export default class InspectionCopilot extends Copilot {
 				document.lineAt(range.end.line).text.length,
 			),
 		);
+
 		const content: string = document.getText(adjustedRange);
+
 		const startLine = range.start.line;
+
 		const projectContext = await this.collectProjectContext(document);
+
 		const inspections = await this.inspectCode(content, projectContext);
 		inspections.forEach((s) => {
 			s.document = document;
@@ -330,6 +346,7 @@ export default class InspectionCopilot extends Copilot {
 			s.problem.position.line =
 				s.problem.position.relativeLine + startLine;
 		});
+
 		return inspections;
 	}
 
@@ -341,6 +358,7 @@ export default class InspectionCopilot extends Copilot {
 		// code lines without empty lines and comments
 		const codeLines: { originalLineIndex: number; content: string }[] =
 			this.extractCodeLines(originalLines);
+
 		const codeLinesContent = codeLines.map((l) => l.content).join("\n");
 
 		if (codeLines.length < 1) {
@@ -350,6 +368,7 @@ export default class InspectionCopilot extends Copilot {
 		const codeWithInspectionComments = await this.send(
 			InspectionCopilot.FORMAT_CODE(context, codeLinesContent),
 		);
+
 		const inspections = this.extractInspections(
 			codeWithInspectionComments,
 			codeLines,
@@ -369,6 +388,7 @@ export default class InspectionCopilot extends Copilot {
 				)
 				.join(",")}]`,
 		});
+
 		return inspections;
 	}
 
@@ -384,16 +404,20 @@ export default class InspectionCopilot extends Copilot {
 		const lines = codeWithInspectionComments
 			.split("\n")
 			.filter((line) => line.trim().length > 0);
+
 		const inspections: Inspection[] = [];
+
 		let commentLineCount = 0;
 
 		for (let i = 0; i < lines.length; ) {
 			const commentMatch = lines[i].match(
 				InspectionCopilot.COMMENT_PATTERN,
 			);
+
 			if (commentMatch) {
 				const inspection: Inspection | undefined =
 					this.extractInspection(i, lines);
+
 				if (inspection) {
 					const codeLineIndex = i - commentLineCount;
 					// relative line number to the start of the code inspected, which will be ajusted relative to the start of container symbol later when caching.
@@ -405,6 +429,7 @@ export default class InspectionCopilot extends Copilot {
 					i += InspectionCopilot.INSPECTION_COMMENT_LINE_COUNT; // inspection comment has 4 lines
 					commentLineCount +=
 						InspectionCopilot.INSPECTION_COMMENT_LINE_COUNT;
+
 					continue;
 				} else {
 					commentLineCount++;
@@ -435,15 +460,19 @@ export default class InspectionCopilot extends Copilot {
 		const problemMatch = lines[index + 0].match(
 			InspectionCopilot.PROBLEM_PATTERN,
 		);
+
 		const solutionMatch = lines[index + 1].match(
 			InspectionCopilot.SOLUTION_PATTERN,
 		);
+
 		const indicatorMatch = lines[index + 2].match(
 			InspectionCopilot.INDICATOR_PATTERN,
 		);
+
 		const severityMatch = lines[index + 3].match(
 			InspectionCopilot.LEVEL_PATTERN,
 		);
+
 		if (problemMatch && solutionMatch && indicatorMatch && severityMatch) {
 			return {
 				id: randomUUID().toString(),
@@ -460,6 +489,7 @@ export default class InspectionCopilot extends Copilot {
 				"Failed to extract inspection from the lines:",
 				lines.slice(index, index + 4),
 			);
+
 			return undefined;
 		}
 	}
@@ -473,7 +503,9 @@ export default class InspectionCopilot extends Copilot {
 		originalLines: string[],
 	): { originalLineIndex: number; content: string }[] {
 		const codeLines: { originalLineIndex: number; content: string }[] = [];
+
 		let inBlockComment = false;
+
 		for (
 			let originalLineIndex = 0;
 			originalLineIndex < originalLines.length;
@@ -510,8 +542,10 @@ export default class InspectionCopilot extends Copilot {
 		document: TextDocument,
 	): Promise<ProjectContext> {
 		logger.info("colleteting project context info (java version)...");
+
 		const javaVersion = await getProjectJavaVersion(document);
 		logger.info("project java version:", javaVersion);
+
 		return { javaVersion };
 	}
 }

@@ -50,22 +50,32 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 		switch (message.command) {
 			case "classpath.onWillListVmInstalls":
 				await this.listVmInstalls();
+
 				break;
+
 			case "classpath.onWillLoadProjectClasspath":
 				this.currentProjectRoot = vscode.Uri.parse(message.uri);
 				await this.loadProjectClasspath(this.currentProjectRoot);
+
 				break;
+
 			case "classpath.onWillSelectOutputPath":
 				await this.selectOutputPath(this.currentProjectRoot);
+
 				break;
+
 			case "classpath.onWillAddSourcePathForUnmanagedFolder":
 				await this.addSourcePathForUnmanagedFolder(
 					this.currentProjectRoot,
 				);
+
 				break;
+
 			case "classpath.onWillSelectFolder":
 				await this.selectFolder(this.currentProjectRoot, message.type);
+
 				break;
+
 			case "classpath.onWillUpdateClassPaths":
 				await this.updateClassPaths(
 					message.rootPath,
@@ -75,19 +85,27 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 					message.vmInstallPath,
 					message.libraries,
 				);
+
 				break;
+
 			case "classpath.onWillAddNewJdk":
 				await this.addNewJdk(this.currentProjectRoot);
+
 				break;
+
 			case "classpath.onWillSelectLibraries":
 				await this.selectLibraries(this.currentProjectRoot);
+
 				break;
+
 			case "classpath.onClickGotoProjectConfiguration":
 				this.gotoProjectConfigurationFile(
 					message.rootUri,
 					message.projectType,
 				);
+
 				break;
+
 			default:
 				break;
 		}
@@ -130,6 +148,7 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 			}
 
 			const classpath = await this.getProjectClasspathFromLS(uri);
+
 			if (classpath) {
 				this.webview.postMessage({
 					command: "classpath.onDidLoadProjectClasspath",
@@ -163,19 +182,25 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 				canSelectFolders: true,
 				canSelectMany: false,
 			});
+
 		if (sourceFolder) {
 			const sourceFolderPath: string = sourceFolder[0].fsPath;
+
 			const projectRootPath: string = currentProjectRoot.fsPath;
+
 			let relativePath: string = path.relative(
 				projectRootPath,
 				sourceFolderPath,
 			);
+
 			if (relativePath.startsWith("..")) {
 				const err: Error = new Error(
 					"The source path must be contained in the project root folder.",
 				);
 				vscode.window.showErrorMessage(err.message);
+
 				setUserError(err);
+
 				throw err;
 			}
 			if (!relativePath) {
@@ -191,6 +216,7 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 		async (_operationId: string, currentProjectRoot: vscode.Uri) => {
 			const relativePath: string | undefined =
 				await this.selectSourceFolderPath(currentProjectRoot);
+
 			if (!relativePath) {
 				return;
 			}
@@ -198,10 +224,12 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 				vscode.workspace
 					.getConfiguration("java", currentProjectRoot)
 					.get<string[]>("project.sourcePaths") || [];
+
 			if (sourcePaths.includes(relativePath)) {
 				vscode.window.showInformationMessage(
 					`The path ${relativePath} has already been a source path.`,
 				);
+
 				return;
 			}
 			sourcePaths.push(relativePath);
@@ -238,6 +266,7 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 		) => {
 			const relativePath: string | undefined =
 				await this.selectSourceFolderPath(currentProjectRoot);
+
 			if (!relativePath) {
 				return;
 			}
@@ -268,6 +297,7 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 			try {
 				const currentProjectRoot: vscode.Uri =
 					vscode.Uri.parse(rootPath);
+
 				if (projectType === ProjectType.UnmanagedFolder) {
 					this.updateSourcePathsForUnmanagedFolder(
 						currentProjectRoot,
@@ -280,7 +310,9 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 					this.changeJdk(currentProjectRoot, vmInstallPath);
 				} else {
 					const classpathEntries: ClasspathEntry[] = [];
+
 					classpathEntries.push(...sourcePaths);
+
 					if (vmInstallPath?.length > 0) {
 						classpathEntries.push({
 							kind: ClasspathEntryKind.Container,
@@ -288,6 +320,7 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 						});
 					}
 					classpathEntries.push(...libraries);
+
 					if (classpathEntries.length > 0) {
 						await vscode.commands.executeCommand(
 							"java.execute.workspaceCommand",
@@ -308,6 +341,7 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 							vscode.commands.executeCommand("java.open.logs");
 						}
 					});
+
 				setUserError(err);
 				sendError(err);
 			}
@@ -330,19 +364,25 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 					canSelectFolders: true,
 					canSelectMany: false,
 				});
+
 			if (outputFolder) {
 				const projectRootPath: string = currentProjectRoot.fsPath;
+
 				const outputFullPath: string = outputFolder[0].fsPath;
+
 				const outputRelativePath: string = path.relative(
 					projectRootPath,
 					outputFullPath,
 				);
+
 				if (outputRelativePath.startsWith("..")) {
 					const err: Error = new Error(
 						"The customized output path must be contained in the project root folder.",
 					);
 					vscode.window.showErrorMessage(err.message);
+
 					setUserError(err);
+
 					throw err;
 				}
 				if (!outputRelativePath) {
@@ -350,7 +390,9 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 						"Cannot set the project root path as the output path.",
 					);
 					vscode.window.showErrorMessage(err.message);
+
 					setUserError(err);
+
 					throw err;
 				}
 				this.webview.postMessage({
@@ -380,6 +422,7 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 				currentProjectRoot.fsPath,
 				outputRelativePath,
 			);
+
 			if ((await fse.readdir(outputFullPath)).length) {
 				const choice: string | undefined =
 					await vscode.window.showInformationMessage(
@@ -387,6 +430,7 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 						"Yes",
 						"No",
 					);
+
 				if (choice === "Yes") {
 					await fse.remove(outputFullPath);
 					await fse.ensureDir(outputFullPath);
@@ -394,6 +438,7 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 					sendInfo(operationId, {
 						canceled: "Cancelled for un-empty output folder",
 					});
+
 					return;
 				}
 			}
@@ -414,6 +459,7 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 				name: "classpath.configuration",
 				kind: "add-new-jdk",
 			};
+
 			const javaHome: vscode.Uri[] | undefined =
 				await vscode.window.showOpenDialog({
 					defaultUri: vscode.workspace.workspaceFolders?.[0].uri,
@@ -422,6 +468,7 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 					canSelectFolders: true,
 					title: "Select the installation path of the JDK",
 				});
+
 			if (!javaHome) {
 				return;
 			}
@@ -441,6 +488,7 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 
 			if (result.success) {
 				const activeVmInstallPath = result.message;
+
 				let vmInstalls: VmInstall[] = await this.getVmInstallsFromLS();
 				vmInstalls = vmInstalls.sort(
 					(vmA: VmInstall, vmB: VmInstall) => {
@@ -454,8 +502,11 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 				});
 			} else {
 				vscode.window.showErrorMessage(result.message);
+
 				const err: Error = new Error(result.message);
+
 				setUserError(err);
+
 				throw err;
 			}
 		},
@@ -472,6 +523,7 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 				name: "classpath.configuration",
 				kind: "use-existing-jdk",
 			};
+
 			const result: IJdkUpdateResult =
 				await vscode.commands.executeCommand<IJdkUpdateResult>(
 					"java.execute.workspaceCommand",
@@ -486,6 +538,7 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 
 			if (result.success) {
 				const activeVmInstallPath = result.message;
+
 				let vmInstalls: VmInstall[] = await this.getVmInstallsFromLS();
 				vmInstalls = vmInstalls.sort(
 					(vmA: VmInstall, vmB: VmInstall) => {
@@ -499,8 +552,11 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 				});
 			} else {
 				vscode.window.showErrorMessage(result.message);
+
 				const err: Error = new Error(result.message);
+
 				setUserError(err);
+
 				throw err;
 			}
 		},
@@ -520,6 +576,7 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 						"Jar": ["jar"],
 					},
 				});
+
 			if (jarFiles) {
 				const jarPaths: string[] = jarFiles.map((uri) => {
 					if (uri.fsPath.startsWith(currentProjectRoot.fsPath)) {
@@ -547,6 +604,7 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 		"projectSettings.classpath.updateUnmanagedFolderLibraries",
 		async (_operationId: string, jarFilePaths: string[]) => {
 			const setting = this.getReferencedLibrariesSetting();
+
 			setting.include = jarFilePaths;
 			this.updateReferencedLibraries(setting);
 		},
@@ -556,7 +614,9 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 		"projectSettings.classpath.gotoProjectConfigurationFile",
 		(operationId: string, rootUri: string, projectType: ProjectType) => {
 			const rootPath: string = vscode.Uri.parse(rootUri).fsPath;
+
 			let configurationPath: string = "";
+
 			if (projectType === ProjectType.Gradle) {
 				configurationPath = path.join(rootPath, "build.gradle");
 			} else if (projectType === ProjectType.Maven) {
@@ -568,6 +628,7 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 					`The configuration file: '${configurationPath}' does not exist.`,
 				);
 				vscode.window.showErrorMessage(err.message);
+
 				throw err;
 			}
 			vscode.commands.executeCommand(
@@ -582,6 +643,7 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 
 	private async getVmInstallsFromLS(): Promise<VmInstall[]> {
 		const ret: VmInstall[] = [];
+
 		try {
 			ret.push(
 				...((await vscode.commands.executeCommand<VmInstall[]>(
@@ -609,6 +671,7 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 			uri.toString(),
 			queryKeys,
 		);
+
 		const classpath: ClasspathComponent = {
 			projectType: getProjectType(
 				uri.fsPath,
@@ -622,12 +685,14 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 			jdkPath: response[VM_LOCATION_KEY] as string,
 			libraries: this.getLibraries(response[CLASSPATH_ENTRIES_KEY]),
 		};
+
 		const baseFsPath = uri.fsPath;
 
 		const outputRelativePath: string = path.relative(
 			baseFsPath,
 			classpath.defaultOutputPath,
 		);
+
 		if (!outputRelativePath.startsWith("..")) {
 			classpath.defaultOutputPath = path.relative(
 				baseFsPath,
@@ -641,6 +706,7 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 				path: vscode.Uri.file(l.path).fsPath,
 			};
 		});
+
 		return classpath;
 	}
 
@@ -649,7 +715,9 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 		baseUri: vscode.Uri,
 	): Promise<ClasspathEntry[]> {
 		const result: ClasspathEntry[] = [];
+
 		const baseFsPath = baseUri.fsPath;
+
 		for (const entry of classpathEntries) {
 			if (entry.kind !== ClasspathEntryKind.Source) {
 				continue;
@@ -659,12 +727,15 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 				continue;
 			}
 			let relativePath: string = path.relative(baseFsPath, entry.path);
+
 			if (!relativePath) {
 				relativePath = ".";
 			}
 			let relativeOutputPath: string | undefined;
+
 			if (entry.output) {
 				relativeOutputPath = path.relative(baseFsPath, entry.output);
+
 				if (!relativeOutputPath) {
 					relativeOutputPath = ".";
 				}
@@ -683,6 +754,7 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 
 	private getLibraries(classpathEntries: ClasspathEntry[]): ClasspathEntry[] {
 		const result: ClasspathEntry[] = [];
+
 		for (const entry of classpathEntries) {
 			if (
 				entry.kind === ClasspathEntryKind.Source ||
@@ -706,11 +778,13 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 			.get<
 				string[] | Partial<IReferencedLibraries>
 			>("referencedLibraries");
+
 		const defaultSetting: IReferencedLibraries = {
 			include: [],
 			exclude: [],
 			sources: {},
 		};
+
 		if (Array.isArray(setting)) {
 			return { ...defaultSetting, include: setting };
 		} else {
@@ -728,6 +802,7 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 					? libraries.sources
 					: undefined,
 		};
+
 		if (!updateSetting.exclude && !updateSetting.sources) {
 			updateSetting = libraries.include;
 		}
@@ -738,8 +813,11 @@ export class ClasspathRequestHandler implements vscode.Disposable {
 }
 
 const NATURE_IDS: string = "org.eclipse.jdt.ls.core.natureIds";
+
 const OUTPUT_PATH_KEY: string = "org.eclipse.jdt.ls.core.outputPath";
+
 const VM_LOCATION_KEY: string = "org.eclipse.jdt.ls.core.vm.location";
+
 const CLASSPATH_ENTRIES_KEY: string =
 	"org.eclipse.jdt.ls.core.classpathEntries";
 

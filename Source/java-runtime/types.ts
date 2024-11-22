@@ -15,6 +15,7 @@ export interface JdkData {
 	arch: string;
 	name: string;
 	size: string;
+
 	downloadLink: string;
 }
 

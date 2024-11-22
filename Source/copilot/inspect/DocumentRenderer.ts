@@ -46,6 +46,7 @@ export class DocumentRenderer {
 	public install(context: ExtensionContext): DocumentRenderer {
 		if (this.installedRenderers.length > 0) {
 			logger.warn("DefaultRenderer is already installed");
+
 			return this;
 		}
 		this.inspectActionCodeLensProvider.install(context);
@@ -61,6 +62,7 @@ export class DocumentRenderer {
 			}
 		});
 		this.reloadInspectionRenderers(context);
+
 		return this;
 	}
 
@@ -74,14 +76,18 @@ export class DocumentRenderer {
 		debounced: boolean = false,
 	): Promise<void> {
 		if (document.languageId !== "java") return;
+
 		if (!debounced) {
 			this.inspectActionCodeLensProvider.rerender(document);
 			this.rerenderInspections(document);
+
 			return;
 		}
 		// clear all rendered inspections first
 		this.installedRenderers.forEach((r) => r.clear(document));
+
 		const key = document.uri.fsPath;
+
 		if (!this.rerenderDebouncelyMap[key]) {
 			this.rerenderDebouncelyMap[key] = debounce(
 				(document: TextDocument) => {
@@ -104,6 +110,7 @@ export class DocumentRenderer {
 
 	private reloadInspectionRenderers(context: ExtensionContext): string[] {
 		this.installedRenderers.splice(0, this.installedRenderers.length);
+
 		const settings = this.reloadInspectionRendererSettings();
 		Object.entries(this.availableRenderers).forEach(([type, renderer]) => {
 			if (settings.includes(type.toLowerCase())) {
@@ -114,6 +121,7 @@ export class DocumentRenderer {
 				renderer.uninstall();
 			}
 		});
+
 		return settings;
 	}
 
@@ -124,16 +132,22 @@ export class DocumentRenderer {
 		const config: WorkspaceConfiguration = workspace.getConfiguration(
 			"java.copilot.inspection.renderer",
 		);
+
 		const types: string[] = Object.keys(this.availableRenderers);
+
 		const settings = types
 			.map((type) =>
 				config.get<boolean>(type) ? type.toLowerCase() : "",
 			)
 			.filter((t) => t);
+
 		if (settings.length === 0) {
 			settings.push("diagnostics");
+
 			settings.push("rulerhighlights");
+
 			const disabled = isCodeLensDisabled();
+
 			if (disabled) {
 				logger.warn("CodeLens is disabled, fallback to GutterIcons");
 			}

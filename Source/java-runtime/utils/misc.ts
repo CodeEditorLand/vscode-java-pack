@@ -32,8 +32,11 @@ export function sourceLevelMajorVersion(level: string): number {
 
 	// look into the interesting bits now
 	const regexp = /\d+/g;
+
 	const match = regexp.exec(version);
+
 	let javaVersion = 0;
+
 	if (match) {
 		javaVersion = parseInt(match[0], 10);
 	}
@@ -55,8 +58,11 @@ export function getMajorVersion(version: string) {
 
 	// look into the interesting bits now
 	const regexp = /\d+/g;
+
 	const match = regexp.exec(version);
+
 	let javaVersion = 0;
+
 	if (match) {
 		javaVersion = parseInt(match[0], 10);
 	}

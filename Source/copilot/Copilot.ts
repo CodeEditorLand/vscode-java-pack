@@ -36,8 +36,11 @@ export default class Copilot {
 		cancellationToken: CancellationToken = Copilot.NOT_CANCELLABEL,
 	): Promise<string> {
 		let answer: string = "";
+
 		let rounds: number = 0;
+
 		const messages = [...this.systemMessagesOrSamples];
+
 		const _send = async (message: string): Promise<boolean> => {
 			rounds++;
 			logger.debug(`User: \n`, message);
@@ -51,12 +54,15 @@ export default class Copilot {
 			logger.info("Copilot: thinking...");
 
 			let rawAnswer: string = "";
+
 			try {
 				const model = (
 					await lm.selectChatModels(this.modelSelector)
 				)?.[0];
+
 				if (!model) {
 					const models = await lm.selectChatModels();
+
 					throw new Error(
 						`No suitable model, available models: [${models.map((m) => m.name).join(", ")}]. Please make sure you have installed the latest "GitHub Copilot Chat" (v0.16.0 or later).`,
 					);
@@ -66,6 +72,7 @@ export default class Copilot {
 					modelOptions ?? this.modelOptions,
 					cancellationToken,
 				);
+
 				for await (const item of response.text) {
 					rawAnswer += item;
 				}
@@ -73,6 +80,7 @@ export default class Copilot {
 				//@ts-ignore
 				const cause = e.cause || e;
 				logger.error(`Failed to chat with copilot`, cause);
+
 				throw cause;
 			}
 			messages.push(
@@ -84,14 +92,18 @@ export default class Copilot {
 			logger.debug(`Copilot: \n`, rawAnswer);
 			logger.info(`Copilot: ${rawAnswer.split("\n")[0]}...`);
 			answer += rawAnswer;
+
 			return answer.trim().endsWith(this.endMark);
 		};
+
 		let complete: boolean = await _send(userMessage);
+
 		while (!complete && rounds < this.maxRounds) {
 			complete = await _send("continue where you left off.");
 		}
 		logger.debug("rounds", rounds);
 		sendInfo("java.copilot.sendRequest.info", { rounds: rounds });
+
 		return answer.replace(this.endMark, "");
 	}
 

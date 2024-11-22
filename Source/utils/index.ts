@@ -33,7 +33,9 @@ export async function recommendExtension(
 	message: string,
 ): Promise<void> {
 	const action = "Install";
+
 	const answer = await vscode.window.showInformationMessage(message, action);
+
 	if (answer === action) {
 		await vscode.commands.executeCommand(
 			"java.helper.installExtension",
@@ -53,6 +55,7 @@ export function stringToTime(str: string) {
 
 export async function loadTextFromFile(resourceUri: string) {
 	let buffer = await readFile(resourceUri);
+
 	return buffer.toString();
 }
 
@@ -102,6 +105,8 @@ export function isInsiders() {
 export function getNonce() {
 	let array = new Uint32Array(16);
 	array = crypto.getRandomValues(array);
+
 	const buffer = Buffer.from(array);
+
 	return buffer.toString("base64");
 }

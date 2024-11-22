@@ -3,6 +3,7 @@
 
 export function getExtensionName() {
 	const packageInfo = getPackageInfo();
+
 	return `${packageInfo["publisher"]}.${packageInfo["name"]}`;
 }
 

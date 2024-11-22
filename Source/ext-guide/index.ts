@@ -18,6 +18,7 @@ export async function javaExtGuideCmdHandler(
 ) {
 	if (javaExtGuideView) {
 		javaExtGuideView.reveal();
+
 		return;
 	}
 
@@ -112,10 +113,12 @@ function getHtmlForWebview(
 	scriptPath: string,
 ) {
 	const scriptPathOnDisk = vscode.Uri.file(scriptPath);
+
 	const scriptUri = webviewPanel.webview.asWebviewUri(scriptPathOnDisk);
 
 	// Use a nonce to whitelist which scripts can be run
 	const nonce = getNonce();
+
 	return `<!DOCTYPE html>
   <html lang="en">
   <head>
@@ -382,6 +385,7 @@ export class JavaExtGuideViewSerializer
 		if (javaExtGuideView) {
 			javaExtGuideView.reveal();
 			webviewPanel.dispose();
+
 			return;
 		}
 

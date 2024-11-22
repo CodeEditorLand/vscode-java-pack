@@ -26,20 +26,25 @@ export class ProcessWatcher {
 	private jreHome?: string;
 	private lastHeartbeat?: string;
 	private context: vscode.ExtensionContext;
+
 	constructor(private daemon: LSDaemon) {
 		this.context = daemon.context;
 	}
 
 	public async start(): Promise<boolean> {
 		const javaExt = vscode.extensions.getExtension("redhat.java");
+
 		if (!javaExt) {
 			return false;
 		}
 		// get embedded JRE Home
 		let jreHome: string | undefined;
+
 		try {
 			const jreFolder = path.join(javaExt.extensionPath, "jre");
+
 			const jreDistros = await fs.promises.readdir(jreFolder);
+
 			if (jreDistros.length > 0) {
 				jreHome = path.join(jreFolder, jreDistros[0]);
 			}
@@ -84,7 +89,9 @@ export class ProcessWatcher {
 			this.pid,
 			"VM.uptime",
 		]);
+
 		const r = /\d+\.\d+ s/;
+
 		return execRes.stdout.match(r)?.toString();
 	}
 
@@ -97,11 +104,15 @@ export class ProcessWatcher {
 			this.pid,
 			"GC.heap_info",
 		]);
+
 		const ryoung = /PSYoungGen\s+total \d+K, used \d+K/;
+
 		const y = execRes.stdout.match(ryoung)?.toString();
 
 		const rold = /ParOldGen\s+total \d+K, used \d+K/;
+
 		const o = execRes.stdout.match(rold)?.toString();
+
 		return [y, o].join(os.EOL);
 	}
 
@@ -119,6 +130,7 @@ export class ProcessWatcher {
 	 */
 	private sendClientInitializeTime(seconds: string) {
 		const upTime = seconds.match(/\d+\.\d+/)?.toString();
+
 		if (upTime) {
 			let interval = Math.round(
 				performance.now() -
@@ -135,12 +147,17 @@ export class ProcessWatcher {
 
 function parseJdtlsJps(jdtlsJpsLine: string): IJdtlsMetadata {
 	const spaceIdx = jdtlsJpsLine.indexOf(" ");
+
 	const pid = jdtlsJpsLine.slice(0, spaceIdx);
+
 	const cmd = jdtlsJpsLine.slice(spaceIdx + 1);
+
 	const res = cmd.match(
 		/-XX:HeapDumpPath=(.*(redhat.java|vscodesws_[0-9a-f]{5}))/,
 	);
+
 	let workspace;
+
 	if (res && res[1]) {
 		workspace = res[1];
 	}
@@ -153,10 +170,13 @@ function parseJdtlsJps(jdtlsJpsLine: string): IJdtlsMetadata {
 
 async function getPidAndWS(jreHome: string, context: vscode.ExtensionContext) {
 	const jpsExecRes = await execFile(path.join(jreHome, "bin", "jps"), ["-v"]);
+
 	const jdtlsLines = jpsExecRes.stdout
 		.split(os.EOL)
 		.filter((line) => line.includes("org.eclipse.jdt.ls.core"));
+
 	let jdtlsJpsLine;
+
 	if (context.storageUri) {
 		jdtlsJpsLine = jdtlsLines.find((line) =>
 			line.includes(path.dirname(context.storageUri!.fsPath)),

@@ -55,8 +55,11 @@ export function redact(
 	const matchedMessage = MESSAGE_WHITELIST.find((msg) =>
 		rawMessage.includes(msg),
 	);
+
 	const message = matchedMessage ?? (consentToCollectLogs ? rawMessage : "");
+
 	const hash = sha1(matchedMessage ?? rawMessage);
+
 	const tags = TAGS.filter((tag) =>
 		rawMessage.toLocaleLowerCase().includes(tag),
 	);
@@ -71,5 +74,6 @@ export function redact(
 function sha1(content: string): string {
 	const hash = createHash("sha1");
 	hash.update(content);
+
 	return hash.digest("hex");
 }

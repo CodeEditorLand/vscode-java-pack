@@ -5,6 +5,7 @@ import * as vscode from "vscode";
 
 // in milliseconds
 let timeElapsed: number = 0;
+
 const INTERVAL = 1000;
 // reference - https://medium.com/@slhenty/ui-response-times-acec744f3157
 // 5s is when users start to lose focus
@@ -30,6 +31,7 @@ function vscodeEventHandler() {
 
 function timerEventHandler() {
 	timeElapsed += INTERVAL;
+
 	if (timeElapsed >= IDLE_THRESHOLD) {
 		timeElapsed = 0;
 		_onIdle.fire();

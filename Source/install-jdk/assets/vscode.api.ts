@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 declare function acquireVsCodeApi(): any;
+
 const vscode = acquireVsCodeApi();
 
 export function onWillFetchAvailableReleases() {

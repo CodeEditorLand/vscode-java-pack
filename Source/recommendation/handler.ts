@@ -43,6 +43,7 @@ export function extensionRecommendationHandler(
 		KEY_RECOMMENDATION_TIMESTAMP_MAP,
 		{},
 	);
+
 	if (!isForce && timeStampMap && timeStampMap[extName] !== undefined) {
 		return;
 	}

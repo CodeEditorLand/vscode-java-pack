@@ -32,7 +32,9 @@ https.globalAgent.options.rejectUnauthorized = false;
  */
 export async function availableReleases(): Promise<AdoptiumReleaseInfo> {
 	const uri = "https://api.adoptium.net/v3/info/available_releases";
+
 	const response = await axios.get(uri);
+
 	return response.data;
 }
 
@@ -91,7 +93,9 @@ export async function latestAssets(
 	jvmImpl: string,
 ): Promise<AdoptiumAsset[]> {
 	let uri = `https://api.adoptium.net/v3/assets/latest/${featureVersion}/${jvmImpl}`;
+
 	const response = await axios.get(uri);
+
 	return response.data;
 }
 
@@ -100,7 +104,9 @@ export async function latestCompatibleAsset(
 	jvmImpl: string,
 ): Promise<AdoptiumAsset | undefined> {
 	const assets = await latestAssets(featureVersion, jvmImpl);
+
 	let os: string = process.platform;
+
 	if (os === "win32") {
 		os = "windows";
 	} else if (os === "darwin") {
@@ -110,6 +116,7 @@ export async function latestCompatibleAsset(
 	}
 
 	let arch = process.arch as string;
+
 	if (arch === "arm64") {
 		arch = "aarch64";
 	}

@@ -91,6 +91,7 @@ export async function installExtensionCmdHandler(
 	displayName: string,
 ) {
 	sendInfo(operationId, { extName: extensionName });
+
 	return vscode.window
 		.withProgress(
 			{
@@ -143,6 +144,7 @@ export async function showReleaseNotesHandler(
 	version: string | undefined,
 ) {
 	const entries = await getReleaseNotesEntries(context);
+
 	const latest = findLatestReleaseNotes(entries);
 
 	if (version === "latest") {
@@ -185,8 +187,10 @@ export async function toggleAwtDevelopmentHandler(
 ) {
 	const workspaceConfig: vscode.WorkspaceConfiguration =
 		vscode.workspace.getConfiguration("java.completion");
+
 	const disabledList: string[] =
 		workspaceConfig.get<string[]>("filteredTypes") || [];
+
 	const filteredTypes: string[] = disabledList.filter((type) => {
 		return !type.startsWith("java.awt.");
 	});
@@ -203,6 +207,7 @@ export async function toggleAwtDevelopmentHandler(
 		);
 	} catch (e) {
 		vscode.window.showErrorMessage((e as Error).message);
+
 		return;
 	}
 

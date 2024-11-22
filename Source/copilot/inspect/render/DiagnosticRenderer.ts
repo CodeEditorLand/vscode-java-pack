@@ -31,6 +31,7 @@ export class DiagnosticRenderer implements InspectionRenderer {
 		this.diagnostics =
 			languages.createDiagnosticCollection(DIAGNOSTICS_GROUP);
 		context.subscriptions.push(this.diagnostics);
+
 		return this;
 	}
 
@@ -60,12 +61,16 @@ export class DiagnosticRenderer implements InspectionRenderer {
 		const oldItems: readonly InspectionDiagnostic[] = (this.diagnostics.get(
 			document.uri,
 		) ?? []) as InspectionDiagnostic[];
+
 		const oldIds: string[] = _.uniq(oldItems).map((c) => c.inspection.id);
+
 		const newIds: string[] = inspections.map((i) => i.id);
+
 		const toKeep: InspectionDiagnostic[] =
 			_.intersection(oldIds, newIds).map(
 				(id) => oldItems.find((c) => c.inspection.id === id)!,
 			) ?? [];
+
 		const toAdd: InspectionDiagnostic[] = _.difference(newIds, oldIds)
 			.map((id) => inspections.find((i) => i.id === id)!)
 			.map((i) => new InspectionDiagnostic(i));
@@ -78,10 +83,12 @@ class InspectionDiagnostic extends Diagnostic {
 		const range = Inspection.getIndicatorRangeOfInspection(
 			inspection.problem,
 		);
+
 		const severiy =
 			inspection.severity.toUpperCase() === "HIGH"
 				? DiagnosticSeverity.Information
 				: DiagnosticSeverity.Hint;
+
 		super(range, inspection.problem.description, severiy);
 		this.source = DIAGNOSTICS_GROUP;
 	}
@@ -97,12 +104,14 @@ export async function fixDiagnostic(
 		return [];
 	}
 	const actions: CodeAction[] = [];
+
 	for (const diagnostic of context.diagnostics) {
 		if (diagnostic.source !== DIAGNOSTICS_GROUP) {
 			continue;
 		}
 		const inspection: Inspection = (diagnostic as InspectionDiagnostic)
 			.inspection as Inspection;
+
 		const fixAction: CodeAction = {
 			title: inspection.solution,
 			diagnostics: [diagnostic],

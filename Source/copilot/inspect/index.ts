@@ -30,12 +30,14 @@ export async function activateCopilotInspection(
 	await waitUntilExtensionsInstalled(DEPENDENT_EXTENSIONS);
 	await waitUntilExtensionsActivated(DEPENDENT_EXTENSIONS);
 	logger.info("Activating Java Copilot features...");
+
 	doActivate(context);
 	logger.info("Java Copilot features activated.");
 }
 
 export function doActivate(context: ExtensionContext): void {
 	const copilot = new InspectionCopilot();
+
 	const renderer: DocumentRenderer = new DocumentRenderer().install(context);
 	registerCommands(copilot, renderer);
 
@@ -79,6 +81,7 @@ async function rewrite(
 			arguments: [document, range],
 		},
 	};
+
 	return [action];
 }
 
@@ -87,19 +90,23 @@ export async function waitUntilExtensionsActivated(
 	interval: number = 1500,
 ) {
 	const start = Date.now();
+
 	return new Promise<void>((resolve) => {
 		const notActivatedExtensionIds = extensionIds.filter(
 			(id) => !extensions.getExtension(id)?.isActive,
 		);
+
 		if (notActivatedExtensionIds.length == 0) {
 			logger.info(
 				`All dependent extensions [${extensionIds.join(", ")}] are activated.`,
 			);
+
 			return resolve();
 		}
 		logger.info(
 			`Dependent extensions [${notActivatedExtensionIds.join(", ")}] are not activated, waiting...`,
 		);
+
 		const id = setInterval(() => {
 			if (
 				extensionIds.every(
@@ -122,14 +129,17 @@ export async function waitUntilExtensionsActivated(
 
 export async function waitUntilExtensionsInstalled(extensionIds: string[]) {
 	const start = Date.now();
+
 	return new Promise<void>((resolve) => {
 		const notInstalledExtensionIds = extensionIds.filter(
 			(id) => !extensions.getExtension(id),
 		);
+
 		if (notInstalledExtensionIds.length == 0) {
 			logger.info(
 				`All dependent extensions [${extensionIds.join(", ")}] are installed.`,
 			);
+
 			return resolve();
 		}
 		sendInfo(

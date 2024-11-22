@@ -55,6 +55,7 @@ class InstallJdkPage {
 		},
 	) {
 		let column = vscode.ViewColumn.Active;
+
 		if (options?.beside) {
 			// "smart" Beside
 			const ate = vscode.window.activeTextEditor;
@@ -83,6 +84,7 @@ class InstallJdkPage {
 		columnOrwebviewPanel: vscode.ViewColumn | vscode.WebviewPanel,
 	) {
 		this._extensionPath = extensionPath;
+
 		if ((columnOrwebviewPanel as vscode.WebviewPanel).viewType) {
 			this._panel = columnOrwebviewPanel as vscode.WebviewPanel;
 		} else {
@@ -117,14 +119,19 @@ class InstallJdkPage {
 				switch (message.command) {
 					case "onWillFetchAvailableReleases":
 						this.doFetchAvailableReleases();
+
 						return;
 
 					case "onWillFetchAsset":
 						this.doFetchAsset(message.payload);
+
 						return;
+
 					case "onWillDownloadTemurinJDK":
 						this.doDownloadTemurinJDK(message.payload);
+
 						return;
+
 					case "onWillReloadWindow":
 						this.doReloadWindow();
 				}
@@ -177,6 +184,7 @@ class InstallJdkPage {
 
 		while (this._disposables.length) {
 			const x = this._disposables.pop();
+
 			if (x) {
 				x.dispose();
 			}
@@ -193,6 +201,7 @@ class InstallJdkPage {
 				"index.js",
 			),
 		);
+
 		const scriptUri = this._panel?.webview.asWebviewUri(scriptPathOnDisk);
 
 		// Use a nonce to whitelist which scripts can be run

@@ -35,6 +35,7 @@ export class CodeLensRenderer implements InspectionRenderer {
 			this.provider,
 		);
 		context.subscriptions.push(this.disposableRegistry);
+
 		return this;
 	}
 
@@ -64,12 +65,16 @@ export class CodeLensRenderer implements InspectionRenderer {
 			return;
 		}
 		const oldItems = this.codeLenses.get(document.uri) ?? [];
+
 		const oldIds: string[] = _.uniq(oldItems).map((c) => c.inspection.id);
+
 		const newIds: string[] = inspections.map((i) => i.id);
+
 		const toKeep: InspectionCodeLens[] =
 			_.intersection(oldIds, newIds).map(
 				(id) => oldItems.find((c) => c.inspection.id === id)!,
 			) ?? [];
+
 		const toAdd: InspectionCodeLens[] = _.difference(newIds, oldIds)
 			.map((id) => inspections.find((i) => i.id === id)!)
 			.flatMap((i) => CodeLensRenderer.toCodeLenses(document, i));
@@ -82,9 +87,11 @@ export class CodeLensRenderer implements InspectionRenderer {
 		inspection: Inspection,
 	): InspectionCodeLens[] {
 		const codeLenses = [];
+
 		const range = Inspection.getIndicatorRangeOfInspection(
 			inspection.problem,
 		);
+
 		const inspectionCodeLens = new InspectionCodeLens(inspection, range, {
 			title: capitalize(inspection.solution),
 			tooltip: inspection.problem.description,
@@ -100,6 +107,7 @@ export class CodeLensRenderer implements InspectionRenderer {
 			arguments: [document, inspection.symbol, inspection],
 		});
 		codeLenses.push(ignoreCodeLens);
+
 		return codeLenses;
 	}
 }

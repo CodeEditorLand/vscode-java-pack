@@ -12,6 +12,7 @@ export async function getReleaseNotesEntries(
 	context: vscode.ExtensionContext,
 ): Promise<ReleaseNotesEntry[]> {
 	const dir = context.asAbsolutePath("release-notes");
+
 	const regex = /v((0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*))\.md/g;
 
 	return new Promise<ReleaseNotesEntry[]>((resolve, reject) => {
@@ -19,6 +20,7 @@ export async function getReleaseNotesEntries(
 			if (err) {
 				sendError(err);
 				reject(err);
+
 				return;
 			}
 
@@ -26,6 +28,7 @@ export async function getReleaseNotesEntries(
 
 			files.forEach((fileName) => {
 				const match = regex.exec(fileName);
+
 				if (!match) {
 					return;
 				}

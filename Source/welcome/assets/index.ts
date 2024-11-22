@@ -12,6 +12,7 @@ import { onWillFetchInitProps } from "./utils";
 
 const onInitialize = (event: any) => {
 	const { data } = event;
+
 	if (data.command === "onDidFetchInitProps") {
 		ReactDOM.render(
 			React.createElement(GetStartedPage, data.props),

@@ -5,6 +5,7 @@ export const WEBVIEW_ID: string = "java.welcome";
 
 // RPC calls to VS Code
 declare function acquireVsCodeApi(): any;
+
 const vscode = acquireVsCodeApi && acquireVsCodeApi();
 
 export function setWelcomeVisibility(visibility: boolean) {

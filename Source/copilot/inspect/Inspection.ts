@@ -36,6 +36,7 @@ export interface InspectionProblem {
 
 export interface Inspection {
 	id: string;
+
 	document?: TextDocument;
 	symbol?: SymbolNode;
 	problem: InspectionProblem;
@@ -70,10 +71,13 @@ export namespace Inspection {
 		problem: InspectionProblem,
 	): Range {
 		const position = problem.position;
+
 		const startLine: number = position.line;
+
 		let startColumn: number = position.code.indexOf(problem.indicator),
 			endLine: number = -1,
 			endColumn: number = -1;
+
 		if (startColumn > -1) {
 			// highlight only the symbol
 			endLine = position.line;

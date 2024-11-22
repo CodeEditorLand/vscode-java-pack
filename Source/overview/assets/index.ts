@@ -18,7 +18,9 @@ window.addEventListener("message", (event) => {
 function syncExtensionVisibility(extensions: any) {
 	$("div[ext]").each((_index: any, elem: any) => {
 		const anchor = $(elem);
+
 		const ext = (anchor.attr("ext") || "").toLowerCase();
+
 		if (extensions.indexOf(ext) !== -1) {
 			anchor.hide();
 		} else {
@@ -40,6 +42,7 @@ function syncSectionVisibility() {
 }
 
 declare function acquireVsCodeApi(): any;
+
 const vscode = acquireVsCodeApi();
 
 $("#showWhenUsingJava").change(function () {
@@ -69,12 +72,14 @@ $("a[command]").click(function (event: any) {
 	event.stopPropagation();
 
 	const command = $(this).attr("command") || "";
+
 	const args = $(this).attr("args") || undefined;
 	execCommand(command, args);
 });
 
 $("button[command]").click(function () {
 	const command = $(this).attr("command") || "";
+
 	const args = $(this).attr("args") || undefined;
 	execCommand(command, args);
 });
@@ -82,8 +87,10 @@ $("button[command]").click(function () {
 function execCommand(command: string, jsonArgs: string | undefined) {
 	if (command) {
 		let args = [];
+
 		if (jsonArgs) {
 			const data = JSON.parse(jsonArgs);
+
 			if (Array.isArray(data)) {
 				args = data;
 			} else {

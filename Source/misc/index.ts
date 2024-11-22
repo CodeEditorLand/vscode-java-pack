@@ -27,13 +27,16 @@ export async function showReleaseNotesOnStart(
 	context: vscode.ExtensionContext,
 ) {
 	const entries = await getReleaseNotesEntries(context);
+
 	const latest = findLatestReleaseNotes(entries);
+
 	if (latest.version !== getExtensionVersion()) {
 		return; // in case we don't draft release note for a version.
 	}
 
 	const history: ReleaseNotesPresentationHistoryEntry[] =
 		context.globalState.get(RELEASE_NOTE_PRESENTATION_HISTORY) || [];
+
 	if (history.some((entry) => entry.version === latest.version)) {
 		return;
 	}

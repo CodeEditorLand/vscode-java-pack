@@ -12,6 +12,7 @@ interface Action {
 }
 
 const actionQueue: Action[] = [];
+
 const pastActions: string[] = [];
 
 export function initialize(context: vscode.ExtensionContext) {
@@ -27,6 +28,7 @@ export function scheduleAction(
 	const isPastAction =
 		_.some(actionQueue, (action) => action.name === name) ||
 		_.some(pastActions, name);
+
 	if (isOneTime && isPastAction) {
 		return Promise.reject(
 			`Action (${name}) was already scheduled or performed once.`,
@@ -36,6 +38,7 @@ export function scheduleAction(
 	return new Promise((resolve, _reject) => {
 		if (isImmediate) {
 			setImmediate(() => resolve(name));
+
 			return;
 		}
 

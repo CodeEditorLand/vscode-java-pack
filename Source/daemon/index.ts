@@ -19,6 +19,7 @@ export async function initDaemon(context: vscode.ExtensionContext) {
 	await daemon.initialize();
 
 	const activated = await checkJavaExtActivated(context);
+
 	if (activated) {
 		daemon.logWatcher.sendStartupMetadata("redhat.java activated");
 	}
@@ -28,6 +29,7 @@ async function checkJavaExtActivated(
 	context: vscode.ExtensionContext,
 ): Promise<boolean> {
 	const javaExt = vscode.extensions.getExtension("redhat.java");
+
 	if (!javaExt) {
 		return false;
 	}
@@ -39,9 +41,11 @@ async function checkJavaExtActivated(
 	// wait javaExt to activate
 	const timeout = 30 * 60 * 1000; // wait 30 min at most
 	let count = 0;
+
 	while (!javaExt.isActive && count < timeout) {
 		await delay(1000);
 		count += 1000;
+
 		if (count % 10000 === 0) {
 			checkIfJavaServerCrashed();
 		}
@@ -52,6 +56,7 @@ async function checkJavaExtActivated(
 			new Error("redhat.java extension not activated within 30 min"),
 		);
 		daemon.logWatcher.sendStartupMetadata("redhat.java activation timeout");
+
 		return false;
 	}
 
@@ -90,16 +95,20 @@ const INTERESTED_REQUESTS: Set<string> = new Set([
 	"initialize",
 	"textDocument/completion",
 ]);
+
 const CANCELLATION_CODE: number = -32800; // report such error if the request is cancelled.
 const CONTENT_MODIFIED_CODE: number = -32801; // report such error if semantic token request is outdated while content modified.
 const INTERNAL_ERROR_CODE: number = -32603; // Internal Error.
 let lspUsageStats: HybridLSPStats;
 async function traceLSPPerformance(javaExt: vscode.Extension<any>) {
 	const javaExtVersion = javaExt.packageJSON?.version;
+
 	const isPreReleaseVersion = /^\d+\.\d+\.\d{10}/.test(javaExtVersion);
+
 	const redHatTelemetryEnabled = workspace
 		.getConfiguration("redhat.telemetry")
 		.get("enabled", false);
+
 	const isTreatment =
 		!isPreReleaseVersion &&
 		(redHatTelemetryEnabled ||
@@ -108,11 +117,13 @@ async function traceLSPPerformance(javaExt: vscode.Extension<any>) {
 				TreatmentVariables.JavaCompletionSampling,
 				true /*checkCache*/,
 			)));
+
 	const sampling: string = isPreReleaseVersion
 		? "pre-release"
 		: isTreatment
 			? "sampling"
 			: "";
+
 	if (!isPreReleaseVersion && !isTreatment) {
 		return;
 	}
@@ -120,6 +131,7 @@ async function traceLSPPerformance(javaExt: vscode.Extension<any>) {
 	// Enable it since redhat.java@1.23.0
 	if (javaExt.exports?.onWillRequestStart) {
 		lspUsageStats = new HybridLSPStats(javaExtVersion, sampling);
+
 		try {
 			// Load HdrHistogramJS WASM module
 			if (vscode.env.uiKind === vscode.UIKind.Desktop) {
@@ -145,6 +157,7 @@ async function traceLSPPerformance(javaExt: vscode.Extension<any>) {
 	// Trace the interested LSP requests performance
 	javaExt.exports?.onDidRequestEnd?.((traceEvent: any) => {
 		const duration = Math.trunc(traceEvent.duration);
+
 		const fromSyntaxServer =
 			traceEvent.fromSyntaxServer === undefined
 				? ""
@@ -181,9 +194,12 @@ async function traceLSPPerformance(javaExt: vscode.Extension<any>) {
 
 		if (traceEvent.error) {
 			let code: number = traceEvent.error?.code || 0;
+
 			let errorMessage: string =
 				traceEvent.error?.message || String(traceEvent.error);
+
 			let exception: string = "";
+
 			if (code === CANCELLATION_CODE || code === CONTENT_MODIFIED_CODE) {
 				return;
 			}
@@ -199,6 +215,7 @@ async function traceLSPPerformance(javaExt: vscode.Extension<any>) {
 				const originalException = resolveActualCause(
 					traceEvent.error.data,
 				);
+
 				if (originalException) {
 					errorMessage =
 						errorMessage + " " + originalException.message;
@@ -218,6 +235,7 @@ async function traceLSPPerformance(javaExt: vscode.Extension<any>) {
 				data: redactDataProperties(traceEvent.data),
 				fromSyntaxServer,
 			});
+
 			return;
 		}
 
@@ -267,6 +285,7 @@ function redactDataProperties(data: any): string {
 
 async function traceJavaExtension(javaExt: vscode.Extension<any>) {
 	const javaExtVersion = javaExt.packageJSON?.version;
+
 	const isPreReleaseVersion = /^\d+\.\d+\.\d{10}/.test(javaExtVersion);
 	javaExt.exports?.trackEvent?.((event: any) => {
 		const metrics: any = {
@@ -278,6 +297,7 @@ async function traceJavaExtension(javaExt: vscode.Extension<any>) {
 
 		for (const key of Object.keys(event?.properties || {})) {
 			const val = event.properties[key];
+
 			if (typeof val == "object" || typeof val == "function") {
 				// non-primitive value
 				metrics[key] = JSON.stringify(val);
@@ -295,9 +315,13 @@ function traceJavaSettingUsage(
 	javaExt: vscode.Extension<any>,
 ) {
 	const javaExtVersion = javaExt.packageJSON?.version;
+
 	const isPreReleaseVersion = /^\d+\.\d+\.\d{10}/.test(javaExtVersion);
+
 	const javaConfigNames: Set<string> = new Set();
+
 	const configDefinition = javaExt.packageJSON?.contributes?.configuration;
+
 	if (Array.isArray(configDefinition)) {
 		for (const category of configDefinition) {
 			for (const key of Object.keys(category.properties || {})) {
@@ -366,15 +390,18 @@ async function checkIfJavaServerCrashed(wait: number = 0 /*ms*/) {
 	const corruptedCache =
 		!(await daemon.processWatcher.start()) &&
 		(await daemon.logWatcher.checkIfWorkspaceCorrupted());
+
 	if (!corruptedCacheDetected && corruptedCache) {
 		corruptedCacheDetected = true;
 		sendInfo("", {
 			name: "corrupted-cache",
 		});
+
 		const ans = await vscode.window.showErrorMessage(
 			"Java extension cannot start due to corrupted workspace cache, please try to clean the workspace.",
 			"Clean and Restart",
 		);
+
 		if (ans === "Clean and Restart") {
 			sendInfo("", {
 				name: "clean-cache-action",
@@ -406,6 +433,7 @@ function resolveActualCause(callstack: any): Exception | undefined {
 	}
 
 	const callstacks = callstack.split(/\r?\n/);
+
 	if (callstacks?.length) {
 		for (let i = callstacks.length - 1; i >= 0; i--) {
 			if (callstacks[i]?.startsWith("Caused by:")) {
@@ -549,10 +577,13 @@ class LSPUsageStats {
 
 	public sendStats() {
 		const startAt = Date.now();
+
 		if (Object.keys(this.requestStarts).length) {
 			const data: any = {};
+
 			for (const key of Object.keys(this.requestStarts)) {
 				const simpleKey = escapeLspRequestName(this.getSimpleKey(key));
+
 				const hdrObj = this.hdrs[key];
 				data[simpleKey] = [
 					this.requestStarts[key] - (this.requestEnds[key] || 0), // the number of requests that are not ended.

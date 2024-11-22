@@ -6,6 +6,7 @@ import * as vscode from "vscode";
 import { extensionRecommendationHandler } from "./handler";
 
 const EXTENSION_NAME = "redhat.vscode-xml";
+
 const RECOMMENDATION_MESSAGE =
 	"XML extension is recommended to check the syntax when editing pom.xml.";
 
@@ -30,6 +31,7 @@ export function initialize(context: vscode.ExtensionContext) {
 		vscode.workspace.textDocuments.findIndex((doc) =>
 			isPomDotXml(doc.uri),
 		) !== -1;
+
 	if (isPomDotXmlOpened) {
 		extensionRecommendationHandler(
 			context,
