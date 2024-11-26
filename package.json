@@ -301,7 +301,7 @@
 	"dependencies": {
 		"@iconify-icons/codicon": "1.2.30",
 		"@xmldom/xmldom": "0.9.5",
-		"axios": "1.7.7",
+		"axios": "1.7.8",
 		"bootstrap": "5.3.3",
 		"compare-versions": "6.1.1",
 		"expand-home-dir": "0.0.3",
@@ -320,7 +320,7 @@
 		"@types/expand-tilde": "2.0.2",
 		"@types/fs-extra": "11.0.4",
 		"@types/lodash": "4.17.13",
-		"@types/node": "22.9.1",
+		"@types/node": "22.10.0",
 		"@types/path-exists": "4.0.2",
 		"@types/semver": "7.5.8",
 		"@types/winreg": "1.2.36",
