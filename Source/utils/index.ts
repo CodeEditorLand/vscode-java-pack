@@ -60,6 +60,7 @@ export async function loadTextFromFile(resourceUri: string) {
 }
 
 export * from "./release-notes";
+
 export * from "./extension";
 
 export async function webviewCmdLinkHandler(obj: {

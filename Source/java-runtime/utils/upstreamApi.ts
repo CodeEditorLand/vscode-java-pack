@@ -17,6 +17,7 @@ import * as vscode from "vscode";
 import { env, workspace } from "vscode";
 
 const expandHomeDir = require("expand-home-dir");
+
 export const REQUIRED_JDK_VERSION = 17;
 
 export async function resolveRequirements(): Promise<{

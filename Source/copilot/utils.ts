@@ -25,10 +25,12 @@ export const CLASS_KINDS: SymbolKind[] = [
 	SymbolKind.Interface,
 	SymbolKind.Enum,
 ];
+
 export const METHOD_KINDS: SymbolKind[] = [
 	SymbolKind.Method,
 	SymbolKind.Constructor,
 ];
+
 export const FIELD_KINDS: SymbolKind[] = [
 	SymbolKind.Field,
 	SymbolKind.Property,

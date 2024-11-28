@@ -14,6 +14,7 @@ import { LSDaemon } from "./daemon";
 const delay = promisify(setTimeout);
 
 let daemon: LSDaemon;
+
 export async function initDaemon(context: vscode.ExtensionContext) {
 	daemon = new LSDaemon(context);
 	await daemon.initialize();

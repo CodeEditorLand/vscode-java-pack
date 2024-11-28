@@ -21,8 +21,11 @@ import InspectionCopilot from "./InspectionCopilot";
 import { SymbolNode } from "./SymbolNode";
 
 export const COMMAND_INSPECT_CLASS = "java.copilot.inspect.class";
+
 export const COMMAND_INSPECT_RANGE = "java.copilot.inspect.range";
+
 export const COMMAND_FIX_INSPECTION = "java.copilot.inspection.fix";
+
 export const COMMAND_IGNORE_INSPECTIONS = "java.copilot.inspection.ignore";
 
 const LEARN_MORE_RESPONSE_FILTERED =

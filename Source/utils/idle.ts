@@ -39,4 +39,5 @@ function timerEventHandler() {
 }
 
 const _onIdle: vscode.EventEmitter<void> = new vscode.EventEmitter();
+
 export const onIdle: vscode.Event<void> = _onIdle.event;
