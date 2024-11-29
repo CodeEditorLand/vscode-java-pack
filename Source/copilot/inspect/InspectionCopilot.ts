@@ -35,6 +35,7 @@ export default class InspectionCopilot extends Copilot {
     Current project uses Java ${context.javaVersion}. please suggest improvements compatible with this version for code below (do not format the reponse, and do not respond markdown):    
     ${code}
     `;
+
 	public static readonly SYSTEM_MESSAGE = `
     **You are expert at Java and promoting newer built-in features of Java.**
     Your identify and suggest improvements for Java code blocks that can be optimized using newer features of Java. Keep the following guidelines in mind:
@@ -57,18 +58,22 @@ export default class InspectionCopilot extends Copilot {
     - Conclude your response with "//${Copilot.DEFAULT_END_MARK}".
     Remember, your aim is to enhance the code, and promote the use of newer built-in Java features at the same time!
     `;
+
 	public static readonly EXAMPLE_USER_MESSAGE = this.FORMAT_CODE(
 		{ javaVersion: "17" },
 		`
     @Entity
     public class EmployeePojo implements Employee {
         private final String name;
+
         public EmployeePojo(String name) {
             this.name = name;
         }
+
         public String getName() {
             return name;
         }
+
         public String getRole() {
             String result = "";
 
@@ -79,10 +84,12 @@ export default class InspectionCopilot extends Copilot {
             } else {
                 result = "FTE";
             }
+
             return result;
         }
     }`,
 	);
+
 	public static readonly EXAMPLE_ASSISTANT_MESSAGE = `
     @Entity
     // @PROBLEM: Using traditional POJO
@@ -91,12 +98,15 @@ export default class InspectionCopilot extends Copilot {
     // @SEVERITY: MIDDLE
     public class EmployeePojo implements Employee {
         private final String name;
+
         public EmployeePojo(String name) {
             this.name = name;
         }
+
         public String getName() {
             return name;
         }
+
         public String getRole() {
             String result = "";
             // @PROBLEM: Using multiple if-else
@@ -110,6 +120,7 @@ export default class InspectionCopilot extends Copilot {
             } else {
                 result = "FTE";
             }
+
             return result;
         }
     }
@@ -118,15 +129,21 @@ export default class InspectionCopilot extends Copilot {
 
 	// Initialize regex patterns
 	private static readonly COMMENT_PATTERN: RegExp = /\/\/ @[A-Z]+: (.*)/;
+
 	private static readonly PROBLEM_PATTERN: RegExp = /\/\/ @PROBLEM: (.*)/;
+
 	private static readonly SOLUTION_PATTERN: RegExp = /\/\/ @SOLUTION: (.*)/;
+
 	private static readonly INDICATOR_PATTERN: RegExp = /\/\/ @INDICATOR: (.*)/;
+
 	private static readonly LEVEL_PATTERN: RegExp = /\/\/ @SEVERITY: (.*)/;
+
 	private static readonly INSPECTION_COMMENT_LINE_COUNT = 4;
 
 	private static readonly DEFAULT_MAX_CONCURRENCIES: number = 3;
 
 	private readonly debounceMap = new Map<string, NodeJS.Timeout>();
+
 	private readonly inspecting: Set<TextDocument> = new Set<TextDocument>();
 
 	public constructor(
@@ -189,15 +206,18 @@ export default class InspectionCopilot extends Copilot {
 			logger.warn(
 				"Copilot is busy, please retry after current inspecting tasks is finished.",
 			);
+
 			void window.showWarningMessage(
 				`Copilot is busy, please retry after current inspecting tasks are finished.`,
 			);
 
 			return Promise.resolve([]);
 		}
+
 		if (this.inspecting.has(document)) {
 			return Promise.resolve([]);
 		}
+
 		try {
 			this.inspecting.add(document);
 			// ajust the range to the minimal container class or method symbols
@@ -214,6 +234,7 @@ export default class InspectionCopilot extends Copilot {
 			if (symbols.length < 1) {
 				const containingClass: SymbolNode =
 					await getInnermostClassContainsRange(range, document);
+
 				symbols.push(containingClass);
 			}
 
@@ -263,6 +284,7 @@ export default class InspectionCopilot extends Copilot {
 							);
 					});
 			}
+
 			InspectionCache.cache(document, symbols, inspections);
 
 			return inspections;
@@ -301,8 +323,10 @@ export default class InspectionCopilot extends Copilot {
 		// inspect code with debounce if key is provided
 		if (this.debounceMap.has(key)) {
 			clearTimeout(this.debounceMap.get(key) as NodeJS.Timeout);
+
 			logger.debug(`debounced`, key);
 		}
+
 		return new Promise<Inspection[]>((resolve) => {
 			this.debounceMap.set(
 				key,
@@ -311,6 +335,7 @@ export default class InspectionCopilot extends Copilot {
 						void _doInspectCode(code, context).then(
 							(inspections) => {
 								this.debounceMap.delete(key);
+
 								resolve(inspections);
 							},
 						);
@@ -340,6 +365,7 @@ export default class InspectionCopilot extends Copilot {
 		const projectContext = await this.collectProjectContext(document);
 
 		const inspections = await this.inspectCode(content, projectContext);
+
 		inspections.forEach((s) => {
 			s.document = document;
 			// real line index to the start of the document
@@ -423,9 +449,12 @@ export default class InspectionCopilot extends Copilot {
 					// relative line number to the start of the code inspected, which will be ajusted relative to the start of container symbol later when caching.
 					inspection.problem.position.relativeLine =
 						codeLines[codeLineIndex].originalLineIndex ?? -1;
+
 					inspection.problem.position.code =
 						codeLines[codeLineIndex].content;
+
 					inspections.push(inspection);
+
 					i += InspectionCopilot.INSPECTION_COMMENT_LINE_COUNT; // inspection comment has 4 lines
 					commentLineCount +=
 						InspectionCopilot.INSPECTION_COMMENT_LINE_COUNT;
@@ -435,6 +464,7 @@ export default class InspectionCopilot extends Copilot {
 					commentLineCount++;
 				}
 			}
+
 			i++;
 		}
 
@@ -508,7 +538,9 @@ export default class InspectionCopilot extends Copilot {
 
 		for (
 			let originalLineIndex = 0;
+
 			originalLineIndex < originalLines.length;
+
 			originalLineIndex++
 		) {
 			const trimmedLine = originalLines[originalLineIndex].trim();
@@ -535,6 +567,7 @@ export default class InspectionCopilot extends Copilot {
 				inBlockComment = false;
 			}
 		}
+
 		return codeLines;
 	}
 
@@ -544,6 +577,7 @@ export default class InspectionCopilot extends Copilot {
 		logger.info("colleteting project context info (java version)...");
 
 		const javaVersion = await getProjectJavaVersion(document);
+
 		logger.info("project java version:", javaVersion);
 
 		return { javaVersion };

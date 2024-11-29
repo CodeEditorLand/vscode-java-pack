@@ -19,15 +19,18 @@ import path = require("path");
 
 export class GutterIconRenderer implements InspectionRenderer {
 	private readonly gutterIcons: Map<Uri, InspectionGutterIcon[]> = new Map();
+
 	private gutterIconDecorationType: TextEditorDecorationType | undefined;
 
 	public install(context: ExtensionContext): InspectionRenderer {
 		if (this.gutterIconDecorationType) return this;
+
 		logger.debug(`[GutterIconRenderer] install`);
 
 		const icon = Uri.file(
 			path.join(context.asAbsolutePath("resources"), `gutter-blue.svg`),
 		);
+
 		this.gutterIconDecorationType = window.createTextEditorDecorationType({
 			isWholeLine: true,
 			gutterIconPath: icon,
@@ -39,14 +42,19 @@ export class GutterIconRenderer implements InspectionRenderer {
 
 	public uninstall(): void {
 		if (!this.gutterIconDecorationType) return;
+
 		logger.debug(`[GutterIconRenderer] uninstall`);
+
 		this.gutterIcons.clear();
+
 		window.visibleTextEditors.forEach(
 			(editor) =>
 				this.gutterIconDecorationType &&
 				editor.setDecorations(this.gutterIconDecorationType, []),
 		);
+
 		this.gutterIconDecorationType.dispose();
+
 		this.gutterIconDecorationType = undefined;
 	}
 
@@ -58,6 +66,7 @@ export class GutterIconRenderer implements InspectionRenderer {
 		} else {
 			this.gutterIcons?.clear();
 		}
+
 		window.visibleTextEditors.forEach(
 			(editor) =>
 				this.gutterIconDecorationType &&
@@ -98,6 +107,7 @@ export class GutterIconRenderer implements InspectionRenderer {
 			.map((i) => GutterIconRenderer.toGutterIcon(i));
 
 		const newGutterIcons: InspectionGutterIcon[] = [...toKeep, ...toAdd];
+
 		this.gutterIcons.set(document.uri, newGutterIcons);
 
 		editor.setDecorations(this.gutterIconDecorationType, newGutterIcons);
@@ -118,6 +128,7 @@ export class GutterIconRenderer implements InspectionRenderer {
 			`${inspection.problem.description}\n\n$(copilot) [${inspection.solution}](${commandUri})`,
 			true,
 		);
+
 		hoverMessage.isTrusted = true;
 
 		return { range, hoverMessage, inspection };

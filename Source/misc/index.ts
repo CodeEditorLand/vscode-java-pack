@@ -20,6 +20,7 @@ export enum HelpViewType {
 
 type ReleaseNotesPresentationHistoryEntry = {
 	version: string;
+
 	timeStamp: string;
 };
 

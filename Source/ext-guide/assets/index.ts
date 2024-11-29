@@ -29,7 +29,9 @@ $("a[data-toggle='tab']").on("shown.bs.tab", (e: any) => {
 	});
 
 	bsHide($("p[ext]:visible"));
+
 	bsHide($("#btn-learn-more"));
+
 	updateSelection();
 });
 
@@ -49,10 +51,12 @@ $("tr").hover((e: any) => {
 	}
 
 	const $nextDesc = $(`p[ext='${ext}'].d-none`);
+
 	bsShow($nextDesc);
 
 	const $learnMore = $("#btn-learn-more");
 	$learnMore.attr("href", `command:java.helper.showExtension?%22${ext}%22`);
+
 	bsShow($learnMore);
 });
 
@@ -68,6 +72,7 @@ function updateSelection() {
 	}
 
 	$btnSelected.text(`Install Selected (${$checked.length})`);
+
 	bsShow($btnSelected);
 }
 

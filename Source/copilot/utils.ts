@@ -107,6 +107,7 @@ export function getUnionRange(symbols: SymbolNode[]): Range {
 	for (const symbol of symbols) {
 		result = result.union(symbol.range);
 	}
+
 	return result;
 }
 
@@ -132,6 +133,7 @@ export async function getSymbolsOfDocument(
 
 		if (CLASS_KINDS.includes(symbol.kind)) {
 			result.push(symbol);
+
 			stack.push(...symbol.children.reverse());
 		} else if (
 			METHOD_KINDS.includes(symbol.kind) ||
@@ -140,6 +142,7 @@ export async function getSymbolsOfDocument(
 			result.push(symbol);
 		}
 	}
+
 	return result;
 }
 
@@ -240,11 +243,13 @@ export function fixedInstrumentOperation(
 			return await cb.apply(thisArg, [operationId, ...args]);
 		} catch (e) {
 			error = e as Error;
+
 			sendOperationError(operationId, operationName, error);
 			// NOTE: re-throw the error to the caller
 			throw e;
 		} finally {
 			const duration = Date.now() - startAt;
+
 			sendOperationEnd(operationId, operationName, duration, error);
 		}
 	};

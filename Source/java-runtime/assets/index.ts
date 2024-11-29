@@ -29,6 +29,7 @@ function showJavaRuntimeEntries(args: any) {
 			javaHomeError: args.javaHomeError,
 			javaDotHome: args.javaDotHome,
 		};
+
 		ReactDOM.render(
 			React.createElement(ToolingJDKPanel, props),
 			document.getElementById("content"),
@@ -38,6 +39,7 @@ function showJavaRuntimeEntries(args: any) {
 			jdkEntries: args.javaRuntimes,
 			projectRuntimes: args.projectRuntimes,
 		};
+
 		ReactDOM.render(
 			React.createElement(ProjectJDKPanel, props),
 			document.getElementById("content"),

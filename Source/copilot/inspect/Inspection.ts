@@ -14,6 +14,7 @@ export interface InspectionProblem {
 	 * short description of the problem
 	 */
 	description: string;
+
 	position: {
 		/**
 		 * real line number to the start of the document, will change
@@ -38,9 +39,13 @@ export interface Inspection {
 	id: string;
 
 	document?: TextDocument;
+
 	symbol?: SymbolNode;
+
 	problem: InspectionProblem;
+
 	solution: string;
+
 	severity: string;
 }
 
@@ -54,10 +59,12 @@ export namespace Inspection {
 						const range = getIndicatorRangeOfInspection(
 							inspection.problem,
 						);
+
 						editor.selection = new Selection(
 							range.start,
 							range.end,
 						);
+
 						editor.revealRange(range);
 					});
 				});
@@ -81,13 +88,16 @@ export namespace Inspection {
 		if (startColumn > -1) {
 			// highlight only the symbol
 			endLine = position.line;
+
 			endColumn = startColumn + problem.indicator?.length;
 		} else {
 			// highlight entire first line
 			startColumn = position.code.search(/\S/) ?? 0; // first non-whitespace character
 			endLine = position.line;
+
 			endColumn = position.code.length; // last character
 		}
+
 		return new Range(
 			new Position(startLine, startColumn),
 			new Position(endLine, endColumn),

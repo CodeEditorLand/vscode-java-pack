@@ -34,10 +34,12 @@ const COMPLIANCE_LEVEL = "org.eclipse.jdt.core.compiler.compliance";
 
 export class CompilerRequestHandler implements vscode.Disposable {
 	private webview: vscode.Webview;
+
 	private disposables: vscode.Disposable[] = [];
 
 	constructor(webview: vscode.Webview) {
 		this.webview = webview;
+
 		this.disposables.push(
 			this.webview.onDidReceiveMessage(async (message) => {
 				switch (message.command) {
@@ -108,6 +110,7 @@ export class CompilerRequestHandler implements vscode.Disposable {
 					COMPLIANCE_LEVEL,
 				],
 			);
+
 			this.webview.postMessage({
 				command: "compiler.onDidGetCompilerSettings",
 				useRelease: response?.[USE_RELEASE] === "enabled",
@@ -143,6 +146,7 @@ export class CompilerRequestHandler implements vscode.Disposable {
 				string,
 				string
 			>();
+
 			compilerSettings.set(
 				USE_RELEASE,
 				useRelease ? "enabled" : "disabled",
@@ -151,30 +155,39 @@ export class CompilerRequestHandler implements vscode.Disposable {
 			if (useRelease) {
 				// if useRelease is enabled, source and target level should honor the compliance level.
 				compilerSettings.set(COMPLIANCE_LEVEL, complianceLevel);
+
 				compilerSettings.set(SOURCE_COMPATIBILITY, complianceLevel);
+
 				compilerSettings.set(TARGET_COMPATIBILITY, complianceLevel);
 			} else {
 				// if useRelease is disabled, compliance level should be the same as target level.
 				compilerSettings.set(COMPLIANCE_LEVEL, targetLevel);
+
 				compilerSettings.set(SOURCE_COMPATIBILITY, sourceLevel);
+
 				compilerSettings.set(TARGET_COMPATIBILITY, targetLevel);
 			}
+
 			compilerSettings.set(
 				ENABLE_PREVIEW_FEATURES,
 				enablePreview ? "enabled" : "disabled",
 			);
+
 			compilerSettings.set(
 				ADD_VARIABlLE_ATTRIBUTE,
 				generateDebugInfo ? "generate" : "do not generate",
 			);
+
 			compilerSettings.set(
 				ADD_LINE_NUMBER_ATTRIBUTE,
 				generateDebugInfo ? "generate" : "do not generate",
 			);
+
 			compilerSettings.set(
 				ADD_SOURCE_FILE_NAME,
 				generateDebugInfo ? "generate" : "do not generate",
 			);
+
 			compilerSettings.set(
 				STORE_METHOD_PARAMETER_INFO,
 				storeMethodParamNames ? "generate" : "do not generate",
@@ -220,11 +233,13 @@ export class CompilerRequestHandler implements vscode.Disposable {
 		if (!packageJson) {
 			const errorString =
 				"The required extension 'redhat.java' is not installed.";
+
 			vscode.window.showErrorMessage(errorString);
 
 			const err: Error = new Error(errorString);
 
 			setUserError(err);
+
 			sendError(err);
 
 			return;

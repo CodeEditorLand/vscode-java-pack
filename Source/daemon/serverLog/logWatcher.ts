@@ -20,8 +20,11 @@ import { redact } from "./whitelist";
 
 export class LogWatcher {
 	private serverLogUri: vscode.Uri | undefined;
+
 	private logProcessedTimestamp: number = Date.now();
+
 	private context: vscode.ExtensionContext;
+
 	private watcher: vscode.FileSystemWatcher | undefined;
 
 	constructor(daemon: LSDaemon) {
@@ -39,6 +42,7 @@ export class LogWatcher {
 				"jdt_ws",
 				".metadata",
 			);
+
 			this.serverLogUri = this.context.storageUri.with({
 				path: serverLogPath,
 			});
@@ -54,6 +58,7 @@ export class LogWatcher {
 				const jdtWsPath: string = await vscode.commands.executeCommand(
 					"_java.workspace.path",
 				);
+
 				this.serverLogUri = vscode.Uri.file(
 					path.join(jdtWsPath, ".metadata"),
 				);
@@ -77,6 +82,7 @@ export class LogWatcher {
 		this.watcher = vscode.workspace.createFileSystemWatcher(
 			new vscode.RelativePattern(this.serverLogUri, "*.log"),
 		);
+
 		this.watcher.onDidChange(async (e) => {
 			if (Date.now() - this.logProcessedTimestamp < 1000) {
 				return;
@@ -108,9 +114,11 @@ export class LogWatcher {
 					if (consentToCollectLogs && e.stack) {
 						infoBody.stack = e.stack;
 					}
+
 					sendInfo("", infoBody);
 				});
 			}
+
 			this.logProcessedTimestamp = Date.now();
 		});
 	}
@@ -118,6 +126,7 @@ export class LogWatcher {
 	public stop() {
 		if (this.watcher) {
 			this.watcher.dispose();
+
 			this.watcher = undefined;
 		}
 	}
@@ -132,6 +141,7 @@ export class LogWatcher {
 			);
 
 			const metadata = sessionMetadata(logs);
+
 			sendInfo("", {
 				name: "jdtls-startup-metadata",
 				remark: remark!,
@@ -196,6 +206,7 @@ export class LogWatcher {
 					if (consentToCollectLogs && e.stack) {
 						infoBody.stack = e.stack;
 					}
+
 					sendInfo("", infoBody);
 				});
 			}

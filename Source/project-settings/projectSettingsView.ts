@@ -53,6 +53,7 @@ class ProjectSettingView {
 						command: "main.onWillChangeRoute",
 						route: sectionId,
 					});
+
 					oneTimeHook.dispose();
 				});
 		} else {
@@ -62,6 +63,7 @@ class ProjectSettingView {
 				route: sectionId,
 			});
 		}
+
 		projectSettingsPanel.reveal();
 	}
 
@@ -138,6 +140,7 @@ class ProjectSettingView {
 			if (!(await this.checkRequirement())) {
 				return;
 			}
+
 			let projects: ProjectInfo[] = await this.getProjectsFromLS();
 
 			_.remove(projects, (p: ProjectInfo) => {
@@ -166,6 +169,7 @@ class ProjectSettingView {
 		if (lsApi) {
 			return true;
 		}
+
 		const javaExt = vscode.extensions.getExtension("redhat.java");
 
 		if (!javaExt) {
@@ -179,6 +183,7 @@ class ProjectSettingView {
 			);
 
 			setUserError(err);
+
 			sendError(err);
 
 			return false;
@@ -199,12 +204,14 @@ class ProjectSettingView {
 			);
 
 			setUserError(err);
+
 			sendError(err);
 
 			return false;
 		}
 
 		await javaExt.activate();
+
 		lsApi = javaExt.exports;
 
 		if (lsApi) {
@@ -244,6 +251,7 @@ class ProjectSettingView {
 				rootPath: projectRoot,
 			});
 		}
+
 		return ret;
 	}
 
@@ -276,6 +284,7 @@ class ProjectSettingView {
 		"projectSetting.executeCommand",
 		async (operationId: string, commandId: string) => {
 			await vscode.commands.executeCommand(commandId);
+
 			sendInfo(operationId, {
 				operationName: "projectSetting.executeCommand",
 				arg: commandId,
@@ -292,12 +301,14 @@ export class ProjectSettingsViewSerializer
 		_state: any,
 	) {
 		projectSettingsPanel = webviewPanel;
+
 		await projectSettingView.initializeWebview(getExtensionContext());
 	}
 }
 
 interface LanguageServerAPI {
 	onDidProjectsImport: vscode.Event<vscode.Uri>;
+
 	onDidClasspathUpdate: vscode.Event<vscode.Uri>;
 }
 

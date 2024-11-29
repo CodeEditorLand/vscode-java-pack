@@ -20,12 +20,15 @@ export function getProjectType(
 	) {
 		return ProjectType.Gradle;
 	}
+
 	if (natureIds.includes(NatureId.Maven)) {
 		return ProjectType.Maven;
 	}
+
 	if (natureIds.includes(NatureId.UnmanagedFolder)) {
 		return ProjectType.UnmanagedFolder;
 	}
+
 	return ProjectType.Others;
 }
 

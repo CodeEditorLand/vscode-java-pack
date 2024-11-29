@@ -64,12 +64,14 @@ async function initializeJavaRuntimeView(
 			path.join(context.extensionPath, "caption.dark.svg"),
 		),
 	};
+
 	webviewPanel.webview.html = getHtmlForWebview(
 		webviewPanel,
 		context.asAbsolutePath("./out/assets/java-runtime/index.js"),
 	);
 
 	context.subscriptions.push(webviewPanel.onDidDispose(onDisposeCallback));
+
 	context.subscriptions.push(
 		webviewPanel.webview.onDidReceiveMessage(async (e) => {
 			switch (e.command) {
@@ -80,8 +82,10 @@ async function initializeJavaRuntimeView(
 
 					break;
 				}
+
 				case "updateJavaHome": {
 					const { javaHome } = e;
+
 					await vscode.workspace
 						.getConfiguration("java")
 						.update(
@@ -92,6 +96,7 @@ async function initializeJavaRuntimeView(
 
 					break;
 				}
+
 				case "updateRuntimePath": {
 					const { sourceLevel, runtimePath } = e;
 
@@ -110,6 +115,7 @@ async function initializeJavaRuntimeView(
 							path: runtimePath,
 						});
 					}
+
 					await vscode.workspace
 						.getConfiguration("java")
 						.update(
@@ -117,12 +123,14 @@ async function initializeJavaRuntimeView(
 							runtimes,
 							vscode.ConfigurationTarget.Global,
 						);
+
 					findJavaRuntimeEntries().then((data) => {
 						showJavaRuntimeEntries(data);
 					});
 
 					break;
 				}
+
 				case "setDefaultRuntime": {
 					const { runtimePath, majorVersion } = e;
 
@@ -150,6 +158,7 @@ async function initializeJavaRuntimeView(
 
 						if (targetRuntime) {
 							targetRuntime.path = runtimePath;
+
 							targetRuntime.default = true;
 						} else {
 							runtimes.push({
@@ -159,6 +168,7 @@ async function initializeJavaRuntimeView(
 							});
 						}
 					}
+
 					await vscode.workspace
 						.getConfiguration("java")
 						.update(
@@ -166,18 +176,21 @@ async function initializeJavaRuntimeView(
 							runtimes,
 							vscode.ConfigurationTarget.Global,
 						);
+
 					findJavaRuntimeEntries().then((data) => {
 						showJavaRuntimeEntries(data);
 					});
 
 					break;
 				}
+
 				case "openBuildScript": {
 					const { scriptFile, rootUri } = e;
 
 					const rootPath = vscode.Uri.parse(rootUri).fsPath;
 
 					const fullPath = path.join(rootPath, scriptFile);
+
 					vscode.commands.executeCommand(
 						"vscode.open",
 						vscode.Uri.file(fullPath),
@@ -185,6 +198,7 @@ async function initializeJavaRuntimeView(
 
 					break;
 				}
+
 				case "onWillBrowseForJDK": {
 					const javaHomeUri: vscode.Uri[] | undefined =
 						await vscode.window.showOpenDialog({
@@ -211,10 +225,13 @@ async function initializeJavaRuntimeView(
 							);
 						}
 					}
+
 					break;
 				}
+
 				case "onWillRunCommandFromWebview": {
 					const { wrappedArgs } = e;
+
 					vscode.commands.executeCommand(
 						"java.webview.runCommand",
 						wrappedArgs,
@@ -222,6 +239,7 @@ async function initializeJavaRuntimeView(
 
 					break;
 				}
+
 				default:
 					break;
 			}
@@ -247,6 +265,7 @@ async function initializeJavaRuntimeView(
 				showJavaRuntimeEntries(data);
 			});
 		});
+
 		context.subscriptions.push(
 			webviewPanel.onDidDispose(() => listener.dispose()),
 		);
@@ -289,12 +308,14 @@ export class JavaRuntimeViewSerializer
 	) {
 		if (javaRuntimeView) {
 			javaRuntimeView.reveal();
+
 			webviewPanel.dispose();
 
 			return;
 		}
 
 		javaRuntimeView = webviewPanel;
+
 		initializeJavaRuntimeView(
 			getExtensionContext(),
 			webviewPanel,
@@ -323,8 +344,11 @@ export async function validateJavaRuntime() {
 
 export async function findJavaRuntimeEntries(): Promise<{
 	javaRuntimes?: JavaRuntimeEntry[];
+
 	projectRuntimes?: ProjectRuntimeEntry[];
+
 	javaDotHome?: string;
+
 	javaHomeError?: string;
 }> {
 	if (!javaHomes) {
@@ -332,8 +356,10 @@ export async function findJavaRuntimeEntries(): Promise<{
 			checkJavac: true,
 			withVersion: true,
 		});
+
 		javaHomes = runtimes.filter((r) => r.hasJavac);
 	}
+
 	const javaRuntimes: JavaRuntimeEntry[] = javaHomes
 		.map((elem) => ({
 			name: elem.homedir,
@@ -349,6 +375,7 @@ export async function findJavaRuntimeEntries(): Promise<{
 
 	try {
 		const runtime = await resolveRequirements();
+
 		javaDotHome = runtime.tooling_jre;
 
 		const javaVersion = runtime.tooling_jre_version;
@@ -407,6 +434,7 @@ async function getProjectRuntimesFromPM(): Promise<ProjectRuntimeEntry[]> {
 					vscode.Uri.parse(project.uri).fsPath,
 					runtimeSpec.natureIds,
 				);
+
 				ret.push({
 					name: project.displayName || project.name,
 					rootPath: project.uri,
@@ -416,6 +444,7 @@ async function getProjectRuntimesFromPM(): Promise<ProjectRuntimeEntry[]> {
 			}
 		}
 	}
+
 	return ret;
 }
 
@@ -444,6 +473,7 @@ async function getProjectRuntimesFromLS(): Promise<ProjectRuntimeEntry[]> {
 				vscode.Uri.parse(projectRoot).fsPath,
 				runtimeSpec.natureIds,
 			);
+
 			ret.push({
 				name: getProjectNameFromUri(projectRoot),
 				rootPath: projectRoot,
@@ -452,6 +482,7 @@ async function getProjectRuntimesFromLS(): Promise<ProjectRuntimeEntry[]> {
 			});
 		}
 	}
+
 	return ret;
 }
 
@@ -476,8 +507,11 @@ async function getRuntimeSpec(projectRootUri: string) {
 				projectRootUri,
 				[NATURE_IDS, SOURCE_LEVEL_KEY, VM_INSTALL_PATH],
 			);
+
 			natureIds = settings[NATURE_IDS];
+
 			runtimePath = settings[VM_INSTALL_PATH];
+
 			sourceLevel = settings[SOURCE_LEVEL_KEY];
 		} catch (error) {
 			console.warn(error);

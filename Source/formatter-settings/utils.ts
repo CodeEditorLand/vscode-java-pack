@@ -33,6 +33,7 @@ export async function getProfilePath(formatterUrl: string): Promise<string> {
 	} else {
 		return path.resolve(formatterUrl);
 	}
+
 	return "";
 }
 
@@ -50,6 +51,7 @@ export function getVSCodeSetting(setting: string, defaultValue: any) {
 
 		return defaultValue;
 	}
+
 	return result;
 }
 
@@ -73,9 +75,11 @@ export async function addDefaultProfile(
 		context,
 		"java-formatter.xml",
 	);
+
 	await fse.copy(defaultProfile, profilePath);
 
 	const workspaceFolders = vscode.workspace.workspaceFolders;
+
 	await vscode.workspace
 		.getConfiguration("java")
 		.update(
@@ -85,6 +89,7 @@ export async function addDefaultProfile(
 				: profilePath,
 			!workspaceFolders?.length,
 		);
+
 	vscode.commands.executeCommand(
 		"vscode.openWith",
 		vscode.Uri.file(profilePath),
@@ -108,7 +113,9 @@ export async function getAbsoluteTargetPath(
 		);
 	} else {
 		const folder: string = context.globalStorageUri.fsPath;
+
 		await fse.ensureDir(folder);
+
 		profilePath = path.join(folder, fileName);
 	}
 	// bug: https://github.com/redhat-developer/vscode-java/issues/1944, only the profiles in posix path can be monitored when changes, so we use posix path for default profile creation temporarily.
@@ -163,6 +170,7 @@ export function parseProfile(document: vscode.TextDocument): ProfileContent {
 	if (!documentDOM) {
 		return { isValid: false, settingsVersion, diagnostics };
 	}
+
 	settingsVersion =
 		documentDOM.documentElement.getAttribute("version") || settingsVersion;
 
@@ -172,6 +180,7 @@ export function parseProfile(document: vscode.TextDocument): ProfileContent {
 	if (!profiles || profiles.length === 0) {
 		return { isValid: false, settingsVersion, diagnostics };
 	}
+
 	const settingsProfileName: string | undefined = vscode.workspace
 		.getConfiguration("java")
 		.get<string>(JavaConstants.SETTINGS_PROFILE_KEY);
@@ -184,6 +193,7 @@ export function parseProfile(document: vscode.TextDocument): ProfileContent {
 			if (profiles[i].getAttribute("kind") !== "CodeFormatterProfile") {
 				continue;
 			}
+
 			settingsVersion =
 				profiles[i].getAttribute("version") || settingsVersion;
 
@@ -219,6 +229,7 @@ export function parseProfile(document: vscode.TextDocument): ProfileContent {
 
 					continue;
 				}
+
 				const value = settings[j].getAttribute("value");
 
 				if (!value) {
@@ -246,16 +257,22 @@ export function parseProfile(document: vscode.TextDocument): ProfileContent {
 						continue;
 					}
 				}
+
 				profileElements.set(id, setting);
+
 				profileSettings.set(id, value);
+
 				lastElement = setting;
 			}
+
 			break;
 		}
 	}
+
 	if (!profileElements.size) {
 		return { isValid: false, settingsVersion, diagnostics };
 	}
+
 	const supportedProfileSettings = getSupportedProfileSettings(
 		Number(settingsVersion),
 	);
@@ -273,6 +290,7 @@ export function parseProfile(document: vscode.TextDocument): ProfileContent {
 
 			continue;
 		}
+
 		const webViewValue: string | undefined =
 			FormatterConverter.profile2WebViewConvert(setting.id, value);
 
@@ -282,6 +300,7 @@ export function parseProfile(document: vscode.TextDocument): ProfileContent {
 			if (!valueNode || !valueNode.nodeValue) {
 				continue;
 			}
+
 			const elementRange = new vscode.Range(
 				new vscode.Position(
 					valueNode.lineNumber - 1,
@@ -292,6 +311,7 @@ export function parseProfile(document: vscode.TextDocument): ProfileContent {
 					valueNode.columnNumber + valueNode.nodeValue.length,
 				),
 			);
+
 			diagnostics.push(
 				new vscode.Diagnostic(
 					elementRange,
@@ -299,6 +319,7 @@ export function parseProfile(document: vscode.TextDocument): ProfileContent {
 					vscode.DiagnosticSeverity.Error,
 				),
 			);
+
 			profileSettings.delete(setting.id);
 
 			setting.value = FormatterConverter.profile2WebViewConvert(
@@ -308,8 +329,10 @@ export function parseProfile(document: vscode.TextDocument): ProfileContent {
 
 			continue;
 		}
+
 		setting.value = webViewValue;
 	}
+
 	return {
 		isValid: true,
 		settingsVersion,
@@ -336,6 +359,7 @@ export async function downloadFile(settingsUrl: string): Promise<string> {
 		} else if (answer === "Open Settings") {
 			openFormatterSettings();
 		}
+
 		return "";
 	}
 }

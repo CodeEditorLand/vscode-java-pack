@@ -34,15 +34,22 @@ export const classpathConfigurationViewSlice = createSlice({
 		},
 		initializeClasspathData: (state, action) => {
 			const projectNum = action.payload.projectsNum;
+
 			state.data.activeVmInstallPath = Array(projectNum).fill("");
+
 			state.data.sources = Array(projectNum).fill([]);
+
 			state.data.output = Array(projectNum).fill("");
+
 			state.data.libraries = Array(projectNum).fill([]);
 
 			state.data.effective.activeVmInstallPath =
 				Array(projectNum).fill("");
+
 			state.data.effective.sources = Array(projectNum).fill([]);
+
 			state.data.effective.output = Array(projectNum).fill("");
+
 			state.data.effective.libraries = Array(projectNum).fill([]);
 		},
 		listVmInstalls: (state, action) => {
@@ -50,12 +57,15 @@ export const classpathConfigurationViewSlice = createSlice({
 		},
 		loadClasspath: (state, action) => {
 			const activeProjectIndex = action.payload.activeProjectIndex;
+
 			state.data.output[activeProjectIndex] = action.payload.output;
+
 			state.data.effective.output[activeProjectIndex] =
 				action.payload.output;
 
 			state.data.activeVmInstallPath[activeProjectIndex] =
 				action.payload.activeVmInstallPath;
+
 			state.data.effective.activeVmInstallPath[activeProjectIndex] =
 				action.payload.activeVmInstallPath;
 
@@ -72,6 +82,7 @@ export const classpathConfigurationViewSlice = createSlice({
 
 			if (!_.isEqual(currentSources, newSources)) {
 				state.data.sources[activeProjectIndex] = action.payload.sources;
+
 				state.data.effective.sources[activeProjectIndex] =
 					action.payload.sources;
 			}
@@ -86,25 +97,31 @@ export const classpathConfigurationViewSlice = createSlice({
 			if (!_.isEqual(currentLibs, newLibs)) {
 				state.data.libraries[activeProjectIndex] =
 					action.payload.libraries;
+
 				state.data.effective.libraries[activeProjectIndex] =
 					action.payload.libraries;
 			}
 		},
 		flushClasspathToEffective: (state, action) => {
 			const activeProjectIndex = action.payload.activeProjectIndex;
+
 			state.data.effective.output[activeProjectIndex] =
 				state.data.output[activeProjectIndex];
+
 			state.data.effective.activeVmInstallPath[activeProjectIndex] =
 				state.data.activeVmInstallPath[activeProjectIndex];
+
 			state.data.effective.sources[activeProjectIndex] = [
 				...state.data.sources[activeProjectIndex],
 			];
+
 			state.data.effective.libraries[activeProjectIndex] = [
 				...state.data.libraries[activeProjectIndex],
 			];
 		},
 		updateSource: (state, action) => {
 			const activeProjectIndex = action.payload.activeProjectIndex;
+
 			state.data.sources[activeProjectIndex] = _.uniqBy(
 				action.payload.sources as ClasspathEntry[],
 				"path",
@@ -112,10 +129,12 @@ export const classpathConfigurationViewSlice = createSlice({
 		},
 		setOutputPath: (state, action) => {
 			const activeProjectIndex = action.payload.activeProjectIndex;
+
 			state.data.output[activeProjectIndex] = action.payload.outputPath;
 		},
 		setJdks: (state, action) => {
 			const activeProjectIndex = action.payload.activeProjectIndex;
+
 			state.data.activeVmInstallPath[activeProjectIndex] =
 				action.payload.activeVmInstallPath;
 
@@ -149,8 +168,11 @@ export const classpathConfigurationViewSlice = createSlice({
 			const activeProjectIndex = action.payload.activeProjectIndex;
 
 			let newLibs = state.data.libraries[activeProjectIndex];
+
 			newLibs.unshift(...action.payload.libraries);
+
 			newLibs = _.uniq(newLibs);
+
 			state.data.libraries[activeProjectIndex] = _.uniqBy(
 				newLibs,
 				"path",

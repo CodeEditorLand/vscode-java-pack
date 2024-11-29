@@ -34,6 +34,7 @@ function timerEventHandler() {
 
 	if (timeElapsed >= IDLE_THRESHOLD) {
 		timeElapsed = 0;
+
 		_onIdle.fire();
 	}
 }

@@ -6,7 +6,9 @@ import { EOL } from "os";
 
 interface LogEntry {
 	timestamp?: number;
+
 	message: string;
+
 	stack?: string;
 }
 
@@ -14,12 +16,19 @@ interface SessionMetadata {
 	importGradleAt?: number;
 
 	importMavenAt?: number;
+
 	initJobFinishedAt?: number;
+
 	startAt?: number;
+
 	initializeAt?: number;
+
 	initializedAt?: number;
+
 	buildJobsFinishedAt?: number;
+
 	javaVersion?: string;
+
 	javaVendor?: string;
 }
 
@@ -92,6 +101,7 @@ export function sessionMetadata(log: string): SessionMetadata {
 
 	if (sessionStartEntry) {
 		const logEntry = parseTimestamp(sessionStartEntry);
+
 		meta.startAt = logEntry.timestamp;
 
 		for (const line of sessionStartEntry.split(EOL)) {
@@ -216,6 +226,7 @@ function getMessage(entry: string) {
 	if (start < 0) {
 		return "";
 	}
+
 	const end = entry.indexOf(EOL, start + MESSAGE_INDICATOR.length);
 
 	return entry.slice(start + MESSAGE_INDICATOR.length, end);
@@ -227,6 +238,7 @@ function getStack(entry: string) {
 	if (start < 0) {
 		return "";
 	}
+
 	const end = entry.indexOf(
 		EOL + EOL + "!ENTRY",
 		start + STACK_INDICATOR.length,

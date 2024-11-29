@@ -68,16 +68,19 @@ async function initializeJavaExtGuideView(
 	);
 
 	context.subscriptions.push(webviewPanel.onDidDispose(onDisposeCallback));
+
 	context.subscriptions.push(
 		webviewPanel.webview.onDidReceiveMessage(async (e) => {
 			if (e.command === "tabActivated") {
 				let tabId = e.tabId;
+
 				sendInfo(operationId, {
 					infoType: "tabActivated",
 					tabId: tabId,
 				});
 			} else if (e.command === "installExtensions") {
 				const extNames = <string[]>e.extNames;
+
 				await Promise.all(
 					extNames.map(async (extName) => {
 						return vscode.commands.executeCommand(
@@ -99,6 +102,7 @@ async function initializeJavaExtGuideView(
 		const installedExtensions = vscode.extensions.all.map((ext) =>
 			ext.id.toLowerCase(),
 		);
+
 		webviewPanel.webview.postMessage({
 			command: "syncExtensionStatus",
 			installedExtensions: installedExtensions,
@@ -384,12 +388,14 @@ export class JavaExtGuideViewSerializer
 	) {
 		if (javaExtGuideView) {
 			javaExtGuideView.reveal();
+
 			webviewPanel.dispose();
 
 			return;
 		}
 
 		javaExtGuideView = webviewPanel;
+
 		instrumentOperation("restoreExtGuideView", (operationId) => {
 			initializeJavaExtGuideView(
 				getExtensionContext(),

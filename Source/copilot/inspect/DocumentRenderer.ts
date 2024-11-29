@@ -27,8 +27,11 @@ export class DocumentRenderer {
 	private readonly availableRenderers: {
 		[type: string]: InspectionRenderer;
 	} = {};
+
 	private readonly installedRenderers: InspectionRenderer[] = [];
+
 	private readonly inspectActionCodeLensProvider: InspectActionCodeLensProvider;
+
 	private readonly rerenderDebouncelyMap: {
 		[key: string]: (document: TextDocument) => void;
 	} = {};
@@ -36,9 +39,13 @@ export class DocumentRenderer {
 	public constructor() {
 		this.inspectActionCodeLensProvider =
 			new InspectActionCodeLensProvider();
+
 		this.availableRenderers["diagnostics"] = new DiagnosticRenderer();
+
 		this.availableRenderers["guttericons"] = new GutterIconRenderer();
+
 		this.availableRenderers["codelenses"] = new CodeLensRenderer();
+
 		this.availableRenderers["rulerhighlights"] =
 			new RulerHighlightRenderer();
 	}
@@ -49,6 +56,7 @@ export class DocumentRenderer {
 
 			return this;
 		}
+
 		this.inspectActionCodeLensProvider.install(context);
 		// watch for inspection renderers configuration changes
 		workspace.onDidChangeConfiguration((event) => {
@@ -56,11 +64,13 @@ export class DocumentRenderer {
 				event.affectsConfiguration("java.copilot.inspection.renderer")
 			) {
 				const settings = this.reloadInspectionRenderers(context);
+
 				sendInfo("java.copilot.inspection.renderer.changed", {
 					"settings": `${settings.join(",")}`,
 				});
 			}
 		});
+
 		this.reloadInspectionRenderers(context);
 
 		return this;
@@ -79,6 +89,7 @@ export class DocumentRenderer {
 
 		if (!debounced) {
 			this.inspectActionCodeLensProvider.rerender(document);
+
 			this.rerenderInspections(document);
 
 			return;
@@ -92,17 +103,21 @@ export class DocumentRenderer {
 			this.rerenderDebouncelyMap[key] = debounce(
 				(document: TextDocument) => {
 					this.inspectActionCodeLensProvider.rerender(document);
+
 					this.rerenderInspections(document);
 				},
 			);
 		}
+
 		this.rerenderDebouncelyMap[key](document);
 	}
 
 	private async rerenderInspections(document: TextDocument): Promise<void> {
 		const inspections =
 			await InspectionCache.getCachedInspectionsOfDoc(document);
+
 		this.installedRenderers.forEach((r) => r.clear(document));
+
 		this.installedRenderers.forEach((r) => {
 			r.renderInspections(document, inspections);
 		});
@@ -112,10 +127,12 @@ export class DocumentRenderer {
 		this.installedRenderers.splice(0, this.installedRenderers.length);
 
 		const settings = this.reloadInspectionRendererSettings();
+
 		Object.entries(this.availableRenderers).forEach(([type, renderer]) => {
 			if (settings.includes(type.toLowerCase())) {
 				// if enabled
 				this.installedRenderers.push(renderer);
+
 				renderer.install(context);
 			} else {
 				renderer.uninstall();
@@ -151,8 +168,10 @@ export class DocumentRenderer {
 			if (disabled) {
 				logger.warn("CodeLens is disabled, fallback to GutterIcons");
 			}
+
 			settings.push(disabled ? "guttericons" : "codelenses");
 		}
+
 		return settings;
 	}
 }

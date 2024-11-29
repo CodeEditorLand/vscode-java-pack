@@ -5,11 +5,17 @@ import * as vscode from "vscode";
 
 export interface JavaFormatterSetting {
 	id: string;
+
 	name: string;
+
 	value: string;
+
 	candidates?: string[];
+
 	category: Category;
+
 	exampleKind: ExampleKind;
+
 	valueKind: ValueKind;
 	// the first profile version the setting becomes valid, default is 1.
 	startVersion: number;
@@ -48,11 +54,13 @@ export enum ExampleKind {
 // two extra properties from @xmldom/xmldom package, see https://www.npmjs.com/package/@xmldom/xmldom
 export interface DOMElement extends Element {
 	lineNumber: number;
+
 	columnNumber: number;
 }
 
 export interface DOMAttr extends Attr {
 	lineNumber: number;
+
 	columnNumber: number;
 }
 
@@ -60,9 +68,14 @@ export interface ProfileContent {
 	isValid: boolean;
 
 	settingsVersion: string;
+
 	diagnostics: vscode.Diagnostic[];
+
 	profileElements?: Map<string, DOMElement>;
+
 	profileSettings?: Map<string, string>;
+
 	lastElement?: DOMElement;
+
 	supportedProfileSettings?: Map<string, JavaFormatterSetting>;
 }

@@ -5,29 +5,39 @@ import { ProjectType } from "../utils/webview";
 
 export interface ProjectInfo {
 	name: string;
+
 	rootPath: string;
 }
 
 export interface VmInstall {
 	typeName: string;
+
 	name: string;
+
 	path: string;
+
 	version: string;
 }
 
 export interface ClasspathComponent {
 	projectType: ProjectType;
+
 	sourcePaths: ClasspathEntry[];
 
 	defaultOutputPath: string;
+
 	jdkPath: string;
+
 	libraries: ClasspathEntry[];
 }
 
 export interface ClasspathEntry {
 	kind: ClasspathEntryKind;
+
 	path: string;
+
 	output?: string;
+
 	attributes?: { [key: string]: string };
 }
 

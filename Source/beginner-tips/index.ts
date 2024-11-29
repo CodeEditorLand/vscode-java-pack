@@ -22,6 +22,7 @@ export class BeginnerTipsViewSerializer
 	implements vscode.WebviewPanelSerializer
 {
 	constructor(private context: vscode.ExtensionContext) {}
+
 	async deserializeWebviewPanel(
 		webviewPanel: vscode.WebviewPanel,
 		_state: unknown,
@@ -32,9 +33,13 @@ export class BeginnerTipsViewSerializer
 
 class BeginnerTipsPage {
 	public static instance: BeginnerTipsPage | undefined;
+
 	private static readonly viewType = WEBVIEW_ID;
+
 	private _panel: vscode.WebviewPanel | undefined;
+
 	private readonly _extensionPath: string;
+
 	private _disposables: vscode.Disposable[] = [];
 
 	public static createOrShow(
@@ -51,10 +56,12 @@ class BeginnerTipsPage {
 	}
 
 	private constructor(extensionPath: string, column: vscode.ViewColumn);
+
 	private constructor(
 		extensionPath: string,
 		webviewPanel: vscode.WebviewPanel,
 	);
+
 	private constructor(
 		extensionPath: string,
 		columnOrwebviewPanel: vscode.ViewColumn | vscode.WebviewPanel,
@@ -87,6 +94,7 @@ class BeginnerTipsPage {
 				path.join(this._extensionPath, "caption.dark.svg"),
 			),
 		};
+
 		this._panel.webview.html = this._getHtmlForWebview();
 
 		this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
@@ -128,6 +136,7 @@ class BeginnerTipsPage {
 		BeginnerTipsPage.instance = undefined;
 
 		this._panel?.dispose();
+
 		this._panel = undefined;
 
 		while (this._disposables.length) {

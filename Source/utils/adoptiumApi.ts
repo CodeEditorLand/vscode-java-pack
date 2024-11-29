@@ -120,6 +120,7 @@ export async function latestCompatibleAsset(
 	if (arch === "arm64") {
 		arch = "aarch64";
 	}
+
 	return assets.find(
 		(a) =>
 			a.binary.image_type === "jdk" &&
@@ -130,19 +131,27 @@ export async function latestCompatibleAsset(
 
 export interface AdoptiumReleaseInfo {
 	available_lts_releases: number[];
+
 	available_releases: number[];
+
 	most_recent_lts: number;
 }
 
 export interface AdoptiumAsset {
 	release_name: string;
+
 	binary: {
 		architecture: string;
+
 		os: string;
+
 		image_type: string;
+
 		installer?: AdoptiumFileMetadata;
+
 		package?: AdoptiumFileMetadata;
 	};
+
 	version: {
 		major: number;
 	};
@@ -150,7 +159,10 @@ export interface AdoptiumAsset {
 
 export interface AdoptiumFileMetadata {
 	name: string;
+
 	link: string;
+
 	checksum: string;
+
 	size: number;
 }

@@ -28,6 +28,7 @@ export async function showWelcomeWebviewBeside(
 		openBeside: true,
 		firstTimeRun: options?.firstTimeRun,
 	};
+
 	await showWelcomeWebview(context, _operationId, newOptions);
 }
 
@@ -36,6 +37,7 @@ export async function showWelcomeWebview(
 	_operationId?: string,
 	options?: {
 		firstTimeRun?: boolean;
+
 		openBeside?: boolean;
 	},
 ) {
@@ -45,6 +47,7 @@ export async function showWelcomeWebview(
 
 	if (welcomeView) {
 		welcomeView.reveal();
+
 		fetchInitProps(context);
 	} else {
 		let column = vscode.ViewColumn.Active;
@@ -52,6 +55,7 @@ export async function showWelcomeWebview(
 		if (options?.openBeside) {
 			// "smart" Beside
 			const ate = vscode.window.activeTextEditor;
+
 			column =
 				ate === undefined || ate.viewColumn === vscode.ViewColumn.One
 					? vscode.ViewColumn.Two
@@ -68,6 +72,7 @@ export async function showWelcomeWebview(
 				retainContextWhenHidden: true,
 			},
 		);
+
 		await initializeWelcomeView(
 			context,
 			welcomeView,
@@ -83,12 +88,14 @@ export class WelcomeViewSerializer implements vscode.WebviewPanelSerializer {
 	) {
 		if (welcomeView) {
 			welcomeView.reveal();
+
 			webviewPanel.dispose();
 
 			return;
 		}
 
 		welcomeView = webviewPanel;
+
 		initializeWelcomeView(
 			getExtensionContext(),
 			webviewPanel,
@@ -114,11 +121,14 @@ async function initializeWelcomeView(
 			path.join(context.extensionPath, "caption.dark.svg"),
 		),
 	};
+
 	webviewPanel.webview.html = getHtmlForWebview(
 		webviewPanel,
 		context.asAbsolutePath("./out/assets/welcome/index.js"),
 	);
+
 	context.subscriptions.push(webviewPanel.onDidDispose(onDisposeCallback));
+
 	context.subscriptions.push(
 		webviewPanel.webview.onDidReceiveMessage((message) => {
 			switch (message.command) {
@@ -142,6 +152,7 @@ async function initializeWelcomeView(
 			}
 		}),
 	);
+
 	context.subscriptions.push(
 		vscode.workspace.onDidChangeConfiguration((e) => {
 			if (e.affectsConfiguration("java.completion.filteredTypes")) {

@@ -44,6 +44,7 @@ export namespace FormatterConverter {
 					default:
 						return undefined;
 				}
+
 			case SupportedSettings.KEEP_TYPE_DECLARATION_ON_ONE_LINE:
 			case SupportedSettings.KEEP_RECORD_DECLARATION_ON_ONE_LINE:
 			case SupportedSettings.KEEP_RECORD_CONSTRUCTOR_ON_ONE_LINE:
@@ -69,6 +70,7 @@ export namespace FormatterConverter {
 						return undefined;
 				}
 		}
+
 		return value;
 	}
 
@@ -112,6 +114,7 @@ export namespace FormatterConverter {
 					default:
 						return undefined;
 				}
+
 			case SupportedSettings.KEEP_TYPE_DECLARATION_ON_ONE_LINE:
 			case SupportedSettings.KEEP_RECORD_DECLARATION_ON_ONE_LINE:
 			case SupportedSettings.KEEP_RECORD_CONSTRUCTOR_ON_ONE_LINE:
@@ -136,6 +139,7 @@ export namespace FormatterConverter {
 					default:
 						return undefined;
 				}
+
 			case SupportedSettings.PUT_EMPTY_STATEMENT_ON_NEW_LINE:
 			case SupportedSettings.COMMENT_INDENTPARAMETERDESCRIPTION:
 			case SupportedSettings.COMMENT_INDENT_PARAMETER_DESCRIPTION:
@@ -160,8 +164,10 @@ export namespace FormatterConverter {
 				if (value === "true" || value === "false" || value === "") {
 					return value;
 				}
+
 				return undefined;
 		}
+
 		return value;
 	}
 }

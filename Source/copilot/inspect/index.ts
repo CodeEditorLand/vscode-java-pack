@@ -27,11 +27,15 @@ export async function activateCopilotInspection(
 	context: ExtensionContext,
 ): Promise<void> {
 	logger.info("Waiting for dependent extensions to be ready...");
+
 	await waitUntilExtensionsInstalled(DEPENDENT_EXTENSIONS);
+
 	await waitUntilExtensionsActivated(DEPENDENT_EXTENSIONS);
+
 	logger.info("Activating Java Copilot features...");
 
 	doActivate(context);
+
 	logger.info("Java Copilot features activated.");
 }
 
@@ -39,6 +43,7 @@ export function doActivate(context: ExtensionContext): void {
 	const copilot = new InspectionCopilot();
 
 	const renderer: DocumentRenderer = new DocumentRenderer().install(context);
+
 	registerCommands(copilot, renderer);
 
 	context.subscriptions.push(
@@ -61,6 +66,7 @@ export function doActivate(context: ExtensionContext): void {
 			InspectionCache.invalidateInspectionCache(doc),
 		), // Rerender class codelens and cached suggestions debouncely on document change
 	);
+
 	window.visibleTextEditors.forEach((editor) =>
 		renderer.rerender(editor.document),
 	);
@@ -103,6 +109,7 @@ export async function waitUntilExtensionsActivated(
 
 			return resolve();
 		}
+
 		logger.info(
 			`Dependent extensions [${notActivatedExtensionIds.join(", ")}] are not activated, waiting...`,
 		);
@@ -114,13 +121,16 @@ export async function waitUntilExtensionsActivated(
 				)
 			) {
 				clearInterval(id);
+
 				sendInfo(
 					"java.copilot.inspection.dependentExtensions.waitActivated",
 					{ time: Date.now() - start },
 				);
+
 				logger.info(
 					`waited for ${Date.now() - start}ms for all dependent extensions [${extensionIds.join(", ")}] to be activated.`,
 				);
+
 				resolve();
 			}
 		}, interval);
@@ -142,10 +152,12 @@ export async function waitUntilExtensionsInstalled(extensionIds: string[]) {
 
 			return resolve();
 		}
+
 		sendInfo(
 			"java.copilot.inspection.dependentExtensions.notInstalledExtensions",
 			{ extensionIds: `[${notInstalledExtensionIds.join(",")}]` },
 		);
+
 		logger.info(
 			`Dependent extensions [${notInstalledExtensionIds.join(", ")}] are not installed, waiting...`,
 		);
@@ -153,13 +165,16 @@ export async function waitUntilExtensionsInstalled(extensionIds: string[]) {
 		const disposable = extensions.onDidChange(() => {
 			if (extensionIds.every((id) => extensions.getExtension(id))) {
 				disposable.dispose();
+
 				sendInfo(
 					"java.copilot.inspection.dependentExtensions.waitInstalled",
 					{ time: Date.now() - start },
 				);
+
 				logger.info(
 					`waited for ${Date.now() - start}ms for all dependent extensions [${extensionIds.join(", ")}] to be installed.`,
 				);
+
 				resolve();
 			}
 		});

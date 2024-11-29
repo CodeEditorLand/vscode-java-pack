@@ -12,11 +12,14 @@ export function renderWhitespace(): void {
 
 	if (!style) {
 		const styleElement: HTMLStyleElement = document.createElement("style");
+
 		styleElement.id = STYLE_ID;
+
 		styleElement.textContent = ``;
 
 		document.head.appendChild(styleElement);
 	}
+
 	const elements = document.querySelectorAll("code");
 
 	for (let i = 0; i < elements.length; i++) {
@@ -30,6 +33,7 @@ export function renderWhitespace(): void {
 		while (treeWalker.nextNode()) {
 			nodes.push(treeWalker.currentNode);
 		}
+
 		for (const node of nodes) {
 			replace(node);
 		}
@@ -42,11 +46,13 @@ function replace(node: Node): void {
 	if (!textValue) {
 		return;
 	}
+
 	const parent: (Node & ParentNode) | null = node.parentNode;
 
 	if (!parent) {
 		return;
 	}
+
 	const tabs: string[] = textValue.split("\t");
 
 	const tabSpaces: string[][] = tabs.map((s) => s.split(" "));
@@ -54,10 +60,12 @@ function replace(node: Node): void {
 	if (tabSpaces.length === 1 && tabSpaces[0].length === 1) {
 		return;
 	}
+
 	for (let i = 0; i < tabSpaces.length; i++) {
 		if (i > 0) {
 			parent.insertBefore<HTMLSpanElement>(createTabElement(), node);
 		}
+
 		let spaceCount = 0;
 
 		for (let j = 0; j < tabSpaces[i].length; j++) {
@@ -66,25 +74,31 @@ function replace(node: Node): void {
 
 				continue;
 			}
+
 			if (spaceCount > 0) {
 				parent.insertBefore<HTMLSpanElement>(
 					createSpaceElement(spaceCount),
 					node,
 				);
 			}
+
 			parent.insertBefore<Text>(
 				document.createTextNode(tabSpaces[i][j]),
 				node,
 			);
+
 			spaceCount = 1;
 		}
 	}
+
 	parent.removeChild(node);
 }
 
 function createSpaceElement(count: number): HTMLSpanElement {
 	const node: HTMLSpanElement = document.createElement("span");
+
 	node.classList.add(SPACE_STYLE);
+
 	node.textContent = " ".repeat(count);
 
 	return node;
@@ -92,7 +106,9 @@ function createSpaceElement(count: number): HTMLSpanElement {
 
 function createTabElement(): HTMLSpanElement {
 	const node: HTMLSpanElement = document.createElement("span");
+
 	node.classList.add(TAB_STYLE);
+
 	node.textContent = "\t";
 
 	return node;

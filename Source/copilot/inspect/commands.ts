@@ -42,6 +42,7 @@ export function registerCommands(
 				await copilot.inspectClass(document, clazz);
 			} catch (e) {
 				showErrorMessage(e, document, clazz);
+
 				logger.error(
 					`Failed to inspect class "${clazz.symbol.name}".`,
 					e,
@@ -49,6 +50,7 @@ export function registerCommands(
 
 				throw e;
 			}
+
 			renderer.rerender(document);
 		},
 	);
@@ -60,6 +62,7 @@ export function registerCommands(
 				await copilot.inspectRange(document, range);
 			} catch (e) {
 				showErrorMessage(e, document, range);
+
 				logger.error(
 					`Failed to inspect range of "${path.basename(document.fileName)}".`,
 					e,
@@ -67,6 +70,7 @@ export function registerCommands(
 
 				throw e;
 			}
+
 			renderer.rerender(document);
 		},
 	);
@@ -80,11 +84,13 @@ export function registerCommands(
 		) => {
 			// source is where is this command triggered from, e.g. "gutter", "codelens", "diagnostic"
 			const range = Inspection.getIndicatorRangeOfInspection(problem);
+
 			sendInfo(`${COMMAND_FIX_INSPECTION}.info`, {
 				problem: problem.description,
 				solution,
 				source,
 			});
+
 			void commands.executeCommand("vscode.editorChat.start", {
 				autoSend: true,
 				message: `/fix ${problem.description}, maybe ${uncapitalize(solution)}`,
@@ -108,11 +114,13 @@ export function registerCommands(
 					solution: inspection.solution,
 				});
 			}
+
 			InspectionCache.invalidateInspectionCache(
 				document,
 				symbol,
 				inspection,
 			);
+
 			renderer.rerender(document);
 		},
 	);
@@ -137,8 +145,10 @@ function showErrorMessage(
 		actions.set("Learn more", () =>
 			env.openExternal(Uri.parse(LEARN_MORE_RESPONSE_FILTERED)),
 		);
+
 		message += ", possibly because it matches existing public code";
 	}
+
 	window.showErrorMessage(`${message}.`, ...actions.keys()).then((choice) => {
 		if (choice) {
 			actions.get(choice)!();

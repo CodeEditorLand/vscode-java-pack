@@ -35,6 +35,7 @@ export const commonSlice = createSlice({
 			state.data.projects = action.payload;
 
 			const projectNum = state.data.projects.length;
+
 			state.data.projectType = Array(projectNum).fill("");
 		},
 		activeProjectChange: (state, action) => {

@@ -81,6 +81,7 @@ export async function showExtensionCmdHandler(
 	extensionName: string,
 ) {
 	sendInfo(operationId, { extName: extensionName });
+
 	vscode.commands.executeCommand("extension.open", extensionName);
 }
 
@@ -118,6 +119,7 @@ export async function openUrlCmdHandler(
 	url: string,
 ) {
 	sendInfo(operationId, { url: url });
+
 	vscode.commands.executeCommand("vscode.open", vscode.Uri.parse(url));
 }
 
@@ -127,6 +129,7 @@ export async function showReleaseNotes(
 	version: string,
 ) {
 	let path = context.asAbsolutePath(`release-notes/v${version}.md`);
+
 	vscode.commands.executeCommand(
 		"markdown.showPreview",
 		vscode.Uri.file(path),
@@ -212,6 +215,7 @@ export async function toggleAwtDevelopmentHandler(
 	}
 
 	fetchInitProps(context);
+
 	vscode.window.showInformationMessage(
 		`Java AWT development is ${enable ? "enabled" : "disabled"}.`,
 	);

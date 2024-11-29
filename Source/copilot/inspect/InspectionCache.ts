@@ -32,6 +32,7 @@ export default class InspectionCache {
 		if (!symbol) {
 			return DOC_SYMBOL_SNAPSHOT_INSPECTIONS.has(documentKey);
 		}
+
 		const symbolInspections =
 			DOC_SYMBOL_SNAPSHOT_INSPECTIONS.get(documentKey);
 		// check if the symbol or its contained symbols are cached
@@ -50,6 +51,7 @@ export default class InspectionCache {
 				return true;
 			}
 		}
+
 		return false;
 	}
 
@@ -68,8 +70,10 @@ export default class InspectionCache {
 		for (const symbol of symbols) {
 			const cachedInspections =
 				InspectionCache.getCachedInspectionsOfSymbol(document, symbol);
+
 			inspections.push(...cachedInspections);
 		}
+
 		return inspections;
 	}
 
@@ -95,14 +99,17 @@ export default class InspectionCache {
 			);
 
 			const inspections = snapshotInspections[1];
+
 			inspections.forEach((s) => {
 				s.document = document;
+
 				s.problem.position.line =
 					s.problem.position.relativeLine + symbol.range.start.line;
 			});
 
 			return inspections;
 		}
+
 		logger.debug(
 			`cache miss for ${SymbolKind[symbol.kind]} ${symbol.qualifiedName} of ${document.uri.fsPath}`,
 		);
@@ -137,6 +144,7 @@ export default class InspectionCache {
 						inspection.problem.position.line -
 						symbol.range.start.line),
 			);
+
 			InspectionCache.cacheSymbolInspections(
 				document,
 				symbol,
@@ -158,6 +166,7 @@ export default class InspectionCache {
 			DOC_SYMBOL_SNAPSHOT_INSPECTIONS.clear();
 		} else if (!symbol) {
 			const documentKey = document.uri.fsPath;
+
 			DOC_SYMBOL_SNAPSHOT_INSPECTIONS.delete(documentKey);
 		} else if (!inspeciton) {
 			const documentKey = document.uri.fsPath;
@@ -203,8 +212,10 @@ export default class InspectionCache {
 
 		const cachedSymbolInspections =
 			DOC_SYMBOL_SNAPSHOT_INSPECTIONS.get(documentKey) ?? new Map();
+
 		inspections.forEach((s) => {
 			s.document = document;
+
 			s.symbol = symbol;
 		});
 		// use qualified name to prevent conflicts between symbols with the same signature in same document
@@ -212,6 +223,7 @@ export default class InspectionCache {
 			symbol.snapshotId,
 			inspections,
 		]);
+
 		DOC_SYMBOL_SNAPSHOT_INSPECTIONS.set(
 			documentKey,
 			cachedSymbolInspections,

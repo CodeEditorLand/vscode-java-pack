@@ -9,6 +9,7 @@ const $ = require("jquery");
 window.addEventListener("message", (event) => {
 	if (event.data.command === "syncExtensionVisibility") {
 		syncExtensionVisibility(event.data.installedExtensions);
+
 		syncSectionVisibility();
 	} else if (event.data.command === "setOverviewVisibility") {
 		$("#showWhenUsingJava").prop("checked", event.data.visibility);
@@ -74,6 +75,7 @@ $("a[command]").click(function (event: any) {
 	const command = $(this).attr("command") || "";
 
 	const args = $(this).attr("args") || undefined;
+
 	execCommand(command, args);
 });
 
@@ -81,6 +83,7 @@ $("button[command]").click(function () {
 	const command = $(this).attr("command") || "";
 
 	const args = $(this).attr("args") || undefined;
+
 	execCommand(command, args);
 });
 
@@ -97,6 +100,7 @@ function execCommand(command: string, jsonArgs: string | undefined) {
 				args.push(data);
 			}
 		}
+
 		vscode.postMessage({
 			command,
 			args,

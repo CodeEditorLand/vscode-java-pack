@@ -17,6 +17,7 @@ let daemon: LSDaemon;
 
 export async function initDaemon(context: vscode.ExtensionContext) {
 	daemon = new LSDaemon(context);
+
 	await daemon.initialize();
 
 	const activated = await checkJavaExtActivated(context);
@@ -45,6 +46,7 @@ async function checkJavaExtActivated(
 
 	while (!javaExt.isActive && count < timeout) {
 		await delay(1000);
+
 		count += 1000;
 
 		if (count % 10000 === 0) {
@@ -56,14 +58,18 @@ async function checkJavaExtActivated(
 		sendError(
 			new Error("redhat.java extension not activated within 30 min"),
 		);
+
 		daemon.logWatcher.sendStartupMetadata("redhat.java activation timeout");
 
 		return false;
 	}
 
 	traceSessionStatus(javaExt);
+
 	traceJavaSettingUsage(context, javaExt);
+
 	traceJavaExtension(javaExt);
+
 	traceLSPPerformance(javaExt);
 
 	// on ServiceReady
@@ -163,10 +169,12 @@ async function traceLSPPerformance(javaExt: vscode.Extension<any>) {
 			traceEvent.fromSyntaxServer === undefined
 				? ""
 				: String(traceEvent.fromSyntaxServer);
+
 		lspUsageStats?.recordRequestEnd(
 			traceEvent.type,
 			traceEvent.fromSyntaxServer,
 		);
+
 		lspUsageStats?.recordDuration(
 			traceEvent.type,
 			duration,
@@ -182,6 +190,7 @@ async function traceLSPPerformance(javaExt: vscode.Extension<any>) {
 				remark: sampling,
 				fromSyntaxServer,
 			});
+
 			lspUsageStats?.record5STimeoutRequest(
 				traceEvent.type,
 				traceEvent.fromSyntaxServer,
@@ -220,6 +229,7 @@ async function traceLSPPerformance(javaExt: vscode.Extension<any>) {
 				if (originalException) {
 					errorMessage =
 						errorMessage + " " + originalException.message;
+
 					exception = originalException.stack.join("\n");
 				}
 			}
@@ -288,6 +298,7 @@ async function traceJavaExtension(javaExt: vscode.Extension<any>) {
 	const javaExtVersion = javaExt.packageJSON?.version;
 
 	const isPreReleaseVersion = /^\d+\.\d+\.\d{10}/.test(javaExtVersion);
+
 	javaExt.exports?.trackEvent?.((event: any) => {
 		const metrics: any = {
 			name: "javaext-trace",
@@ -307,6 +318,7 @@ async function traceJavaExtension(javaExt: vscode.Extension<any>) {
 				metrics[key] = val;
 			}
 		}
+
 		sendInfo("", metrics);
 	});
 }
@@ -357,6 +369,7 @@ function traceJavaSettingUsage(
 
 function traceSessionStatus(javaExt: vscode.Extension<any>) {
 	let initHandled: boolean = false;
+
 	javaExt.exports?.onDidRequestEnd?.((traceEvent: any) => {
 		if (initHandled) {
 			return;
@@ -364,6 +377,7 @@ function traceSessionStatus(javaExt: vscode.Extension<any>) {
 
 		if (traceEvent?.type === "initialize") {
 			initHandled = true;
+
 			daemon.logWatcher.checkIfUnsavedWorkspace().then((unsaved) => {
 				if (unsaved) {
 					sendInfo("", {
@@ -394,6 +408,7 @@ async function checkIfJavaServerCrashed(wait: number = 0 /*ms*/) {
 
 	if (!corruptedCacheDetected && corruptedCache) {
 		corruptedCacheDetected = true;
+
 		sendInfo("", {
 			name: "corrupted-cache",
 		});
@@ -407,6 +422,7 @@ async function checkIfJavaServerCrashed(wait: number = 0 /*ms*/) {
 			sendInfo("", {
 				name: "clean-cache-action",
 			});
+
 			vscode.commands.executeCommand("java.clean.workspace", true);
 		} else {
 			sendInfo("", {
@@ -425,6 +441,7 @@ function escapeLspRequestName(name: string) {
 
 interface Exception {
 	message: string;
+
 	stack: string[];
 }
 
@@ -464,6 +481,7 @@ class HybridLSPStats {
 		readonly sampling: string,
 	) {
 		this.lspStats = new LSPUsageStats(javaExtVersion, sampling, false);
+
 		this.ssLspStats = new LSPUsageStats(javaExtVersion, sampling, true);
 	}
 
@@ -529,18 +547,26 @@ class HybridLSPStats {
 
 	public sendStats() {
 		this.lspStats.sendStats();
+
 		this.ssLspStats?.sendStats();
 	}
 }
 
 class LSPUsageStats {
 	private requestStarts: { [key: string]: number } = {};
+
 	private requestEnds: { [key: string]: number } = {};
+
 	private s1TimeoutRequests: { [key: string]: number } = {};
+
 	private s5TimeoutRequests: { [key: string]: number } = {};
+
 	private errorRequests: { [key: string]: number } = {};
+
 	private noResultRequests: { [key: string]: number } = {};
+
 	private hdrs: { [key: string]: HDR } = {};
+
 	public constructor(
 		readonly javaExtVersion: string,
 		readonly sampling: string,
@@ -557,6 +583,7 @@ class LSPUsageStats {
 
 	public recordDuration(type: string, duration: number) {
 		this.hdrs[type] = this.hdrs[type] || new HDR();
+
 		this.hdrs[type].record(duration);
 	}
 
@@ -586,6 +613,7 @@ class LSPUsageStats {
 				const simpleKey = escapeLspRequestName(this.getSimpleKey(key));
 
 				const hdrObj = this.hdrs[key];
+
 				data[simpleKey] = [
 					this.requestStarts[key] - (this.requestEnds[key] || 0), // the number of requests that are not ended.
 					this.requestEnds[key] || 0, // the number of requests that are ended.
@@ -599,9 +627,12 @@ class LSPUsageStats {
 					hdrObj?.getPercentile(95) || 0, // the 95th percentile of the request duration.
 					hdrObj?.getPercentile(99) || 0, // the 99th percentile of the request duration.
 				];
+
 				hdrObj?.destroy();
 			}
+
 			const duration = Date.now() - startAt;
+
 			sendInfo("", {
 				name: this.fromSyntaxServer
 					? "lsp.ss.aggregate.v1"
@@ -618,9 +649,11 @@ class LSPUsageStats {
 		if (key.startsWith("workspace/executeCommand/")) {
 			return key.replace("workspace/executeCommand/", "we/");
 		}
+
 		if (key.startsWith("textDocument/")) {
 			return key.replace("textDocument/", "td/");
 		}
+
 		return key;
 	}
 }

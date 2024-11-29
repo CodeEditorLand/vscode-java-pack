@@ -16,15 +16,21 @@ const execFile = promisify(cp.execFile);
 
 interface IJdtlsMetadata {
 	pid?: string;
+
 	jreHome?: string;
+
 	workspace?: string;
 }
 
 export class ProcessWatcher {
 	private workspace?: string;
+
 	private pid?: string;
+
 	private jreHome?: string;
+
 	private lastHeartbeat?: string;
+
 	private context: vscode.ExtensionContext;
 
 	constructor(private daemon: LSDaemon) {
@@ -51,13 +57,17 @@ export class ProcessWatcher {
 		} catch (error) {
 			// do nothing when jre is not embedded, to avoid spamming logs
 		}
+
 		if (!jreHome) {
 			return false;
 		}
+
 		this.jreHome = jreHome;
 
 		const jdtlsmeta = await getPidAndWS(jreHome, this.context);
+
 		this.pid = jdtlsmeta.pid;
+
 		this.workspace = jdtlsmeta.workspace;
 
 		return this.pid !== undefined && this.workspace !== undefined;
@@ -70,10 +80,12 @@ export class ProcessWatcher {
 					if (!this.lastHeartbeat && seconds) {
 						this.sendClientInitializeTime(seconds);
 					}
+
 					this.lastHeartbeat = seconds;
 				})
 				.catch((_e) => {
 					clearInterval(id);
+
 					this.onDidJdtlsCrash(this.lastHeartbeat);
 				});
 		}, 5000);
@@ -121,6 +133,7 @@ export class ProcessWatcher {
 			name: "jdtls-last-heartbeat",
 			message: lastHeartbeat!,
 		});
+
 		this.daemon.logWatcher.sendErrorAndStackOnCrash();
 	}
 
@@ -137,6 +150,7 @@ export class ProcessWatcher {
 					activatingTimestamp -
 					parseFloat(upTime) * 1000,
 			);
+
 			sendInfo("", {
 				name: "client-initialize-time",
 				message: interval.toString(),

@@ -5,15 +5,21 @@ import { ProjectType } from "../utils/webview";
 
 export interface JavaRuntimeEntry {
 	name: string;
+
 	fspath: string;
+
 	type: string;
+
 	majorVersion: number;
 }
 
 export interface JdkData {
 	os: string;
+
 	arch: string;
+
 	name: string;
+
 	size: string;
 
 	downloadLink: string;
@@ -21,8 +27,12 @@ export interface JdkData {
 
 export interface ProjectRuntimeEntry {
 	name: string;
+
 	rootPath: string;
+
 	runtimePath: string;
+
 	sourceLevel: string;
+
 	projectType: ProjectType;
 }

@@ -1110,6 +1110,7 @@ export function getSupportedProfileSettings(
 		string,
 		JavaFormatterSetting
 	>();
+
 	supportedProfileSettings.forEach((value, key) => {
 		if (
 			value.startVersion <= version &&

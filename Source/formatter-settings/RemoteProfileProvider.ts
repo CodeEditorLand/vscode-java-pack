@@ -9,6 +9,7 @@ export class RemoteProfileProvider
 	implements vscode.TextDocumentContentProvider
 {
 	public static scheme = "java-formatter";
+
 	private contentStorage: Map<string, string> = new Map<string, string>();
 
 	public setContent(url: string, content: string): void {

@@ -8,10 +8,12 @@ const M2E_SELECTED_PROFILES = "org.eclipse.m2e.core.selectedProfiles";
 
 export class MavenRequestHandler implements vscode.Disposable {
 	private webview: vscode.Webview;
+
 	private disposables: vscode.Disposable[] = [];
 
 	constructor(webview: vscode.Webview) {
 		this.webview = webview;
+
 		this.disposables.push(
 			this.webview.onDidReceiveMessage(async (message) => {
 				switch (message.command) {

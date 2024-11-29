@@ -27,9 +27,12 @@ export class DiagnosticRenderer implements InspectionRenderer {
 
 	public install(context: ExtensionContext): InspectionRenderer {
 		if (this.diagnostics) return this;
+
 		logger.debug("[DiagnosticRenderer] install...");
+
 		this.diagnostics =
 			languages.createDiagnosticCollection(DIAGNOSTICS_GROUP);
+
 		context.subscriptions.push(this.diagnostics);
 
 		return this;
@@ -37,9 +40,13 @@ export class DiagnosticRenderer implements InspectionRenderer {
 
 	public uninstall(): void {
 		if (!this.diagnostics) return;
+
 		logger.debug("[DiagnosticRenderer] uninstall...");
+
 		this.diagnostics.clear();
+
 		this.diagnostics.dispose();
+
 		this.diagnostics = undefined;
 	}
 
@@ -58,6 +65,7 @@ export class DiagnosticRenderer implements InspectionRenderer {
 		if (inspections.length < 1 || !this.diagnostics) {
 			return;
 		}
+
 		const oldItems: readonly InspectionDiagnostic[] = (this.diagnostics.get(
 			document.uri,
 		) ?? []) as InspectionDiagnostic[];
@@ -74,6 +82,7 @@ export class DiagnosticRenderer implements InspectionRenderer {
 		const toAdd: InspectionDiagnostic[] = _.difference(newIds, oldIds)
 			.map((id) => inspections.find((i) => i.id === id)!)
 			.map((i) => new InspectionDiagnostic(i));
+
 		this.diagnostics.set(document.uri, [...toKeep, ...toAdd]);
 	}
 }
@@ -90,6 +99,7 @@ class InspectionDiagnostic extends Diagnostic {
 				: DiagnosticSeverity.Hint;
 
 		super(range, inspection.problem.description, severiy);
+
 		this.source = DIAGNOSTICS_GROUP;
 	}
 }
@@ -103,12 +113,14 @@ export async function fixDiagnostic(
 	if (document?.languageId !== "java") {
 		return [];
 	}
+
 	const actions: CodeAction[] = [];
 
 	for (const diagnostic of context.diagnostics) {
 		if (diagnostic.source !== DIAGNOSTICS_GROUP) {
 			continue;
 		}
+
 		const inspection: Inspection = (diagnostic as InspectionDiagnostic)
 			.inspection as Inspection;
 
@@ -127,7 +139,9 @@ export async function fixDiagnostic(
 				],
 			},
 		};
+
 		actions.push(fixAction);
 	}
+
 	return actions;
 }

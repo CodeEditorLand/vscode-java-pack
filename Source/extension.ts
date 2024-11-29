@@ -38,10 +38,13 @@ export let activatingTimestamp: number;
 
 export async function activate(context: vscode.ExtensionContext) {
 	activatingTimestamp = performance.now();
+
 	syncState(context);
+
 	initializeTelemetry(context);
 	// initialize exp service ahead of activation operation to make sure exp context properties are set.
 	await initExp(context);
+
 	await instrumentOperation("activation", initializeExtension)(context);
 }
 
@@ -50,10 +53,15 @@ async function initializeExtension(
 	context: vscode.ExtensionContext,
 ) {
 	initFormatterSettingsEditorProvider(context);
+
 	initRemoteProfileProvider(context);
+
 	initUtils(context);
+
 	initCommands(context);
+
 	initRecommendations(context);
+
 	initDaemon(context);
 
 	activatedTimestamp = performance.now();
@@ -64,6 +72,7 @@ async function initializeExtension(
 			"..",
 			"redhat.java",
 		);
+
 		cleanJavaWorkspaceIndicator = path.join(
 			javaWorkspaceStoragePath,
 			"jdt_ws",
@@ -85,36 +94,42 @@ async function initializeExtension(
 			new JavaExtGuideViewSerializer(),
 		),
 	);
+
 	context.subscriptions.push(
 		vscode.window.registerWebviewPanelSerializer(
 			"java.overview",
 			new OverviewViewSerializer(),
 		),
 	);
+
 	context.subscriptions.push(
 		vscode.window.registerWebviewPanelSerializer(
 			"java.runtime",
 			new JavaRuntimeViewSerializer(),
 		),
 	);
+
 	context.subscriptions.push(
 		vscode.window.registerWebviewPanelSerializer(
 			"java.gettingStarted",
 			new BeginnerTipsViewSerializer(context),
 		),
 	);
+
 	context.subscriptions.push(
 		vscode.window.registerWebviewPanelSerializer(
 			"java.welcome",
 			new WelcomeViewSerializer(),
 		),
 	);
+
 	context.subscriptions.push(
 		vscode.window.registerWebviewPanelSerializer(
 			"java.projectSettings",
 			new ProjectSettingsViewSerializer(),
 		),
 	);
+
 	context.subscriptions.push(
 		vscode.window.registerWebviewPanelSerializer(
 			"java.installJdk",
@@ -180,7 +195,10 @@ export async function deactivate() {
 	) {
 		data.name = "cleanJavaLSWorkspace";
 	}
+
 	sendInfo("", data);
+
 	sendLSPUsageStats();
+
 	await disposeTelemetryWrapper();
 }

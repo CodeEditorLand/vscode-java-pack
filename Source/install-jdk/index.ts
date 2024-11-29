@@ -30,6 +30,7 @@ export function showInstallJdkWebviewBeside(
 
 export class InstallJdkViewSerializer implements vscode.WebviewPanelSerializer {
 	constructor(private context: vscode.ExtensionContext) {}
+
 	async deserializeWebviewPanel(
 		webviewPanel: vscode.WebviewPanel,
 		_state: unknown,
@@ -42,15 +43,20 @@ export class InstallJdkViewSerializer implements vscode.WebviewPanelSerializer {
 
 class InstallJdkPage {
 	public static instance: InstallJdkPage | undefined;
+
 	private static readonly viewType = WEBVIEW_ID;
+
 	private _panel: vscode.WebviewPanel | undefined;
+
 	private readonly _extensionPath: string;
+
 	private _disposables: vscode.Disposable[] = [];
 
 	public static createOrShow(
 		extensionPath: string,
 		options?: {
 			webviewPanel?: vscode.WebviewPanel;
+
 			beside?: boolean;
 		},
 	) {
@@ -59,6 +65,7 @@ class InstallJdkPage {
 		if (options?.beside) {
 			// "smart" Beside
 			const ate = vscode.window.activeTextEditor;
+
 			column =
 				ate === undefined || ate.viewColumn === vscode.ViewColumn.One
 					? vscode.ViewColumn.Two
@@ -75,10 +82,12 @@ class InstallJdkPage {
 	}
 
 	private constructor(extensionPath: string, column: vscode.ViewColumn);
+
 	private constructor(
 		extensionPath: string,
 		webviewPanel: vscode.WebviewPanel,
 	);
+
 	private constructor(
 		extensionPath: string,
 		columnOrwebviewPanel: vscode.ViewColumn | vscode.WebviewPanel,
@@ -109,6 +118,7 @@ class InstallJdkPage {
 			),
 			dark: vscode.Uri.file(path.join(extensionPath, "caption.dark.svg")),
 		};
+
 		this._panel.webview.html = this._getHtmlForWebview();
 
 		this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
@@ -143,6 +153,7 @@ class InstallJdkPage {
 
 	private async doFetchAvailableReleases() {
 		const releases = await availableReleases();
+
 		this._panel?.webview.postMessage({
 			command: "onDidFetchAvailableReleases",
 			payload: releases,
@@ -154,6 +165,7 @@ class InstallJdkPage {
 			payload?.majorVersion?.toString(),
 			"hotspot",
 		);
+
 		this._panel?.webview.postMessage({
 			command: "onDidFetchAsset",
 			payload: asset,
@@ -180,6 +192,7 @@ class InstallJdkPage {
 		InstallJdkPage.instance = undefined;
 
 		this._panel?.dispose();
+
 		this._panel = undefined;
 
 		while (this._disposables.length) {

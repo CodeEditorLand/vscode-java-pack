@@ -16,7 +16,9 @@ let extensionContext: vscode.ExtensionContext;
 
 export function initialize(context: vscode.ExtensionContext) {
 	extensionContext = context;
+
 	initializeIdle(context);
+
 	initializeScheduler(context);
 }
 
@@ -65,11 +67,15 @@ export * from "./extension";
 
 export async function webviewCmdLinkHandler(obj: {
 	webview: string;
+
 	identifier: string;
+
 	command: string;
+
 	args?: string[];
 }) {
 	const { webview, identifier, command, args } = obj;
+
 	sendInfo("", {
 		name: "openWebviewUrl",
 		webview,
@@ -105,6 +111,7 @@ export function isInsiders() {
 
 export function getNonce() {
 	let array = new Uint32Array(16);
+
 	array = crypto.getRandomValues(array);
 
 	const buffer = Buffer.from(array);

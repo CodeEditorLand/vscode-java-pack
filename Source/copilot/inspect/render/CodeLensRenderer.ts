@@ -24,16 +24,21 @@ import { InspectionRenderer } from "./InspectionRenderer";
 
 export class CodeLensRenderer implements InspectionRenderer {
 	private readonly codeLenses: Map<Uri, InspectionCodeLens[]> = new Map();
+
 	private readonly provider = new InspectionCodeLensProvider(this.codeLenses);
+
 	private disposableRegistry: Disposable | undefined;
 
 	public install(context: ExtensionContext): InspectionRenderer {
 		if (this.disposableRegistry) return this;
+
 		logger.debug(`[CodeLensRenderer] install`);
+
 		this.disposableRegistry = languages.registerCodeLensProvider(
 			{ language: "java" },
 			this.provider,
 		);
+
 		context.subscriptions.push(this.disposableRegistry);
 
 		return this;
@@ -41,10 +46,15 @@ export class CodeLensRenderer implements InspectionRenderer {
 
 	public uninstall(): void {
 		if (!this.disposableRegistry) return;
+
 		logger.debug(`[CodeLensRenderer] uninstall`);
+
 		this.codeLenses.clear();
+
 		this.disposableRegistry.dispose();
+
 		this.provider.refresh();
+
 		this.disposableRegistry = undefined;
 	}
 
@@ -54,6 +64,7 @@ export class CodeLensRenderer implements InspectionRenderer {
 		} else {
 			this.codeLenses.clear();
 		}
+
 		this.provider.refresh();
 	}
 
@@ -64,6 +75,7 @@ export class CodeLensRenderer implements InspectionRenderer {
 		if (inspections.length < 1 || !this.codeLenses) {
 			return;
 		}
+
 		const oldItems = this.codeLenses.get(document.uri) ?? [];
 
 		const oldIds: string[] = _.uniq(oldItems).map((c) => c.inspection.id);
@@ -78,7 +90,9 @@ export class CodeLensRenderer implements InspectionRenderer {
 		const toAdd: InspectionCodeLens[] = _.difference(newIds, oldIds)
 			.map((id) => inspections.find((i) => i.id === id)!)
 			.flatMap((i) => CodeLensRenderer.toCodeLenses(document, i));
+
 		this.codeLenses.set(document.uri, [...toKeep, ...toAdd]);
+
 		this.provider.refresh();
 	}
 
@@ -98,6 +112,7 @@ export class CodeLensRenderer implements InspectionRenderer {
 			command: COMMAND_FIX_INSPECTION,
 			arguments: [inspection.problem, inspection.solution, "codelenses"],
 		});
+
 		codeLenses.push(inspectionCodeLens);
 
 		const ignoreCodeLens = new InspectionCodeLens(inspection, range, {
@@ -106,6 +121,7 @@ export class CodeLensRenderer implements InspectionRenderer {
 			command: COMMAND_IGNORE_INSPECTIONS,
 			arguments: [document, inspection.symbol, inspection],
 		});
+
 		codeLenses.push(ignoreCodeLens);
 
 		return codeLenses;
@@ -124,6 +140,7 @@ class InspectionCodeLens extends CodeLens {
 
 class InspectionCodeLensProvider implements CodeLensProvider {
 	private readonly emitter: EventEmitter<void> = new EventEmitter<void>();
+
 	public readonly onDidChangeCodeLenses: Event<void> = this.emitter.event;
 
 	constructor(private readonly codeLenses: Map<Uri, CodeLens[]>) {}

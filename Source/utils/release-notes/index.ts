@@ -19,6 +19,7 @@ export async function getReleaseNotesEntries(
 		fs.readdir(dir, (err, files) => {
 			if (err) {
 				sendError(err);
+
 				reject(err);
 
 				return;
@@ -51,6 +52,7 @@ export async function getReleaseNotesEntries(
 
 export function findLatestReleaseNotes(entries: ReleaseNotesEntry[]) {
 	let latest = entries[0];
+
 	entries.forEach((entry) => {
 		if (gt(entry.version, latest.version)) {
 			latest = entry;

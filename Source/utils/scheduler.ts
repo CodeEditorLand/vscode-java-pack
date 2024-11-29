@@ -8,6 +8,7 @@ import { onIdle } from "./idle";
 
 interface Action {
 	name: string;
+
 	resolve: (name: string) => void;
 }
 
@@ -55,6 +56,7 @@ function idleHandler() {
 	}
 
 	const action = actionQueue.shift();
+
 	pastActions.push((action && action.name) || "");
 
 	if (action) {

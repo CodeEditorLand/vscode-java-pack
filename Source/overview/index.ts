@@ -89,6 +89,7 @@ async function initializeOverviewView(
 			path.join(context.extensionPath, "caption.dark.svg"),
 		),
 	};
+
 	webviewPanel.webview.html = getHtmlForWebview(
 		webviewPanel,
 		context.asAbsolutePath("./out/assets/overview/index.js"),
@@ -100,6 +101,7 @@ async function initializeOverviewView(
 		const installedExtensions = vscode.extensions.all.map((ext) =>
 			ext.id.toLowerCase(),
 		);
+
 		webviewPanel.webview.postMessage({
 			command: "syncExtensionVisibility",
 			installedExtensions: installedExtensions,
@@ -142,6 +144,7 @@ export async function showOverviewPageOnActivation(
 	);
 
 	let showInBackground = overviewLastShowTime !== undefined;
+
 	vscode.commands.executeCommand("java.overview", showInBackground);
 }
 
@@ -152,12 +155,14 @@ export class OverviewViewSerializer implements vscode.WebviewPanelSerializer {
 	) {
 		if (overviewView) {
 			overviewView.reveal();
+
 			webviewPanel.dispose();
 
 			return;
 		}
 
 		overviewView = webviewPanel;
+
 		initializeOverviewView(
 			getExtensionContext(),
 			webviewPanel,

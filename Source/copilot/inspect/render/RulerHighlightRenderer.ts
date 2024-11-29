@@ -18,13 +18,16 @@ import { InspectionRenderer } from "./InspectionRenderer";
 export class RulerHighlightRenderer implements InspectionRenderer {
 	private readonly rulerHighlights: Map<Uri, InspectionRulerHighlight[]> =
 		new Map();
+
 	private rulerDecorationType: TextEditorDecorationType | undefined;
 
 	public install(_context: ExtensionContext): InspectionRenderer {
 		if (this.rulerDecorationType) return this;
+
 		logger.debug(`[RulerRenderer] install`);
 
 		const color = new ThemeColor("textLink.foreground");
+
 		this.rulerDecorationType = window.createTextEditorDecorationType({
 			isWholeLine: true,
 			overviewRulerLane: OverviewRulerLane.Right,
@@ -36,14 +39,19 @@ export class RulerHighlightRenderer implements InspectionRenderer {
 
 	public uninstall(): void {
 		if (!this.rulerDecorationType) return;
+
 		logger.debug(`[RulerRenderer] uninstall`);
+
 		this.rulerHighlights.clear();
+
 		window.visibleTextEditors.forEach(
 			(editor) =>
 				this.rulerDecorationType &&
 				editor.setDecorations(this.rulerDecorationType, []),
 		);
+
 		this.rulerDecorationType.dispose();
+
 		this.rulerDecorationType = undefined;
 	}
 
@@ -55,6 +63,7 @@ export class RulerHighlightRenderer implements InspectionRenderer {
 		} else {
 			this.rulerHighlights?.clear();
 		}
+
 		window.visibleTextEditors.forEach(
 			(editor) =>
 				this.rulerDecorationType &&
@@ -73,6 +82,7 @@ export class RulerHighlightRenderer implements InspectionRenderer {
 		if (inspections.length < 1 || !editor || !this.rulerDecorationType) {
 			return;
 		}
+
 		const oldItems: readonly InspectionRulerHighlight[] =
 			this.rulerHighlights.get(document.uri) ?? [];
 
@@ -93,6 +103,7 @@ export class RulerHighlightRenderer implements InspectionRenderer {
 			...toKeep,
 			...toAdd,
 		];
+
 		this.rulerHighlights.set(document.uri, newRulerHightlights);
 
 		editor.setDecorations(this.rulerDecorationType, newRulerHightlights);

@@ -15,11 +15,14 @@ import InspectionCache from "./InspectionCache";
 
 export class InspectActionCodeLensProvider implements CodeLensProvider {
 	private inspectCodeLenses: Map<Uri, CodeLens[]> = new Map();
+
 	private emitter: EventEmitter<void> = new EventEmitter<void>();
+
 	public readonly onDidChangeCodeLenses: Event<void> = this.emitter.event;
 
 	public install(context: ExtensionContext): InspectActionCodeLensProvider {
 		logger.debug("[InspectCodeLensProvider] install...");
+
 		context.subscriptions.push(
 			languages.registerCodeLensProvider({ language: "java" }, this),
 		);
@@ -29,6 +32,7 @@ export class InspectActionCodeLensProvider implements CodeLensProvider {
 
 	public async rerender(document: TextDocument) {
 		if (document.languageId !== "java") return;
+
 		logger.debug(
 			"[InspectCodeLensProvider] rerender inspect codelenses...",
 		);
@@ -65,6 +69,7 @@ export class InspectActionCodeLensProvider implements CodeLensProvider {
 			.forEach((codeLens) => topLevelCodeLenses.push(codeLens));
 
 		this.inspectCodeLenses.set(document.uri, topLevelCodeLenses);
+
 		this.emitter.fire();
 	}
 

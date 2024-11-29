@@ -23,6 +23,7 @@ export const REQUIRED_JDK_VERSION = 17;
 export async function resolveRequirements(): Promise<{
 	tooling_jre: string | undefined; // Used to launch Java extension.
 	tooling_jre_version: number;
+
 	java_home: string | undefined; // Used as default project JDK.
 	java_version: number;
 }> {
@@ -47,6 +48,7 @@ export async function resolveRequirements(): Promise<{
 		if (javaHome) {
 			// java.jdt.ls.java.home or java.home setting has highest priority.
 			source = `java.home variable defined in ${env.appName} settings`;
+
 			javaHome = expandHomeDir(javaHome);
 
 			if (!(await fse.pathExists(javaHome!))) {
@@ -70,12 +72,15 @@ export async function resolveRequirements(): Promise<{
 				} else {
 					msg = `The ${source} (${javaHome}) does not point to a JDK.`;
 				}
+
 				invalidJavaHome(reject, msg);
 			}
+
 			javaVersion = await getMajorVersion(javaHome);
 
 			if (preferenceName === "java.jdt.ls.java.home" || !toolingJre) {
 				toolingJre = javaHome;
+
 				toolingJreVersion = javaVersion;
 			}
 		}
@@ -98,9 +103,13 @@ export async function resolveRequirements(): Promise<{
 
 			if (validJdks.length > 0) {
 				sortJdksBySource(validJdks);
+
 				javaHome = validJdks[0].homedir;
+
 				javaVersion = validJdks[0].version?.major ?? 0;
+
 				toolingJre = javaHome;
+
 				toolingJreVersion = javaVersion;
 			}
 		} else {
@@ -119,11 +128,14 @@ export async function resolveRequirements(): Promise<{
 
 				if (runtime) {
 					javaHome = runtime.homedir;
+
 					javaVersion = runtime.version?.major ?? 0;
 				}
 			} else if (javaRuntimes.length) {
 				sortJdksBySource(javaRuntimes);
+
 				javaHome = javaRuntimes[0].homedir;
+
 				javaVersion = javaRuntimes[0].version?.major ?? 0;
 			} else if (
 				(javaHome = (await findDefaultRuntimeFromSettings()) ?? "")
@@ -163,6 +175,7 @@ async function findEmbeddedJRE(
 	if (!javaExtPath) {
 		return undefined;
 	}
+
 	const jreHome = path.join(javaExtPath, "jre");
 
 	if (fse.existsSync(jreHome) && fse.statSync(jreHome).isDirectory()) {
@@ -224,9 +237,11 @@ function sortJdksBySource(jdks: IJavaRuntime[]) {
 			}
 		}
 	}
+
 	rankedJdks
 		.filter((jdk) => jdk.rank === undefined)
 		.forEach((jdk) => (jdk.rank = sources.length));
+
 	rankedJdks.sort((a, b) => a.rank - b.rank);
 }
 
@@ -247,8 +262,10 @@ function checkJavaPreferences() {
 	if (!javaHome) {
 		// Read java.home from the deprecated "java.home" setting.
 		preference = "java.home";
+
 		javaHome = workspace.getConfiguration().get<string>("java.home");
 	}
+
 	return {
 		javaHome,
 		preference,
@@ -263,6 +280,7 @@ async function getMajorVersion(javaHome?: string): Promise<number> {
 	if (!javaHome) {
 		return 0;
 	}
+
 	const runtime = await getRuntime(javaHome, { withVersion: true });
 
 	return runtime?.version?.major || 0;

@@ -8,7 +8,9 @@ import { AdoptiumAsset, AdoptiumReleaseInfo } from "../../../utils/adoptiumApi";
 // Define a type for the slice state
 interface State {
 	availableReleases?: AdoptiumReleaseInfo;
+
 	asset?: AdoptiumAsset;
+
 	currentVersion?: number;
 }
 
@@ -21,6 +23,7 @@ export const slice = createSlice({
 	reducers: {
 		listReleases: (state, action: PayloadAction<AdoptiumReleaseInfo>) => {
 			state.availableReleases = action.payload;
+
 			state.currentVersion = state.availableReleases.most_recent_lts;
 		},
 		selectVersion: (state, action: PayloadAction<number>) => {

@@ -49,7 +49,9 @@ export function redact(
 	consentToCollectLogs: boolean,
 ): {
 	message: string;
+
 	tags: string[];
+
 	hash: string;
 } {
 	const matchedMessage = MESSAGE_WHITELIST.find((msg) =>
@@ -73,6 +75,7 @@ export function redact(
 
 function sha1(content: string): string {
 	const hash = createHash("sha1");
+
 	hash.update(content);
 
 	return hash.digest("hex");

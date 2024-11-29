@@ -40,6 +40,7 @@ export function sourceLevelMajorVersion(level: string): number {
 	if (match) {
 		javaVersion = parseInt(match[0], 10);
 	}
+
 	return javaVersion;
 }
 
@@ -66,5 +67,6 @@ export function getMajorVersion(version: string) {
 	if (match) {
 		javaVersion = parseInt(match[0], 10);
 	}
+
 	return javaVersion;
 }

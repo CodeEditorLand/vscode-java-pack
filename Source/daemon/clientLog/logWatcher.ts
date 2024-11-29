@@ -10,7 +10,9 @@ const lombokJarRegex = /lombok-\d+.*\.jar/;
 
 export class ClientLogWatcher {
 	private context: vscode.ExtensionContext;
+
 	private javaExtensionRoot: vscode.Uri | undefined;
+
 	private logProcessedTimestamp: number = Date.now();
 
 	constructor(daemon: LSDaemon) {
@@ -45,7 +47,9 @@ export class ClientLogWatcher {
 					) {
 						continue;
 					}
+
 					const info: any = {};
+
 					info.defaultProjectJdk = log?.message
 						.replace("Use the JDK from '", "")
 						.replace("' as the initial default project JDK.", "");
@@ -63,6 +67,7 @@ export class ClientLogWatcher {
 					if (startupLog) {
 						info.xmx =
 							startupLog.message.match(/-Xmx[0-9kmgKMG]+/g)?.[0];
+
 						info.xms =
 							startupLog.message.match(/-Xms[0-9kmgKMG]+/g)?.[0];
 
@@ -71,6 +76,7 @@ export class ClientLogWatcher {
 						} else if (startupLog.message.match(lombokJarRegex)) {
 							info.lombok = "embedded"; // lombok projects, loading embedded lombok.jar
 						}
+
 						info.workspaceType = startupLog.message.match(
 							/-XX:HeapDumpPath=.*(vscodesws)/,
 						)
@@ -79,6 +85,7 @@ export class ClientLogWatcher {
 					}
 
 					const errorLog = logs.find((log) => log.level === "error");
+
 					info.error = errorLog ? "true" : undefined;
 
 					const missingJar =
@@ -94,6 +101,7 @@ export class ClientLogWatcher {
 							"The Language Support for Java server crashed and will restart.",
 						),
 					);
+
 					info.crash = crashLog ? "true" : undefined;
 
 					sendInfo("", {
@@ -150,6 +158,7 @@ export class ClientLogWatcher {
 				return await vscode.workspace.fs.readFile(uri);
 			}
 		}
+
 		return undefined;
 	}
 }
@@ -191,6 +200,7 @@ function parse(rawLog: string) {
 		} else if (line === END) {
 			if (current !== undefined) {
 				ret.push(current);
+
 				current = undefined;
 			}
 		} else {
@@ -203,5 +213,6 @@ function parse(rawLog: string) {
 			}
 		}
 	}
+
 	return ret;
 }
