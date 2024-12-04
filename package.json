@@ -301,7 +301,7 @@
 	"dependencies": {
 		"@iconify-icons/codicon": "1.2.30",
 		"@xmldom/xmldom": "0.9.5",
-		"axios": "1.7.8",
+		"axios": "1.7.9",
 		"bootstrap": "5.3.3",
 		"compare-versions": "6.1.1",
 		"expand-home-dir": "0.0.3",
@@ -316,7 +316,7 @@
 	},
 	"description": "Popular extensions for Java development that provides Java IntelliSense, debugging, testing, Maven/Gradle support, project management and more",
 	"devDependencies": {
-		"@types/bytes": "3.1.4",
+		"@types/bytes": "3.1.5",
 		"@types/expand-tilde": "2.0.2",
 		"@types/fs-extra": "11.0.4",
 		"@types/lodash": "4.17.13",
@@ -332,8 +332,8 @@
 		"postcss": "8.4.49",
 		"postcss-loader": "8.1.1",
 		"process": "0.11.10",
-		"sass": "1.81.1",
-		"sass-loader": "16.0.3",
+		"sass": "1.82.0",
+		"sass-loader": "16.0.4",
 		"style-loader": "4.0.0",
 		"ts-loader": "9.5.1"
 	},
