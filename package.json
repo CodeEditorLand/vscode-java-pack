@@ -1,39 +1,12 @@
 {
-	"activationEvents": [
-		"onLanguage:java",
-		"workspaceContains:pom.xml",
-		"workspaceContains:*/pom.xml",
-		"workspaceContains:build.gradle",
-		"workspaceContains:*/build.gradle",
-		"workspaceContains:settings.gradle",
-		"workspaceContains:*/settings.gradle",
-		"workspaceContains:build.gradle.kts",
-		"workspaceContains:*/build.gradle.kts",
-		"workspaceContains:settings.gradle.kts",
-		"workspaceContains:*/settings.gradle.kts",
-		"workspaceContains:.classpath",
-		"workspaceContains:*/.classpath",
-		"onCommand:java.overview",
-		"onCommand:java.showReleaseNotes",
-		"onWebviewPanel:java.overview",
-		"onCommand:java.runtime",
-		"onCommand:java.gettingStarted",
-		"onWebviewPanel:java.gettingStarted",
-		"onCommand:java.extGuide",
-		"onWebviewPanel:java.extGuide",
-		"onCommand:java.welcome",
-		"onWebviewPanel:java.welcome",
-		"onCommand:java.installJdk",
-		"onWebviewPanel:java.installJdk",
-		"onCommand:java.classpathConfiguration",
-		"onCommand:java.projectSettings",
-		"onWebviewPanel:java.projectSettings",
-		"onCommand:java.formatterSettings",
-		"onWalkthrough:javaWelcome"
-	],
-	"aiKey": "b4a8a622-6ac7-4cf8-83aa-f325e1890795",
-	"capabilities": {
-		"virtualWorkspaces": false
+	"name": "@codeeditorland/java-pack",
+	"displayName": "Extension Pack for Java",
+	"description": "Popular extensions for Java development that provides Java IntelliSense, debugging, testing, Maven/Gradle support, project management and more",
+	"main": "./out/extension",
+	"scripts": {
+		"build": "webpack --config webpack.config.js --mode=\"production\"",
+		"compile": "webpack --config webpack.config.js",
+		"update-tpn": "node scripts/update-third-party-notice.js"
 	},
 	"contributes": {
 		"commands": [
@@ -298,6 +271,38 @@
 			}
 		]
 	},
+	"activationEvents": [
+		"onLanguage:java",
+		"workspaceContains:pom.xml",
+		"workspaceContains:*/pom.xml",
+		"workspaceContains:build.gradle",
+		"workspaceContains:*/build.gradle",
+		"workspaceContains:settings.gradle",
+		"workspaceContains:*/settings.gradle",
+		"workspaceContains:build.gradle.kts",
+		"workspaceContains:*/build.gradle.kts",
+		"workspaceContains:settings.gradle.kts",
+		"workspaceContains:*/settings.gradle.kts",
+		"workspaceContains:.classpath",
+		"workspaceContains:*/.classpath",
+		"onCommand:java.overview",
+		"onCommand:java.showReleaseNotes",
+		"onWebviewPanel:java.overview",
+		"onCommand:java.runtime",
+		"onCommand:java.gettingStarted",
+		"onWebviewPanel:java.gettingStarted",
+		"onCommand:java.extGuide",
+		"onWebviewPanel:java.extGuide",
+		"onCommand:java.welcome",
+		"onWebviewPanel:java.welcome",
+		"onCommand:java.installJdk",
+		"onWebviewPanel:java.installJdk",
+		"onCommand:java.classpathConfiguration",
+		"onCommand:java.projectSettings",
+		"onWebviewPanel:java.projectSettings",
+		"onCommand:java.formatterSettings",
+		"onWalkthrough:javaWelcome"
+	],
 	"dependencies": {
 		"@iconify-icons/codicon": "1.2.30",
 		"@xmldom/xmldom": "0.9.5",
@@ -314,7 +319,6 @@
 		"lodash": "4.17.21",
 		"semver": "7.6.3"
 	},
-	"description": "Popular extensions for Java development that provides Java IntelliSense, debugging, testing, Maven/Gradle support, project management and more",
 	"devDependencies": {
 		"@types/bytes": "3.1.5",
 		"@types/expand-tilde": "2.0.2",
@@ -337,7 +341,6 @@
 		"style-loader": "4.0.0",
 		"ts-loader": "9.5.1"
 	},
-	"displayName": "Extension Pack for Java",
 	"extensionPack": [
 		"VisualStudioExptTeam.vscodeintellicode",
 		"redhat.java",
@@ -348,12 +351,9 @@
 		"vscjava.vscode-maven"
 	],
 	"icon": "logo.png",
-	"main": "./out/extension",
-	"name": "vscode-java-pack",
 	"preview": false,
-	"scripts": {
-		"build": "webpack --config webpack.config.js --mode=\"production\"",
-		"compile": "webpack --config webpack.config.js",
-		"update-tpn": "node scripts/update-third-party-notice.js"
+	"aiKey": "b4a8a622-6ac7-4cf8-83aa-f325e1890795",
+	"capabilities": {
+		"virtualWorkspaces": false
 	}
 }
