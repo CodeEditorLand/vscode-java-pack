@@ -538,9 +538,7 @@ export default class InspectionCopilot extends Copilot {
 
 		for (
 			let originalLineIndex = 0;
-
 			originalLineIndex < originalLines.length;
-
 			originalLineIndex++
 		) {
 			const trimmedLine = originalLines[originalLineIndex].trim();
